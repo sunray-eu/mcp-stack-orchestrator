@@ -1,0 +1,244 @@
+{
+  "version": "2026-02-20-global-dynamic",
+  "notes": "Standardized global MCP stack profiles across Codex, Claude Code, and OpenCode with runtime workspace inference.",
+  "managed_servers": [
+    "mcpx-basic-memory",
+    "mcpx-qdrant",
+    "mcpx-chroma",
+    "mcpx-lsp",
+    "mcpx-surrealdb-http",
+    "mcpx-archon-http",
+    "mcpx-qdrant-global",
+    "mcpx-qdrant-project-a",
+    "mcpx-qdrant-project-b",
+    "mcpx-lsp-py",
+    "mcpx-lsp-ts"
+  ],
+  "profiles": {
+    "none": [],
+    "core": [
+      "mcpx-basic-memory",
+      "mcpx-qdrant",
+      "mcpx-chroma",
+      "mcpx-lsp"
+    ],
+    "core-surreal": [
+      "mcpx-basic-memory",
+      "mcpx-qdrant",
+      "mcpx-chroma",
+      "mcpx-lsp",
+      "mcpx-surrealdb-http"
+    ],
+    "core-archon": [
+      "mcpx-basic-memory",
+      "mcpx-qdrant",
+      "mcpx-chroma",
+      "mcpx-lsp",
+      "mcpx-archon-http"
+    ],
+    "full": [
+      "mcpx-basic-memory",
+      "mcpx-qdrant",
+      "mcpx-chroma",
+      "mcpx-lsp",
+      "mcpx-surrealdb-http",
+      "mcpx-archon-http"
+    ]
+  },
+  "servers": {
+    "mcpx-basic-memory": {
+      "summary": "Project-aware memory notes, local-first.",
+      "codex": {
+        "kind": "stdio",
+        "command": "uvx",
+        "args": [
+          "basic-memory",
+          "mcp"
+        ],
+        "env": {
+          "BASIC_MEMORY_FORCE_LOCAL": "true",
+          "BASIC_MEMORY_DEFAULT_PROJECT": "main"
+        },
+        "startup_timeout_sec": 120
+      },
+      "claude": {
+        "transport": "stdio",
+        "command": [
+          "uvx",
+          "basic-memory",
+          "mcp"
+        ],
+        "env": {
+          "BASIC_MEMORY_FORCE_LOCAL": "true",
+          "BASIC_MEMORY_DEFAULT_PROJECT": "main"
+        }
+      },
+      "opencode": {
+        "type": "local",
+        "command": [
+          "uvx",
+          "basic-memory",
+          "mcp"
+        ],
+        "environment": {
+          "BASIC_MEMORY_FORCE_LOCAL": "true",
+          "BASIC_MEMORY_DEFAULT_PROJECT": "main"
+        },
+        "timeout": 120000,
+        "enabled": true
+      }
+    },
+    "mcpx-qdrant": {
+      "summary": "Global semantic retrieval with runtime project-aware collection inference.",
+      "codex": {
+        "kind": "stdio",
+        "command": "${STACK_ROOT}/scripts/mcpx_qdrant_auto.sh",
+        "args": [],
+        "env": {
+          "MCP_QDRANT_COLLECTION_MODE": "workspace",
+          "QDRANT_URL": "http://127.0.0.1:6333",
+          "EMBEDDING_MODEL": "sentence-transformers/all-MiniLM-L6-v2"
+        },
+        "startup_timeout_sec": 120
+      },
+      "claude": {
+        "transport": "stdio",
+        "command": [
+          "${STACK_ROOT}/scripts/mcpx_qdrant_auto.sh"
+        ],
+        "env": {
+          "MCP_QDRANT_COLLECTION_MODE": "workspace",
+          "QDRANT_URL": "http://127.0.0.1:6333",
+          "EMBEDDING_MODEL": "sentence-transformers/all-MiniLM-L6-v2"
+        }
+      },
+      "opencode": {
+        "type": "local",
+        "command": [
+          "${STACK_ROOT}/scripts/mcpx_qdrant_auto.sh"
+        ],
+        "environment": {
+          "MCP_QDRANT_COLLECTION_MODE": "workspace",
+          "QDRANT_URL": "http://127.0.0.1:6333",
+          "EMBEDDING_MODEL": "sentence-transformers/all-MiniLM-L6-v2"
+        },
+        "timeout": 120000,
+        "enabled": true
+      }
+    },
+    "mcpx-chroma": {
+      "summary": "Local persistent Chroma fallback.",
+      "codex": {
+        "kind": "stdio",
+        "command": "uvx",
+        "args": [
+          "chroma-mcp",
+          "--client-type",
+          "persistent",
+          "--data-dir",
+          "${STACK_ROOT}/infra/volumes/chroma-mcp"
+        ],
+        "env": {},
+        "startup_timeout_sec": 120
+      },
+      "claude": {
+        "transport": "stdio",
+        "command": [
+          "uvx",
+          "chroma-mcp",
+          "--client-type",
+          "persistent",
+          "--data-dir",
+          "${STACK_ROOT}/infra/volumes/chroma-mcp"
+        ],
+        "env": {}
+      },
+      "opencode": {
+        "type": "local",
+        "command": [
+          "uvx",
+          "chroma-mcp",
+          "--client-type",
+          "persistent",
+          "--data-dir",
+          "${STACK_ROOT}/infra/volumes/chroma-mcp"
+        ],
+        "timeout": 120000,
+        "enabled": true
+      }
+    },
+    "mcpx-lsp": {
+      "summary": "Language-server MCP with runtime workspace and language inference.",
+      "codex": {
+        "kind": "stdio",
+        "command": "${STACK_ROOT}/scripts/mcpx_lsp_auto.sh",
+        "args": [],
+        "env": {
+          "MCP_LSP_MODE": "auto",
+          "MCP_LSP_PREFERENCE": "typescript",
+          "MCP_TS_LSP": "typescript-language-server",
+          "MCP_PY_LSP": "pyright-langserver"
+        },
+        "startup_timeout_sec": 120
+      },
+      "claude": {
+        "transport": "stdio",
+        "command": [
+          "${STACK_ROOT}/scripts/mcpx_lsp_auto.sh"
+        ],
+        "env": {
+          "MCP_LSP_MODE": "auto",
+          "MCP_LSP_PREFERENCE": "typescript",
+          "MCP_TS_LSP": "typescript-language-server",
+          "MCP_PY_LSP": "pyright-langserver"
+        }
+      },
+      "opencode": {
+        "type": "local",
+        "command": [
+          "${STACK_ROOT}/scripts/mcpx_lsp_auto.sh"
+        ],
+        "environment": {
+          "MCP_LSP_MODE": "auto",
+          "MCP_LSP_PREFERENCE": "typescript",
+          "MCP_TS_LSP": "typescript-language-server",
+          "MCP_PY_LSP": "pyright-langserver"
+        },
+        "timeout": 120000,
+        "enabled": true
+      }
+    },
+    "mcpx-surrealdb-http": {
+      "summary": "SurrealDB MCP over local HTTP endpoint (infra profile surreal/full).",
+      "codex": {
+        "kind": "http",
+        "url": "http://127.0.0.1:18080/mcp"
+      },
+      "claude": {
+        "transport": "http",
+        "url": "http://127.0.0.1:18080/mcp"
+      },
+      "opencode": {
+        "type": "remote",
+        "url": "http://127.0.0.1:18080/mcp",
+        "enabled": true
+      }
+    },
+    "mcpx-archon-http": {
+      "summary": "Archon MCP over local HTTP endpoint (infra profile archon/full).",
+      "codex": {
+        "kind": "http",
+        "url": "http://127.0.0.1:18051/mcp"
+      },
+      "claude": {
+        "transport": "http",
+        "url": "http://127.0.0.1:18051/mcp"
+      },
+      "opencode": {
+        "type": "remote",
+        "url": "http://127.0.0.1:18051/mcp",
+        "enabled": true
+      }
+    }
+  }
+}

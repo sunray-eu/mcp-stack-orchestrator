@@ -1,0 +1,22 @@
+run	real_s	result
+S0_nomcp_py_task1	6.01	python_repo_service/api/main.py
+S0_nomcp_ts_task1	14.87	src/billing/billing.service.ts
+S1_basic_memory_ts_write	25.16	{"write_ok":true,"search_ok":true,"top_result":{"title":"mcp-eval-billing","permalink":"mcp-eval-billing","file_path":"mcp-eval-billing.md","content":"BillingService path is src/billing/billing.service.ts ."}}
+S1_chroma_py_find	9.25	{"query_ok":true,"top_document":"BillingService path is src/billing/billing.service.ts."}
+S1_chroma_ts_store	14.25	{"query_ok":true,"top_document":"BillingService path is src/billing/billing.service.ts."}
+S1_codex_wrapper_ping	14.74	{"ping_ok":true,"response":"hello"}
+S1_eslint_ts	16.00	{"tool_ok":false,"issue_count":0}
+S1_lsp_py_definition	104.15	{"definition_file":"python_repo_service/api/main.py","symbol_name":"health_check"}
+S1_lsp_py_definition_direct	9.98	{"definition_file":"<PY_REPO>/python_repo_service/api/main.py","symbol_name":"health_check"}
+S1_lsp_py_definition_warm	133.16	{"definition_file":"python_repo_service/api/main.py","symbol_name":"health_check"}
+S1_lsp_ts_definition	47.33	{"definition_file":"src/billing/billing.service.ts","symbol_name":"BillingService"}
+S1_lsp_ts_definition_direct	-	
+S1_memory_py_find	13.35	{"search_ok":true,"value":"src/billing/billing.service.ts"}
+S1_memory_ts_store	18.36	{"store_ok":true,"search_ok":true,"value":"src/billing/billing.service.ts"}
+S1_qdrant_py_find_global	7.47	{"find_ok":true,"top_text":"BillingService is implemented in src/billing/billing.service.ts"}
+S1_qdrant_ts_store_find	24.57	{"store_ok":true,"find_ok":true,"top_text":"BillingService is implemented in src/billing/billing.service.ts"}
+S1_shinpr_py_global_query	25.46	{"query_ok":true,"top_source":"<TS_REPO>/README.md","top_score":0.1584114506840706}
+S1_shinpr_py_ingest	18.50	{"ingest_ok":true,"query_ok":true,"top_source":"<PY_REPO>/README.md","top_score":0.6536856533799049}
+S1_shinpr_ts_rag	20.25	{"ingest_ok":false,"query_ok":false,"top_source":null,"top_score":null}
+S1_shinpr_ts_rag_retry	46.89	{"ingest_ok":true,"query_ok":true,"top_source":"<TS_REPO>/README.md","top_score":0.1584114506840706}
+baseline_ts_task1	39.59	src/billing/billing.service.ts

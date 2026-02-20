@@ -1,0 +1,25 @@
+name: Bug report
+description: Report a reproducible defect in infra/config/scripts
+labels: [bug]
+body:
+  - type: textarea
+    attributes:
+      label: Summary
+      description: What happened?
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Steps to reproduce
+      description: Include exact commands and profile.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Environment
+      description: OS, Docker version, agent versions, profile.

@@ -1,0 +1,12 @@
+service	url	http_code	status_note
+qdrant-api	http://127.0.0.1:6333/healthz	200	health endpoint
+qdrant-dashboard	http://127.0.0.1:6333/dashboard/	200	dashboard ui
+archon-api	http://127.0.0.1:18081/health	200	health endpoint
+archon-mcp-health	http://127.0.0.1:18051/health	200	health endpoint
+archon-ui	http://127.0.0.1:13737	200	web ui
+surreal-mcp	http://127.0.0.1:18080/mcp	406	MCP endpoint returns 406 for plain HTTP probe
+surrealdb-rpc	http://127.0.0.1:18083/rpc	400	RPC endpoint reachable (non-upgrade probe returns 400)
+surrealist-ui	http://127.0.0.1:18082	200	web ui
+docs-mcp-ui	http://127.0.0.1:16280	200	web ui + mcp server management
+docs-mcp-mcp	http://127.0.0.1:16280/mcp	405	mcp endpoint
+docs-mcp-initialize	http://127.0.0.1:16280/mcp	200	POST initialize succeeds (streamable HTTP MCP)

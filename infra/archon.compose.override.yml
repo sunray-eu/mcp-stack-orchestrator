@@ -1,0 +1,19 @@
+services:
+  archon-server:
+    container_name: ai-mcp-archon-server
+    volumes:
+      - ${MCP_HOST_FS_ROOT:-/}:/hostfs:ro
+      - ${MCP_HOST_FS_USERS:-/Users}:/Users:ro
+
+  archon-mcp:
+    container_name: ai-mcp-archon-mcp
+    volumes:
+      - ${MCP_HOST_FS_ROOT:-/}:/hostfs:ro
+      - ${MCP_HOST_FS_USERS:-/Users}:/Users:ro
+
+  archon-frontend:
+    container_name: ai-mcp-archon-ui
+
+networks:
+  app-network:
+    name: ai-mcp-archon-net

@@ -1,0 +1,20 @@
+# Secrets and runtime
+.secrets.env
+tmp/
+logs/
+backups/
+
+# Infra runtime state
+infra/volumes/
+servers/
+
+# Local/editor artifacts
+.DS_Store
+*.swp
+*.swo
+*.tmp
+
+.latest-*
+
+__pycache__/
+*.pyc

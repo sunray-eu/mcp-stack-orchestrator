@@ -1,0 +1,138 @@
+services:
+  qdrant:
+    image: ${QDRANT_IMAGE:-qdrant/qdrant:v1.15.4}
+    container_name: ai-mcp-qdrant
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - ./volumes/qdrant:/qdrant/storage
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c '</dev/tcp/127.0.0.1/6333'"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  chroma:
+    image: ${CHROMA_IMAGE:-chromadb/chroma:1.0.20}
+    container_name: ai-mcp-chroma
+    ports:
+      - "18000:8000"
+    environment:
+      IS_PERSISTENT: "TRUE"
+      PERSIST_DIRECTORY: /chroma/chroma
+      CHROMA_SERVER_NOFILE: 65535
+    volumes:
+      - ./volumes/chroma:/chroma/chroma
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8000/api/v2/heartbeat"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  postgres:
+    image: ${PGVECTOR_IMAGE:-pgvector/pgvector:pg16}
+    container_name: ai-mcp-postgres
+    ports:
+      - "15432:5432"
+    environment:
+      POSTGRES_USER: mcp
+      POSTGRES_PASSWORD: mcp
+      POSTGRES_DB: mcp
+    volumes:
+      - ./volumes/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mcp -d mcp"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: ${REDIS_IMAGE:-redis:7.4-alpine}
+    container_name: ai-mcp-redis
+    ports:
+      - "16379:6379"
+    volumes:
+      - ./volumes/redis:/data
+    command: ["redis-server", "--appendonly", "yes"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  surrealmcp:
+    image: ${SURREALMCP_IMAGE:-surrealdb/surrealmcp:latest}
+    container_name: ai-mcp-surreal-mcp
+    ports:
+      - "18080:8080"
+    volumes:
+      - ${MCP_HOST_FS_ROOT:-/}:/hostfs:ro
+      - ${MCP_HOST_FS_USERS:-/Users}:/Users:ro
+    command:
+      [
+        "start",
+        "--auth-disabled",
+        "--bind-address",
+        "0.0.0.0:8080",
+        "--server-url",
+        "http://127.0.0.1:18080",
+      ]
+
+  surrealdb:
+    image: ${SURREALDB_IMAGE:-surrealdb/surrealdb:latest}
+    container_name: ai-mcp-surrealdb
+    ports:
+      - "${SURREALDB_RPC_PORT:-18083}:8000"
+    command:
+      [
+        "start",
+        "--log",
+        "info",
+        "--bind",
+        "0.0.0.0:8000",
+        "--user",
+        "${SURREALDB_ROOT_USER:-root}",
+        "--pass",
+        "${SURREALDB_ROOT_PASS:-root}",
+        "--default-namespace",
+        "${SURREALDB_DEFAULT_NS:-mcp}",
+        "--default-database",
+        "${SURREALDB_DEFAULT_DB:-workspace}",
+        "rocksdb:///data/surrealdb",
+      ]
+    volumes:
+      - ./volumes/surrealdb:/data
+
+  surrealist:
+    image: ${SURREALIST_IMAGE:-surrealdb/surrealist:latest}
+    container_name: ai-mcp-surrealist
+    ports:
+      - "18082:8080"
+    volumes:
+      - ${SURREALIST_INSTANCE_FILE:-./surrealist/instance.json}:/usr/share/nginx/html/instance.json:ro
+
+  docs-mcp-web:
+    image: ${DOCS_MCP_IMAGE:-ghcr.io/arabold/docs-mcp-server:latest}
+    container_name: ai-mcp-docs-mcp
+    ports:
+      - "16280:6280"
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      DOCS_MCP_EMBEDDING_MODEL: ${DOCS_MCP_EMBEDDING_MODEL:-}
+      OPENAI_API_BASE: ${OPENAI_API_BASE:-}
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
+      GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS:-}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
+      AWS_REGION: ${AWS_REGION:-}
+      AZURE_OPENAI_API_KEY: ${AZURE_OPENAI_API_KEY:-}
+      AZURE_OPENAI_API_INSTANCE_NAME: ${AZURE_OPENAI_API_INSTANCE_NAME:-}
+      AZURE_OPENAI_API_DEPLOYMENT_NAME: ${AZURE_OPENAI_API_DEPLOYMENT_NAME:-}
+      AZURE_OPENAI_API_VERSION: ${AZURE_OPENAI_API_VERSION:-}
+    command: ["--protocol", "http", "--host", "0.0.0.0", "--port", "6280"]
+    volumes:
+      - ./volumes/docs-mcp-data:/data
+      - ./volumes/docs-mcp-config:/config
+      - ${MCP_HOST_FS_ROOT:-/}:/hostfs:ro
+      - ${MCP_HOST_FS_USERS:-/Users}:/Users:ro

@@ -1,0 +1,58 @@
+category	name	url	source_type	repo
+memory	shinpr mcp-local-rag	https://github.com/shinpr/mcp-local-rag	github	shinpr/mcp-local-rag
+memory	yikizi mcp-local-rag	https://github.com/yikizi/mcp-local-rag	github	yikizi/mcp-local-rag
+memory	chroma-core chroma-mcp	https://github.com/chroma-core/chroma-mcp	github	chroma-core/chroma-mcp
+memory	marlian claude-qdrant-mcp	https://github.com/marlian/claude-qdrant-mcp	github	marlian/claude-qdrant-mcp
+memory	mhalder qdrant-mcp-server	https://github.com/mhalder/qdrant-mcp-server	github	mhalder/qdrant-mcp-server
+memory	doITmagic rag-code-mcp	https://github.com/doITmagic/rag-code-mcp	github	doITmagic/rag-code-mcp
+memory	joinQuantish codebase-rag	https://github.com/joinQuantish/codebase-rag	github	joinQuantish/codebase-rag
+memory	qdrant mcp-server-qdrant	https://github.com/qdrant/mcp-server-qdrant	github	qdrant/mcp-server-qdrant
+memory	er77 code-graph-rag-mcp	https://github.com/er77/code-graph-rag-mcp/	github	er77/code-graph-rag-mcp
+memory	MCP servers memory ref	https://github.com/modelcontextprotocol/servers/tree/main/src/memory	github-path	modelcontextprotocol/servers
+memory	memory-graph	https://github.com/memory-graph/memory-graph	github	memory-graph/memory-graph
+memory	puliczek mcp-memory	https://github.com/puliczek/mcp-memory	github	puliczek/mcp-memory
+memory	basicmachines basic-memory	https://github.com/basicmachines-co/basic-memory	github	basicmachines-co/basic-memory
+memory	ardaaltinors MemCP	https://github.com/ardaaltinors/MemCP	github	ardaaltinors/MemCP
+memory	MemCP website	https://mcp.altinors.com/	website	-
+memory	doobidoo mcp-memory-service	https://github.com/doobidoo/mcp-memory-service	github	doobidoo/mcp-memory-service
+memory	st3v3nmw sourcerer-mcp	https://github.com/st3v3nmw/sourcerer-mcp	github	st3v3nmw/sourcerer-mcp
+memory	tecnomanu pampa	https://github.com/tecnomanu/pampa	github	tecnomanu/pampa
+memory	Wildcard deepcontext-mcp	https://github.com/Wildcard-Official/deepcontext-mcp	github	Wildcard-Official/deepcontext-mcp
+memory	jbenshetler mcp-ragex	https://github.com/jbenshetler/mcp-ragex	github	jbenshetler/mcp-ragex
+memory	adam-hanna semantic-search-mcp	https://github.com/adam-hanna/semantic-search-mcp	github	adam-hanna/semantic-search-mcp
+memory	oculairmedia Letta-MCP-server	https://github.com/oculairmedia/Letta-MCP-server	github	oculairmedia/Letta-MCP-server
+memory	esxr langgraph-mcp	https://github.com/esxr/langgraph-mcp	github	esxr/langgraph-mcp
+memory	ceorkm kratos-mcp	https://github.com/ceorkm/kratos-mcp	github	ceorkm/kratos-mcp
+memory	pi22by7 In-Memoria	https://github.com/pi22by7/In-Memoria	github	pi22by7/In-Memoria
+other	eslint MCP docs	https://eslint.org/docs/latest/use/mcp	website	-
+other	tuannvm codex-mcp-server	https://github.com/tuannvm/codex-mcp-server	github	tuannvm/codex-mcp-server
+other	lastmile-ai mcp-agent	https://github.com/lastmile-ai/mcp-agent	github	lastmile-ai/mcp-agent
+other	nosolosoft opencode-mcp	https://github.com/nosolosoft/opencode-mcp	github	nosolosoft/opencode-mcp
+other	teabranch agentic-developer-mcp	https://github.com/teabranch/agentic-developer-mcp	github	teabranch/agentic-developer-mcp
+other	Tritlo lsp-mcp	https://github.com/Tritlo/lsp-mcp	github	Tritlo/lsp-mcp
+other	uplinq mcp-typescript	https://www.npmjs.com/package/@uplinq/mcp-typescript	npm	@uplinq/mcp-typescript
+other	mizchi lsmcp	https://github.com/mizchi/lsmcp	github	mizchi/lsmcp
+other	isaacphi mcp-language-server	https://github.com/isaacphi/mcp-language-server	github	isaacphi/mcp-language-server
+other	mseep lsp-mcp	https://www.npmjs.com/package/@mseep/lsp-mcp	npm	@mseep/lsp-mcp
+other	jonrad lsp-mcp	https://github.com/jonrad/lsp-mcp	github	jonrad/lsp-mcp
+other	Stryk91 lsp-mcp-rs	https://github.com/Stryk91/lsp-mcp-rs	github	Stryk91/lsp-mcp-rs
+other	beixiyo vsc-lsp-mcp	https://github.com/beixiyo/vsc-lsp-mcp	github	beixiyo/vsc-lsp-mcp
+other	alexwohletz language-server-mcp	https://github.com/alexwohletz/language-server-mcp	github	alexwohletz/language-server-mcp
+method	BMAD-METHOD	https://github.com/bmad-code-org/BMAD-METHOD	github	bmad-code-org/BMAD-METHOD
+other	HKUDS AutoAgent	https://github.com/HKUDS/AutoAgent	github	HKUDS/AutoAgent
+other	Significant-Gravitas AutoGPT	https://github.com/Significant-Gravitas/AutoGPT	github	Significant-Gravitas/AutoGPT
+other	westonbrown Cyber-AutoAgent	https://github.com/westonbrown/Cyber-AutoAgent	github	westonbrown/Cyber-AutoAgent
+other	HKUDS RAG-Anything	https://github.com/HKUDS/RAG-Anything	github	HKUDS/RAG-Anything
+memory	getzep graphiti	https://github.com/getzep/graphiti	github	getzep/graphiti
+other	ItMeDiaTech rag-cli	https://github.com/ItMeDiaTech/rag-cli	github	ItMeDiaTech/rag-cli
+method	Spillwave article	https://pub.spillwave.com/give-your-claude-code-opencode-and-codex-full-rag-over-docs-and-code-repos-edcf654407e9	website	-
+other	SpillwaveSolutions agent-brain	https://github.com/SpillwaveSolutions/agent-brain	github	SpillwaveSolutions/agent-brain
+method	Agno docs	https://docs.agno.com/	website	-
+other	EvoAgentX	https://github.com/EvoAgentX/EvoAgentX	github	EvoAgentX/EvoAgentX
+memory-workflow	coleam00 Archon	https://github.com/coleam00/Archon	github	coleam00/Archon
+memory	thedotmack claude-mem	https://github.com/thedotmack/claude-mem	github	thedotmack/claude-mem
+memory-backend	SurrealDB	https://surrealdb.com/mcp	website	-
+memory	cbunting99 enhanced-mcp-memory	https://github.com/cbunting99/enhanced-mcp-memory	github	cbunting99/enhanced-mcp-memory
+other	arabold docs-mcp-server	https://github.com/arabold/docs-mcp-server	github	arabold/docs-mcp-server
+other	Docfork	https://docfork.com/	website	-
+method	LlamaIndex MCP examples	https://developers.llamaindex.ai/python/examples/tools/mcp/	website	-

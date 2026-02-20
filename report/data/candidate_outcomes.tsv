@@ -1,0 +1,58 @@
+name	category	status	score	reason
+shinpr mcp-local-rag	memory-rag	tested	7.4	Strong local RAG quality; first-run handshake timeout required startup_timeout tuning; no native namespace isolation.
+yikizi mcp-local-rag	memory-rag	tested	7.0	Global npm install path worked with stable status tool calls; overlaps shinpr feature set but usable.
+chroma-core chroma-mcp	memory-rag	tested	7.6	Fast and reliable local persistent vector store with collection namespaces; broad embedding support.
+marlian claude-qdrant-mcp	memory-rag	skipped	5.8	Unofficial Qdrant wrapper; intentionally not tested further because official qdrant server is available and preferred.
+mhalder qdrant-mcp-server	memory-rag	skipped	6.2	Reasonable project but redundant with official qdrant server tested successfully.
+doITmagic rag-code-mcp	memory-rag	tested	7.1	After local Ollama+Qdrant setup, MCP tools were discoverable and callable; docs search needs extra local config.
+joinQuantish codebase-rag	memory-rag	tested	4.8	Built/tested in multiple command variants but MCP initialize consistently closed during handshake.
+qdrant mcp-server-qdrant	memory-rag	tested	7.7	Official implementation; reliable cross-project retrieval with dashboard-visible shared Qdrant service mode.
+er77 code-graph-rag-mcp	memory-rag	tested	7.5	Source build succeeded and rich graph/semantic toolset worked; strong context quality at moderate setup cost.
+MCP servers memory ref	memory	tested	7.4	Simple persistent memory graph; very low setup friction; no project namespace isolation by default.
+memory-graph	memory	tested	6.8	Local memory graph server started and read/status calls worked; broader feature surface than basic-memory.
+puliczek mcp-memory	memory	tested	6.2	Cloudflare remote endpoint worked in authenticated mode; transport/auth variants were sensitive and not fully local-first.
+basicmachines basic-memory	memory	tested	7.8	Best memory UX for coding notes; supports project-scoped operations; local-first with optional cloud.
+ardaaltinors MemCP	memory	tested	5.6	Local infra and MCP endpoint can run, but auth/API-key flow returned 500 locally and authenticated tool calls were high-latency.
+MemCP website	memory	skipped	0.0	Not an MCP server repository; informational website only.
+doobidoo mcp-memory-service	memory	tested	5.4	Feature-rich but stdio and HTTP startup handshakes repeatedly failed in this environment.
+st3v3nmw sourcerer-mcp	repo-search	tested	6.8	Server starts cleanly and status tool works with real key path; useful semantic search pending indexing.
+tecnomanu pampa	memory	tested	5.1	Attempted default and Node22 paths; MCP initialize closed during handshake.
+Wildcard deepcontext-mcp	repo-search	tested	6.9	Local and credentialed runs both exposed working status/search tools; requires indexing step for real value.
+jbenshetler mcp-ragex	repo-search	tested	6.3	Feature-rich tool surface, but MCP discovery was flaky and daemon/status behavior was inconsistent.
+adam-hanna semantic-search-mcp	repo-search	tested	6.7	Local startup and status calls were stable; practical repo semantic search primitive.
+oculairmedia Letta-MCP-server	memory-agent	tested	6.4	Local Letta deployment plus log-tuning produced stable tool discovery; heavier infra and operational complexity.
+esxr langgraph-mcp	workflow	evaluated	5.0	Local-first runtime tested deeply: default deps fail (`langchain.chains` missing under langchain 1.x), but local boot succeeds after compatibility pin (`langchain<1` + `langchain-community`). Still an MCP-client orchestration template, not a standalone Codex MCP server.
+ceorkm kratos-mcp	memory	tested	6.6	Status and memory tools are available; full behavior depends on project/storage initialization.
+pi22by7 In-Memoria	memory	tested	7.0	With real credentials, health/status calls succeeded and broad intelligence toolset was exposed.
+eslint MCP docs	linting	tested	4.8	Official and easy setup but failed on TS repo (`scopeManager.addGlobals`), and not useful for Python repo.
+tuannvm codex-mcp-server	wrapper	tested	4.5	Works, but wraps Codex inside Codex (extra latency and recursion risk) with limited net coding benefit.
+lastmile-ai mcp-agent	workflow	tested	4.4	`mcp-agent dev serve` and minimal script modes repeatedly timed out or closed during initialize.
+nosolosoft opencode-mcp	wrapper	tested	5.2	Server health and tool listing worked, but it is still a wrapper layer with overlap and added risk.
+teabranch agentic-developer-mcp	workflow	tested	5.4	Source server started and tools worked, but orchestration focus offers limited direct context benefit.
+Tritlo lsp-mcp	lsp	tested	5.2	Both npm and source-build variants failed MCP initialize handshake in this environment.
+uplinq mcp-typescript	lsp	tested	4.2	Startup crashes with completion capability mismatch; not stable for production Codex use.
+mizchi lsmcp	lsp	tested	6.6	TypeScript-focused LSP bridge exposed rich tools and capability checks successfully.
+isaacphi mcp-language-server	lsp	tested	7.3	Excellent context quality when configured with direct language-server binaries; setup friction and TS timeout risk.
+mseep lsp-mcp	lsp	tested	5.0	Repeated handshake timeouts in discovery calls.
+jonrad lsp-mcp	lsp	tested	5.1	Handshake timeouts in this environment despite reasonable project maturity.
+Stryk91 lsp-mcp-rs	lsp	tested	4.6	Server process starts but transport closes before usable MCP interaction.
+beixiyo vsc-lsp-mcp	lsp	tested	4.8	VSCode extension architecture; standalone run outside VSCode host closed handshake.
+alexwohletz language-server-mcp	lsp	tested	5.0	Source build and local binary checks passed, but MCP initialize response closed repeatedly.
+BMAD-METHOD	method	evaluated	6.5	Useful non-MCP process framework for planning/review; not a direct MCP runtime tool.
+HKUDS AutoAgent	workflow-framework	evaluated	4.6	General autonomous-agent framework, not a Codex MCP server; heavy credential footprint and broad execution surface reduce local coding utility.
+Significant-Gravitas AutoGPT	workflow-framework	evaluated	4.7	Large agent platform with strong maintenance, but not a direct MCP server for Codex and high setup/ops overhead.
+westonbrown Cyber-AutoAgent	workflow-framework	skipped	3.9	Archived offensive-security agent project; not MCP-first and out-of-scope/high-risk for normal coding workflows.
+HKUDS RAG-Anything	rag-framework	evaluated	5.0	Active multimodal RAG framework but not an MCP server; useful concepts, limited direct Codex integration value.
+getzep graphiti	memory-graph	tested	6.1	Includes experimental MCP server with rich graph memory features; strong project health but handshake/setup friction remained in this Codex environment.
+ItMeDiaTech rag-cli	workflow-plugin	evaluated	5.3	Claude plugin with optional MCP component; productivity-focused but plugin-centric and not cleanly Codex-native.
+Spillwave article	method	skipped	0.0	Article page could not be fetched due Cloudflare/robots restrictions in this environment.
+SpillwaveSolutions agent-brain	workflow-plugin	evaluated	5.6	RAG system centered on Claude plugin commands; promising architecture but not a direct Codex MCP-first workflow.
+Agno docs	method	evaluated	5.2	Agent framework documentation only (not an MCP server candidate), useful for orchestration patterns.
+EvoAgentX	workflow-framework	evaluated	4.9	Self-evolving agent framework, not a Codex MCP server; requires broader model/tool orchestration beyond this benchmark focus.
+coleam00 Archon	memory-workflow	tested	6.8	Fully validated with remote Supabase bootstrap and live MCP operations (health/session/project create-delete); high context utility but heavy setup and key compatibility friction (requires legacy service_role JWT, not sb_secret).
+thedotmack claude-mem	memory-plugin	evaluated	6.2	Popular persistent-memory plugin with MCP tools, but integration is primarily Claude-plugin oriented rather than direct Codex MCP setup.
+SurrealDB	memory-backend	tested	6.7	Official Surreal MCP validated in both stdio and HTTP modes with deep CRUD/query checks (0 MCP failures); strong local reliability, moderate coding-context impact unless used as a backing memory store.
+cbunting99 enhanced-mcp-memory	memory	tested	5.8	Feature-rich MCP memory server and easy uvx launch, but repeated initialize handshake timeouts reduced reliability score.
+arabold docs-mcp-server	docs-context	tested	6.2	Strong grounded-docs concept with active maintenance and local modes; in-session Codex handshake timeouts prevented stable tool execution.
+Docfork	docs-context	evaluated	6.0	MCP docs-context SaaS with good freshness claims, but cloud-first service and limited local/offline control lower risk-adjusted score.
+LlamaIndex MCP examples	method	evaluated	6.1	Useful MCP integration examples and client patterns, but reference docs rather than a standalone server candidate.
