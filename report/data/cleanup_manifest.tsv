@@ -1,0 +1,6 @@
+date	scope	item	action	before	after	backup_reference	verification
+2026-02-20	git	TS-Repo-A evaluation branch	delete local temporary branch	mcp-eval/<ts-repo>	main only	/Users/marosvarchola/mcp-eval/backups/final-cleanup-20260220-190126/repos/ts-repo.bundle	git status clean on main
+2026-02-20	git	PY-Repo-B evaluation branch	delete local temporary branch	mcp-eval/<py-repo>	main only	/Users/marosvarchola/mcp-eval/backups/final-cleanup-20260220-190126/repos/py-repo.bundle	git status clean on main
+2026-02-20	filesystem	legacy evaluation workspace	archive + prune	~5.1G	22M	/Users/marosvarchola/mcp-eval/backups/final-cleanup-20260220-190126/archives/evaluation-results.tar.gz	du -sh /Users/marosvarchola/mcp-eval
+2026-02-20	filesystem	legacy duplicate source tree	archive + relocate	present under gits	removed from gits path	/Users/marosvarchola/mcp-eval/backups/final-cleanup-20260220-190126/archives/mcp-stack-orchestrator-source.tar.gz	path removed from active gits root
+2026-02-20	stack	production MCP runtime	health verification	N/A	PASS=36 WARN=0 FAIL=0	N/A	task quality:doctor PROFILE=full
