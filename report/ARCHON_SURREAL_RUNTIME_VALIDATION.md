@@ -7,6 +7,28 @@ Date: 2026-02-20
 - Archon MCP: `https://github.com/coleam00/Archon`
 - Supabase project used for Archon: `gydtkaqliotvwasgyubw` (`ai-mcp-archon`, previously `mcp-eval-archon`)
 
+## Latest Runtime Update (2026-02-20, post-interruption)
+
+- Archon was revalidated using direct MCP tools in this session (not only raw HTTP scripts):
+  - retrieval calls (`rag_get_available_sources`, `rag_search_knowledge_base`, `rag_search_code_examples`)
+  - workflow CRUD (`manage_project`, `manage_task`, `manage_document`, `find_*`)
+- Orchestrator `archon` startup path now actively syncs model/embedding/rag settings on every `up archon`:
+  - `LLM_PROVIDER`, `MODEL_CHOICE`, `EMBEDDING_PROVIDER`, `EMBEDDING_MODEL`
+  - `USE_AGENTIC_RAG`, `USE_HYBRID_SEARCH`, `USE_RERANKING`, `USE_CONTEXTUAL_EMBEDDINGS`
+- Archon MCP runtime now includes `archon-mcp-compat` on `:18051` with native Archon MCP on `:18052`:
+  - normalizes headers/content-type for strict MCP clients
+  - auto-recovers stale/uninitialized session flows by bootstrap+retry
+  - verified in-session by successful `mcpx-archon-http` tool calls
+- Verified after restart that Archon credentials hold:
+  - `MODEL_CHOICE=gpt-5.2`
+  - `EMBEDDING_MODEL=text-embedding-3-large`
+- SurrealDB MCP is now fixed end-to-end in-session:
+  - stale MCP session IDs are recovered by a local compatibility proxy (`surrealmcp-compat`)
+  - OAuth authorization-server probe paths now return proper JSON metadata + `Content-Type`
+  - runtime pinned to SurrealDB `2.3.10` compatibility image (SurrealDB `3.0.0` caused WS subprotocol mismatch with current SurrealMCP)
+  - real MCP tool calls succeeded (`connect_endpoint`, `use_namespace`, `use_database`, `create`, `select`, `update`, `query`, `disconnect_endpoint`)
+  - Surrealist UI (`127.0.0.1:18082`) query execution confirms visible local data
+
 ## SurrealDB MCP (Official)
 
 ### What was validated
@@ -63,7 +85,7 @@ Date: 2026-02-20
 ## Verdict (Worth It?)
 
 - SurrealDB MCP: technically solid and reliable, but best as an optional backend layer, not a top standalone coding-context accelerator.
-- Archon MCP: worth setting up only if you want deep project/task/doc/RAG workflow and accept higher setup and ops complexity.
+- Archon MCP: worth setting up if you want deep project/task/doc/RAG workflow and accept higher setup and ops complexity; orchestrator sync automation now reduces drift and operational mistakes.
 
 ## Artifacts
 - Smoke matrix: `<STACK_ROOT>/report/second_wave_smoke.tsv`

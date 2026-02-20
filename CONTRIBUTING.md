@@ -7,10 +7,12 @@
    - `fix/<short-topic>`
    - `chore/<short-topic>`
 2. Keep commits focused and small.
-3. Run validation before opening PR:
-   - `make doctor PROFILE=core`
-   - `python3 -m py_compile scripts/stack_apply.py`
-   - `bash -n scripts/*.sh`
+3. Install local tooling once:
+   - `task setup`
+4. Run validation before opening PR:
+   - `task quality:check`
+   - `task quality:doctor PROFILE=core`
+   - `pre-commit run --all-files`
 
 ## Commit Convention
 
@@ -35,3 +37,4 @@ Examples:
 - Include summary, risk, and rollback notes.
 - Include evidence (doctor output or report links) for runtime-impacting changes.
 - Do not commit secrets or generated runtime env files.
+- Keep changes reproducible through `task` entrypoints (do not add undocumented ad-hoc commands).

@@ -20,6 +20,38 @@ Use a **profiled stack** instead of one static config:
 
 This lets you keep correctness and speed in normal coding, while enabling heavy context workflows on demand.
 
+## DX Normalization Update (2026-02-20)
+
+- Primary operator interface is now Taskfile-based (`task ...`) for consistent day-2 operations.
+- Shell scripts remain as internal runtime engines but are no longer the primary user surface.
+- Added layered AGENTS scaffolding (`global -> company -> project`) with reusable prompts and generator:
+  - `task agents:init ...`
+  - `task agents:render ...`
+- Added duplicate stack detection command:
+  - `task env:where`
+- Surreal compatibility policy and v3 migration TODO are now explicitly documented in:
+  - `docs/SURREAL_COMPATIBILITY.md`
+
+## Runtime Delta (Latest Full Interaction Test)
+
+Latest exhaustive runtime validation artifact:
+- `<STACK_ROOT>/report/FINAL_RUNTIME_TOOL_INTERACTION_TEST.md`
+
+Key updates from the final in-session tool interaction pass:
+- `mcpx-lsp` remains the most reliable correctness anchor for symbol-level coding work.
+- `mcpx-qdrant` remains best for low-latency semantic recall, but current wrapper metadata input is still constrained.
+- `mcpx-basic-memory` is stable for project memory, but `fetch` on non-main projects should be avoided (use `search_notes` + `read_note`).
+- `mcpx-chroma` is stable for local vector workflows; local backend still does not support `fork_collection`.
+- `mcpx-archon-http` lifecycle features are solid; RAG is only useful after explicit source ingestion.
+- `mcpx-surrealdb-http` is now stable in this stack with the compatibility layer and SurrealDB version pinning:
+  - `surrealmcp-compat` handles OAuth discovery probes + stale-session recovery
+  - SurrealDB runtime pinned to `2.3.10` for current SurrealMCP WS compatibility
+  - real in-session CRUD/query tool calls validated
+
+Operational recommendation remains unchanged:
+- Default to `core` during active coding.
+- Switch to `full` for workflow-heavy context layers (Archon/Surreal/docs UI).
+
 ## Current Applied State (already executed)
 
 Applied profile: `full`
@@ -45,12 +77,13 @@ Legacy managed names retained only for automatic cleanup during profile re-apply
 - `mcpx-lsp-py`
 - `mcpx-lsp-ts`
 
-UI/infra services started by `stack_infra.sh` (profile-dependent):
+UI/infra services started by `task infra:up` (profile-dependent):
 - `ai-mcp-qdrant`
 - `ai-mcp-surreal-mcp`
 - `ai-mcp-surrealist`
 - `ai-mcp-archon-server`
 - `ai-mcp-archon-mcp`
+- `ai-mcp-archon-mcp-compat`
 - `ai-mcp-archon-ui`
 - `ai-mcp-docs-mcp`
 
@@ -61,40 +94,45 @@ Canonical config source:
 
 Profile applier:
 - `<STACK_ROOT>/scripts/stack_apply.sh`
+- Primary operator entrypoint: `task profile:apply`
 
 Infra manager:
 - `<STACK_ROOT>/scripts/stack_infra.sh`
+- Primary operator entrypoint: `task infra:up|down|status`
 
 Version manager:
 - `<STACK_ROOT>/scripts/stack_versions.sh`
+- Primary operator entrypoint: `task quality:versions:*`
 
 Stack health doctor:
 - `<STACK_ROOT>/scripts/stack_doctor.sh`
+- Primary operator entrypoint: `task quality:doctor`
 
 One-command activator (infra + profile):
 - `<STACK_ROOT>/scripts/stack_activate.sh`
+- Primary operator entrypoint: `task profile:activate`
 
 ## Infra Lifecycle
 
 Start full infra (Qdrant + Surreal + Archon + Docs MCP web):
 
 ```bash
-<STACK_ROOT>/scripts/stack_infra.sh up full
+task infra:up PROFILE=full
 ```
 
 Stop full infra:
 
 ```bash
-<STACK_ROOT>/scripts/stack_infra.sh down full
+task infra:down PROFILE=full
 ```
 
 Status:
 
 ```bash
-<STACK_ROOT>/scripts/stack_infra.sh status
-<STACK_ROOT>/scripts/stack_doctor.sh full
-<STACK_ROOT>/scripts/stack_versions.sh show
-<STACK_ROOT>/scripts/stack_versions.sh check
+task infra:status
+task quality:doctor PROFILE=full
+task quality:versions:show
+task quality:versions:check
 ```
 
 ## Profile Lifecycle
@@ -102,19 +140,19 @@ Status:
 Apply `core` to all agents:
 
 ```bash
-<STACK_ROOT>/scripts/stack_apply.sh core --agents codex,claude,opencode --codex-target both
+task profile:apply PROFILE=core AGENTS=codex,claude,opencode CODEX_TARGET=both
 ```
 
 Apply `full` to all agents:
 
 ```bash
-<STACK_ROOT>/scripts/stack_apply.sh full --agents codex,claude,opencode --codex-target both
+task profile:apply PROFILE=full AGENTS=codex,claude,opencode CODEX_TARGET=both
 ```
 
 Disable managed MCP stack (keep non-managed MCPs untouched):
 
 ```bash
-<STACK_ROOT>/scripts/stack_apply.sh none --agents codex,claude,opencode --codex-target both
+task profile:apply PROFILE=none AGENTS=codex,claude,opencode CODEX_TARGET=both
 ```
 
 ## When To Use Which Profile
@@ -160,14 +198,21 @@ Live status snapshot:
 - No secrets are printed by stack scripts.
 - Qdrant MCP instances now share `QDRANT_URL=http://127.0.0.1:6333` with per-server `COLLECTION_NAME` isolation, enabling dashboard visibility without data-file lock collisions.
 - Managed infra image refs are centralized and digest-pinned in `<STACK_ROOT>/infra/versions.env`.
+- Surreal runtime compatibility policy:
+  - Keep SurrealDB pinned to `2.3.x` for current SurrealMCP builds.
+  - Use `surrealmcp-compat` on `127.0.0.1:18080` as the MCP endpoint; direct backend SurrealMCP remains on `127.0.0.1:18084`.
+  - Track v3 migration readiness in `docs/SURREAL_COMPATIBILITY.md` and re-test before changing channels.
+- Archon MCP transport compatibility policy:
+  - Keep `mcpx-archon-http` pointed at `127.0.0.1:18051/mcp` (compat endpoint).
+  - Native Archon MCP runs on `127.0.0.1:18052`; `archon-mcp-compat` handles bootstrap/session edge-cases for clients that call tools before initialize.
 
 Upgrade procedure:
 
 ```bash
-<STACK_ROOT>/scripts/stack_versions.sh check
-<STACK_ROOT>/scripts/stack_versions.sh refresh
-<STACK_ROOT>/scripts/stack_infra.sh up full
-<STACK_ROOT>/scripts/stack_doctor.sh full
+task quality:versions:check
+task quality:versions:refresh
+task infra:up PROFILE=full
+task quality:doctor PROFILE=full
 ```
 
 ## Restore
@@ -175,13 +220,13 @@ Upgrade procedure:
 One-command full restore:
 
 ```bash
-<STACK_ROOT>/scripts/restore_original.sh
+task profile:restore
 ```
 
 Or explicit backup:
 
 ```bash
-<STACK_ROOT>/scripts/restore_original.sh <STACK_ROOT>/backups/<backup_dir>
+task profile:restore BACKUP=<STACK_ROOT>/backups/<backup_dir>
 ```
 
 ## Documentation Rechecked (official/primary)

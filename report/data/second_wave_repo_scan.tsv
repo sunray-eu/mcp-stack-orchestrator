@@ -6,29 +6,29 @@ code-graph-rag-mcp	True	False	False	False	True	npx @modelcontextprotocol/inspect
 codebase-rag	True	False	False	False	True		api key,openai,github,https://,postgres
 codex-mcp-server	True	False	False	False	True	npx -y codex-mcp-server | claude mcp add codex-cli -- npx -y codex-mcp-server	api key,openai,github,token,sse,http://,https://
 deepcontext-mcp	True	False	False	False	True	npx @wildcard-ai/deepcontext@latest | claude mcp add deepcontext \ | claude mcp add deepcontext-local \	api key,github,token,sse,https://
-in-memoria	True	False	False	True	True	npx in-memoria learn ./my-project | npx in-memoria server | npx	
-npx in-memoria --help | claude mcp add in-memoria -- npx in-memoria server	github,token,sse,https://						
+in-memoria	True	False	False	True	True	npx in-memoria learn ./my-project | npx in-memoria server | npx
+npx in-memoria --help | claude mcp add in-memoria -- npx in-memoria server	github,token,sse,https://
 isaacphi-mcp-language-server	False	False	False	False	True		google,github,sse,https://
-jonrad-lsp-mcp	True	False	False	True	True	npx	
-"Note: Claude Desktop is finicky with npx it seems. Sometimes it says the mcp fails but the tools still work. I'll look into this... later 😊 | npx -y --silent -p 'typescript@5.7.3' -p 'typescript-language-server@4.3.3' typescript-language-server --stdio""] | docker run ... | docker run -i --rm -v <LOCAL_DIR>:<REMOTE_DIR> jonrad/lsp-mcp:<version>"	github,https://,docker						
+jonrad-lsp-mcp	True	False	False	True	True	npx
+"Note: Claude Desktop is finicky with npx it seems. Sometimes it says the mcp fails but the tools still work. I'll look into this... later 😊 | npx -y --silent -p 'typescript@5.7.3' -p 'typescript-language-server@4.3.3' typescript-language-server --stdio""] | docker run ... | docker run -i --rm -v <LOCAL_DIR>:<REMOTE_DIR> jonrad/lsp-mcp:<version>"	github,https://,docker
 kratos-mcp	True	False	False	False	True	npx (no installation required) | npx kratos-mcp | npx --yes kratos-mcp@latest | claude mcp add kratos -- npx --yes kratos-mcp@latest | claude mcp add kratos -- kratos-mcp	anthropic,github,token,sse,https://
 langgraph-mcp	False	True	False	False	True		openai,github,token,sse,https://,docker
 language-server-mcp	True	False	False	False	True		github,https://
 letta-mcp-server	False	False	True	True	True	Docker Compose | docker run -d \	github,sse,http://,https://,docker
 lsmcp	True	False	False	False	True	"npx @mizchi/lsmcp init -p tsgo | npx -- -y @mizchi/lsmcp -p tsgo | npx -- -y @mizchi/lsmcp --bin=""<lsp-command>"" | claude mcp add lsmcp npx -- -y @mizchi/lsmcp -p tsgo | claude mcp add lsmcp npx -- -y @mizchi/lsmcp --bin=""<lsp-command>"""	github,sse,https://
-lsp-mcp-rs	False	False	True	False	True		
+lsp-mcp-rs	False	False	True	False	True
 mcp-agent	False	True	False	False	True	uvx mcp-agent | uvx mcp-agent init | uvx mcp-agent deploy my-agent	api key,openai,anthropic,google,github,token,oauth,sse,https://
 mcp-language-server	False	False	False	False	True		google,github,sse,https://
 mcp-memory-service	False	True	False	True	True	claude mcp add --transport http memory-service http://your-server:8000/mcp	api key,openai,github,token,oauth,sse,http://,https://,redis,docker
 mcp-ragex	False	True	False	True	True	Docker Compose for deployment: | docker compose -f docker-compose.prod.yml up -d | docker compose -f docker-compose.prod.yml ps | Docker runs with  | claude mcp add ragex ~/.local/bin/ragex-mcp --scope project | claude mcp add ragex /home/user/.local/bin/ragex | claude mcp add ragex /path/to/mcp-ragex/ragex --scope project	github,token,sse,https://,chroma,redis,docker
-mcp-servers	True	False	False	True	True	uvx	
-uvx mcp-server-git | npx or docker). | npx or docker!) | npx -y @modelcontextprotocol/server-memory	api key,openai,anthropic,google,github,token,oauth,sse,http://,https://,postgres,qdrant,chroma,redis,docker						
+mcp-servers	True	False	False	True	True	uvx
+uvx mcp-server-git | npx or docker). | npx or docker!) | npx -y @modelcontextprotocol/server-memory	api key,openai,anthropic,google,github,token,oauth,sse,http://,https://,postgres,qdrant,chroma,redis,docker
 memory-graph	False	True	False	True	True	uvx (Quick Test) | uvx memorygraph --version  # No install needed | uvx | Quick testing | No | | docker compose up -d                           # SQLite | docker compose -f docker-compose.neo4j.yml up -d  # Neo4j | claude mcp add --scope user memorygraph -- memorygraph | claude mcp add --scope user memorygraph -- memorygraph --profile extended	api key,github,token,oauth,sse,https://,postgres,redis,docker
 opencode-mcp	False	False	False	False	True		anthropic,github,https://
 pampa	True	False	False	False	True	npx pampa --help | npx pampa index | npx pampa index --provider transformers	api key,openai,github,token,oauth,sse,https://,docker
 puliczek-mcp-memory	True	False	False	False	True	npx wrangler vectorize create mcp-memory-vectorize --dimensions 1024 --metric cosine	api key,github,oauth,sse,https://
-qdrant-mcp-server-qdrant	False	True	False	True	True	uvx	
-When using [ | uvx mcp-server-qdrant | uvx mcp-server-qdrant --transport sse | npx @smithery/cli install mcp-server-qdrant --client claude | docker run -p 8000:8000 \ | claude mcp add code-search \	api key,github,sse,http://,https://,qdrant,docker						
+qdrant-mcp-server-qdrant	False	True	False	True	True	uvx
+When using [ | uvx mcp-server-qdrant | uvx mcp-server-qdrant --transport sse | npx @smithery/cli install mcp-server-qdrant --client claude | docker run -p 8000:8000 \ | claude mcp add code-search \	api key,github,sse,http://,https://,qdrant,docker
 rag-code-mcp	False	False	False	False	True		github,token,sse,https://,qdrant,docker
 semantic-search-mcp	False	True	False	False	True	uvx semantic-search-mcp | claude mcp add semantic-search -- semantic-search-mcp	github,sse,https://
 shinpr-mcp-local-rag	True	False	False	False	True	npx -y mcp-local-rag | npx mcp-local-rag skills install --claude-code | npx mcp-local-rag skills install --claude-code --global | claude mcp add local-rag --scope user --env BASE_DIR=/path/to/your/documents -- npx -y mcp-local-rag | claude mcp add local-rag --scope user \	api key,anthropic,github,token,oauth,sse,https://,docker

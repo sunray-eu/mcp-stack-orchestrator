@@ -63,4 +63,3 @@ What is not fully compliant:
 - Prioritize top 8 candidates for full S0-S4 + coding-task benchmark completion:
   - `basic-memory`, `qdrant official`, `chroma-mcp`, `code-graph-rag-mcp`, `mcp-language-server`, `shinpr mcp-local-rag`, `doITmagic rag-code-mcp`, `deepcontext-mcp`.
 - Then backfill remaining candidates with documented prune rules where redundant/non-applicable.
-

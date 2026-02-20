@@ -1,0 +1,34 @@
+---
+version: "3"
+
+vars:
+  PROFILE: '{{default "full" .PROFILE}}'
+  AGENTS: '{{default "codex,claude,opencode" .AGENTS}}'
+  CODEX_TARGET: '{{default "both" .CODEX_TARGET}}'
+  BACKUP: '{{default "" .BACKUP}}'
+
+tasks:
+  apply:
+    desc: Apply managed MCP profile to local agent configs.
+    cmds:
+      - ./scripts/stack_apply.sh {{.PROFILE}} --agents {{.AGENTS}} --codex-target {{.CODEX_TARGET}}
+
+  activate:
+    desc: Start profile infra + apply matching MCP profile.
+    cmds:
+      - ./scripts/stack_activate.sh {{.PROFILE}}
+
+  disable:
+    desc: Disable managed profile and stop managed infra.
+    cmds:
+      - ./scripts/stack_activate.sh none
+
+  restore:
+    desc: Restore from latest backup and stop stack.
+    cmds:
+      - |
+        if [ -n "{{.BACKUP}}" ]; then
+          ./scripts/restore_original.sh "{{.BACKUP}}"
+        else
+          ./scripts/restore_original.sh
+        fi

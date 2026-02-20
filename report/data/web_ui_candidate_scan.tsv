@@ -1,58 +1,58 @@
 name	category	url	repo	local_dir	ui_signal	evidence
-shinpr mcp-local-rag	memory	https://github.com/shinpr/mcp-local-rag	shinpr/mcp-local-rag	<STACK_ROOT>/servers/shinpr-mcp-local-rag	none-detected	
-yikizi mcp-local-rag	memory	https://github.com/yikizi/mcp-local-rag	yikizi/mcp-local-rag	<STACK_ROOT>/servers/yikizi-mcp-local-rag	none-detected	
-chroma-core chroma-mcp	memory	https://github.com/chroma-core/chroma-mcp	chroma-core/chroma-mcp		not-cloned	
-marlian claude-qdrant-mcp	memory	https://github.com/marlian/claude-qdrant-mcp	marlian/claude-qdrant-mcp		not-cloned	
-mhalder qdrant-mcp-server	memory	https://github.com/mhalder/qdrant-mcp-server	mhalder/qdrant-mcp-server		not-cloned	
-doITmagic rag-code-mcp	memory	https://github.com/doITmagic/rag-code-mcp	doITmagic/rag-code-mcp		not-cloned	
-joinQuantish codebase-rag	memory	https://github.com/joinQuantish/codebase-rag	joinQuantish/codebase-rag		not-cloned	
-qdrant mcp-server-qdrant	memory	https://github.com/qdrant/mcp-server-qdrant	qdrant/mcp-server-qdrant	<STACK_ROOT>/servers/qdrant-mcp-server-qdrant	none-detected	
-er77 code-graph-rag-mcp	memory	https://github.com/er77/code-graph-rag-mcp/	er77/code-graph-rag-mcp		not-cloned	
-MCP servers memory ref	memory	https://github.com/modelcontextprotocol/servers/tree/main/src/memory	modelcontextprotocol/servers		not-cloned	
-memory-graph	memory	https://github.com/memory-graph/memory-graph	memory-graph/memory-graph		not-cloned	
-puliczek mcp-memory	memory	https://github.com/puliczek/mcp-memory	puliczek/mcp-memory	<STACK_ROOT>/servers/puliczek-mcp-memory	none-detected	
-basicmachines basic-memory	memory	https://github.com/basicmachines-co/basic-memory	basicmachines-co/basic-memory		not-cloned	
-ardaaltinors MemCP	memory	https://github.com/ardaaltinors/MemCP	ardaaltinors/MemCP		not-cloned	
-MemCP website	memory	https://mcp.altinors.com/	-		website-doc-only	
-doobidoo mcp-memory-service	memory	https://github.com/doobidoo/mcp-memory-service	doobidoo/mcp-memory-service		not-cloned	
-st3v3nmw sourcerer-mcp	memory	https://github.com/st3v3nmw/sourcerer-mcp	st3v3nmw/sourcerer-mcp		not-cloned	
-tecnomanu pampa	memory	https://github.com/tecnomanu/pampa	tecnomanu/pampa		not-cloned	
-Wildcard deepcontext-mcp	memory	https://github.com/Wildcard-Official/deepcontext-mcp	Wildcard-Official/deepcontext-mcp		not-cloned	
-jbenshetler mcp-ragex	memory	https://github.com/jbenshetler/mcp-ragex	jbenshetler/mcp-ragex		not-cloned	
-adam-hanna semantic-search-mcp	memory	https://github.com/adam-hanna/semantic-search-mcp	adam-hanna/semantic-search-mcp		not-cloned	
-oculairmedia Letta-MCP-server	memory	https://github.com/oculairmedia/Letta-MCP-server	oculairmedia/Letta-MCP-server		not-cloned	
-esxr langgraph-mcp	memory	https://github.com/esxr/langgraph-mcp	esxr/langgraph-mcp		not-cloned	
-ceorkm kratos-mcp	memory	https://github.com/ceorkm/kratos-mcp	ceorkm/kratos-mcp		not-cloned	
-pi22by7 In-Memoria	memory	https://github.com/pi22by7/In-Memoria	pi22by7/In-Memoria		not-cloned	
-eslint MCP docs	other	https://eslint.org/docs/latest/use/mcp	-		website-doc-only	
-tuannvm codex-mcp-server	other	https://github.com/tuannvm/codex-mcp-server	tuannvm/codex-mcp-server		not-cloned	
-lastmile-ai mcp-agent	other	https://github.com/lastmile-ai/mcp-agent	lastmile-ai/mcp-agent		not-cloned	
-nosolosoft opencode-mcp	other	https://github.com/nosolosoft/opencode-mcp	nosolosoft/opencode-mcp		not-cloned	
-teabranch agentic-developer-mcp	other	https://github.com/teabranch/agentic-developer-mcp	teabranch/agentic-developer-mcp		not-cloned	
-Tritlo lsp-mcp	other	https://github.com/Tritlo/lsp-mcp	Tritlo/lsp-mcp	<STACK_ROOT>/servers/Tritlo-lsp-mcp	none-detected	
-uplinq mcp-typescript	other	https://www.npmjs.com/package/@uplinq/mcp-typescript	@uplinq/mcp-typescript		not-cloned	
-mizchi lsmcp	other	https://github.com/mizchi/lsmcp	mizchi/lsmcp		not-cloned	
-isaacphi mcp-language-server	other	https://github.com/isaacphi/mcp-language-server	isaacphi/mcp-language-server	<STACK_ROOT>/servers/isaacphi-mcp-language-server	none-detected	
-mseep lsp-mcp	other	https://www.npmjs.com/package/@mseep/lsp-mcp	@mseep/lsp-mcp		not-cloned	
-jonrad lsp-mcp	other	https://github.com/jonrad/lsp-mcp	jonrad/lsp-mcp	<STACK_ROOT>/servers/jonrad-lsp-mcp	none-detected	
-Stryk91 lsp-mcp-rs	other	https://github.com/Stryk91/lsp-mcp-rs	Stryk91/lsp-mcp-rs		not-cloned	
-beixiyo vsc-lsp-mcp	other	https://github.com/beixiyo/vsc-lsp-mcp	beixiyo/vsc-lsp-mcp		not-cloned	
-alexwohletz language-server-mcp	other	https://github.com/alexwohletz/language-server-mcp	alexwohletz/language-server-mcp		not-cloned	
-BMAD-METHOD	method	https://github.com/bmad-code-org/BMAD-METHOD	bmad-code-org/BMAD-METHOD		not-cloned	
+shinpr mcp-local-rag	memory	https://github.com/shinpr/mcp-local-rag	shinpr/mcp-local-rag	<STACK_ROOT>/servers/shinpr-mcp-local-rag	none-detected
+yikizi mcp-local-rag	memory	https://github.com/yikizi/mcp-local-rag	yikizi/mcp-local-rag	<STACK_ROOT>/servers/yikizi-mcp-local-rag	none-detected
+chroma-core chroma-mcp	memory	https://github.com/chroma-core/chroma-mcp	chroma-core/chroma-mcp		not-cloned
+marlian claude-qdrant-mcp	memory	https://github.com/marlian/claude-qdrant-mcp	marlian/claude-qdrant-mcp		not-cloned
+mhalder qdrant-mcp-server	memory	https://github.com/mhalder/qdrant-mcp-server	mhalder/qdrant-mcp-server		not-cloned
+doITmagic rag-code-mcp	memory	https://github.com/doITmagic/rag-code-mcp	doITmagic/rag-code-mcp		not-cloned
+joinQuantish codebase-rag	memory	https://github.com/joinQuantish/codebase-rag	joinQuantish/codebase-rag		not-cloned
+qdrant mcp-server-qdrant	memory	https://github.com/qdrant/mcp-server-qdrant	qdrant/mcp-server-qdrant	<STACK_ROOT>/servers/qdrant-mcp-server-qdrant	none-detected
+er77 code-graph-rag-mcp	memory	https://github.com/er77/code-graph-rag-mcp/	er77/code-graph-rag-mcp		not-cloned
+MCP servers memory ref	memory	https://github.com/modelcontextprotocol/servers/tree/main/src/memory	modelcontextprotocol/servers		not-cloned
+memory-graph	memory	https://github.com/memory-graph/memory-graph	memory-graph/memory-graph		not-cloned
+puliczek mcp-memory	memory	https://github.com/puliczek/mcp-memory	puliczek/mcp-memory	<STACK_ROOT>/servers/puliczek-mcp-memory	none-detected
+basicmachines basic-memory	memory	https://github.com/basicmachines-co/basic-memory	basicmachines-co/basic-memory		not-cloned
+ardaaltinors MemCP	memory	https://github.com/ardaaltinors/MemCP	ardaaltinors/MemCP		not-cloned
+MemCP website	memory	https://mcp.altinors.com/	-		website-doc-only
+doobidoo mcp-memory-service	memory	https://github.com/doobidoo/mcp-memory-service	doobidoo/mcp-memory-service		not-cloned
+st3v3nmw sourcerer-mcp	memory	https://github.com/st3v3nmw/sourcerer-mcp	st3v3nmw/sourcerer-mcp		not-cloned
+tecnomanu pampa	memory	https://github.com/tecnomanu/pampa	tecnomanu/pampa		not-cloned
+Wildcard deepcontext-mcp	memory	https://github.com/Wildcard-Official/deepcontext-mcp	Wildcard-Official/deepcontext-mcp		not-cloned
+jbenshetler mcp-ragex	memory	https://github.com/jbenshetler/mcp-ragex	jbenshetler/mcp-ragex		not-cloned
+adam-hanna semantic-search-mcp	memory	https://github.com/adam-hanna/semantic-search-mcp	adam-hanna/semantic-search-mcp		not-cloned
+oculairmedia Letta-MCP-server	memory	https://github.com/oculairmedia/Letta-MCP-server	oculairmedia/Letta-MCP-server		not-cloned
+esxr langgraph-mcp	memory	https://github.com/esxr/langgraph-mcp	esxr/langgraph-mcp		not-cloned
+ceorkm kratos-mcp	memory	https://github.com/ceorkm/kratos-mcp	ceorkm/kratos-mcp		not-cloned
+pi22by7 In-Memoria	memory	https://github.com/pi22by7/In-Memoria	pi22by7/In-Memoria		not-cloned
+eslint MCP docs	other	https://eslint.org/docs/latest/use/mcp	-		website-doc-only
+tuannvm codex-mcp-server	other	https://github.com/tuannvm/codex-mcp-server	tuannvm/codex-mcp-server		not-cloned
+lastmile-ai mcp-agent	other	https://github.com/lastmile-ai/mcp-agent	lastmile-ai/mcp-agent		not-cloned
+nosolosoft opencode-mcp	other	https://github.com/nosolosoft/opencode-mcp	nosolosoft/opencode-mcp		not-cloned
+teabranch agentic-developer-mcp	other	https://github.com/teabranch/agentic-developer-mcp	teabranch/agentic-developer-mcp		not-cloned
+Tritlo lsp-mcp	other	https://github.com/Tritlo/lsp-mcp	Tritlo/lsp-mcp	<STACK_ROOT>/servers/Tritlo-lsp-mcp	none-detected
+uplinq mcp-typescript	other	https://www.npmjs.com/package/@uplinq/mcp-typescript	@uplinq/mcp-typescript		not-cloned
+mizchi lsmcp	other	https://github.com/mizchi/lsmcp	mizchi/lsmcp		not-cloned
+isaacphi mcp-language-server	other	https://github.com/isaacphi/mcp-language-server	isaacphi/mcp-language-server	<STACK_ROOT>/servers/isaacphi-mcp-language-server	none-detected
+mseep lsp-mcp	other	https://www.npmjs.com/package/@mseep/lsp-mcp	@mseep/lsp-mcp		not-cloned
+jonrad lsp-mcp	other	https://github.com/jonrad/lsp-mcp	jonrad/lsp-mcp	<STACK_ROOT>/servers/jonrad-lsp-mcp	none-detected
+Stryk91 lsp-mcp-rs	other	https://github.com/Stryk91/lsp-mcp-rs	Stryk91/lsp-mcp-rs		not-cloned
+beixiyo vsc-lsp-mcp	other	https://github.com/beixiyo/vsc-lsp-mcp	beixiyo/vsc-lsp-mcp		not-cloned
+alexwohletz language-server-mcp	other	https://github.com/alexwohletz/language-server-mcp	alexwohletz/language-server-mcp		not-cloned
+BMAD-METHOD	method	https://github.com/bmad-code-org/BMAD-METHOD	bmad-code-org/BMAD-METHOD		not-cloned
 HKUDS AutoAgent	other	https://github.com/HKUDS/AutoAgent	HKUDS/AutoAgent	<STACK_ROOT>/servers/HKUDS-AutoAgent	detected	<STACK_ROOT>/servers/HKUDS-AutoAgent/docs/i18n/fr/docusaurus-plugin-content-docs/current/usage/llms/google-llms.md:7:- [Gemini - Google AI Studio](https://docs.litellm.ai/docs/providers/gemini) | <STACK_ROOT>/servers/HKUDS-AutoAgent/docs/i18n/fr/docusaurus-plugin-content-docs/current/usage/llms/google-llms.md:8:- [VertexAI - Google Cloud Platform](https://docs.litellm.ai/docs/providers/vertex) | <STACK_ROOT>/servers/HKUDS-AutoAgent/docs/i18n/fr/docusaurus-plugin-content-docs/current/usage/configuration-options.md:6:Si vous exécutez en [Mode GUI](https://docs.all-hands.dev/modules/usage/how-to/gui-mode), les paramètres disponibles dans l'inte
 Significant-Gravitas AutoGPT	other	https://github.com/Significant-Gravitas/AutoGPT	Significant-Gravitas/AutoGPT	<STACK_ROOT>/servers/Significant-Gravitas-AutoGPT	detected	<STACK_ROOT>/servers/Significant-Gravitas-AutoGPT/README.md:57:👉 [Follow the official self-hosting guide here](https://agpt.co/docs/platform/getting-started/getting-started) | <STACK_ROOT>/servers/Significant-Gravitas-AutoGPT/README.md:80:### 🧱 AutoGPT Frontend | <STACK_ROOT>/servers/Significant-Gravitas-AutoGPT/README.md:82:The AutoGPT frontend is where users interact with our powerful AI automation platform. It offers multiple ways to engage with and leverage our AI agents. This is the interface where you'll bring your AI automation ideas to life:
 westonbrown Cyber-AutoAgent	other	https://github.com/westonbrown/Cyber-AutoAgent	westonbrown/Cyber-AutoAgent	<STACK_ROOT>/servers/westonbrown-Cyber-AutoAgent	detected	<STACK_ROOT>/servers/westonbrown-Cyber-AutoAgent/docs/user-instructions.md:131:URL: http://localhost:3000 | <STACK_ROOT>/servers/westonbrown-Cyber-AutoAgent/docs/user-instructions.md:221:| Ollama | `curl http://localhost:11434/api/version` | | <STACK_ROOT>/servers/westonbrown-Cyber-AutoAgent/docs/user-instructions.md:330:| Terminal Architecture | [terminal-frontend.md](terminal-frontend.md) |
 HKUDS RAG-Anything	other	https://github.com/HKUDS/RAG-Anything	HKUDS/RAG-Anything	<STACK_ROOT>/servers/HKUDS-RAG-Anything	detected	"<STACK_ROOT>/servers/HKUDS-RAG-Anything/README_zh.md:1094:    # vlm_url=""http://127.0.0.1:3000"" # 当backend=vlm-http-client时，需指定服务地址 | <STACK_ROOT>/servers/HKUDS-RAG-Anything/README.md:1113:    # vlm_url=""http://127.0.0.1:3000"" # Service address when using backend=vlm-http-client"
-getzep graphiti	memory	https://github.com/getzep/graphiti	getzep/graphiti	<STACK_ROOT>/servers/getzep-graphiti	none-detected	
+getzep graphiti	memory	https://github.com/getzep/graphiti	getzep/graphiti	<STACK_ROOT>/servers/getzep-graphiti	none-detected
 ItMeDiaTech rag-cli	other	https://github.com/ItMeDiaTech/rag-cli	ItMeDiaTech/rag-cli	<STACK_ROOT>/servers/ItMeDiaTech-rag-cli	detected	<STACK_ROOT>/servers/ItMeDiaTech-rag-cli/docs/FIXES_APPLIED.md:118:- `src/rag_cli_plugin/services/enhanced_web_dashboard.py:332-334` | <STACK_ROOT>/servers/ItMeDiaTech-rag-cli/docs/FIXES_APPLIED.md:529:4. `services/enhanced_web_dashboard.py` - Bare except fix | <STACK_ROOT>/servers/ItMeDiaTech-rag-cli/README.md:153:python scripts/index.py --input /path/to/docs
-Spillwave article	method	https://pub.spillwave.com/give-your-claude-code-opencode-and-codex-full-rag-over-docs-and-code-repos-edcf654407e9	-		website-doc-only	
+Spillwave article	method	https://pub.spillwave.com/give-your-claude-code-opencode-and-codex-full-rag-over-docs-and-code-repos-edcf654407e9	-		website-doc-only
 SpillwaveSolutions agent-brain	other	https://github.com/SpillwaveSolutions/agent-brain	SpillwaveSolutions/agent-brain	<STACK_ROOT>/servers/SpillwaveSolutions-agent-brain	detected	<STACK_ROOT>/servers/SpillwaveSolutions-agent-brain/docs/API_REFERENCE.md:33:- **Swagger UI**: `http://localhost:8000/docs` | <STACK_ROOT>/servers/SpillwaveSolutions-agent-brain/docs/API_REFERENCE.md:34:- **ReDoc**: `http://localhost:8000/redoc` | <STACK_ROOT>/servers/SpillwaveSolutions-agent-brain/docs/API_REFERENCE.md:35:- **OpenAPI JSON**: `http://localhost:8000/openapi.json`
-Agno docs	method	https://docs.agno.com/	-		website-doc-only	
+Agno docs	method	https://docs.agno.com/	-		website-doc-only
 EvoAgentX	other	https://github.com/EvoAgentX/EvoAgentX	EvoAgentX/EvoAgentX	<STACK_ROOT>/servers/EvoAgentX-EvoAgentX	detected	<STACK_ROOT>/servers/EvoAgentX-EvoAgentX/README.md:156:For local development or detailed setup (e.g., using conda), refer to the [Installation Guide for EvoAgentX](./docs/installation.md). | <STACK_ROOT>/servers/EvoAgentX-EvoAgentX/README.md:250:> 📖 More details on supported models and config options: [LLM module guide](./docs/modules/llm.md). | <STACK_ROOT>/servers/EvoAgentX-EvoAgentX/README.md:340:Check out our [tutorial](https://github.com/EvoAgentX/EvoAgentX/blob/main/docs/tutorial/mcp.md) to learn how to configure your preferred MCP tools with EvoAgentX.
-coleam00 Archon	memory-workflow	https://github.com/coleam00/Archon	coleam00/Archon	<STACK_ROOT>/servers/coleam00-Archon	none-detected	
+coleam00 Archon	memory-workflow	https://github.com/coleam00/Archon	coleam00/Archon	<STACK_ROOT>/servers/coleam00-Archon	none-detected
 thedotmack claude-mem	memory	https://github.com/thedotmack/claude-mem	thedotmack/claude-mem	<STACK_ROOT>/servers/thedotmack-claude-mem	detected	"<STACK_ROOT>/servers/thedotmack-claude-mem/docs/i18n/README.bn.md:8:      <source media=""(prefers-color-scheme: dark)"" srcset=""https://raw.githubusercontent.com/thedotmack/claude-mem/main/docs/public/claude-mem-logo-for-dark-mode.webp""> | <STACK_ROOT>/servers/thedotmack-claude-mem/docs/i18n/README.bn.md:9:      <source media=""(prefers-color-scheme: light)"" srcset=""https://raw.githubusercontent.com/thedotmack/claude-mem/main/docs/public/claude-mem-logo-for-light-mode.webp""> | <STACK_ROOT>/servers/thedotmack-claude-mem/docs/i18n/README.bn.md:10:      <img src=""https://raw.githubusercontent.com/thedotmack/claude-mem/main/docs/public/claude-mem-"
-SurrealDB	memory-backend	https://surrealdb.com/mcp	-		website-doc-only	
-cbunting99 enhanced-mcp-memory	memory	https://github.com/cbunting99/enhanced-mcp-memory	cbunting99/enhanced-mcp-memory	<STACK_ROOT>/servers/cbunting99-enhanced-mcp-memory	none-detected	
+SurrealDB	memory-backend	https://surrealdb.com/mcp	-		website-doc-only
+cbunting99 enhanced-mcp-memory	memory	https://github.com/cbunting99/enhanced-mcp-memory	cbunting99/enhanced-mcp-memory	<STACK_ROOT>/servers/cbunting99-enhanced-mcp-memory	none-detected
 arabold docs-mcp-server	other	https://github.com/arabold/docs-mcp-server	arabold/docs-mcp-server	<STACK_ROOT>/servers/arabold-docs-mcp-server	detected	<STACK_ROOT>/servers/arabold-docs-mcp-server/docs/concepts/pipeline-architecture.md:244:- Web UI polling for status display | <STACK_ROOT>/servers/arabold-docs-mcp-server/docs/concepts/data-storage.md:181:On macOS: `~/Library/Application Support/docs-mcp-server/` | <STACK_ROOT>/servers/arabold-docs-mcp-server/docs/concepts/eventbus-architecture.md:3:This document describes the event-driven architecture used for real-time communication between backend services and the web UI. The system uses a central event bus to decouple event producers from consumers, enabling flexible and scalable status updates.
-Docfork	other	https://docfork.com/	-		website-doc-only	
-LlamaIndex MCP examples	method	https://developers.llamaindex.ai/python/examples/tools/mcp/	-		website-doc-only	
+Docfork	other	https://docfork.com/	-		website-doc-only
+LlamaIndex MCP examples	method	https://developers.llamaindex.ai/python/examples/tools/mcp/	-		website-doc-only

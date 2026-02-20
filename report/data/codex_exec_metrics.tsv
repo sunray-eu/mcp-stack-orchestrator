@@ -10,7 +10,7 @@ S1_lsp_py_definition	104.15	{"definition_file":"python_repo_service/api/main.py"
 S1_lsp_py_definition_direct	9.98	{"definition_file":"<PY_REPO>/python_repo_service/api/main.py","symbol_name":"health_check"}
 S1_lsp_py_definition_warm	133.16	{"definition_file":"python_repo_service/api/main.py","symbol_name":"health_check"}
 S1_lsp_ts_definition	47.33	{"definition_file":"src/billing/billing.service.ts","symbol_name":"BillingService"}
-S1_lsp_ts_definition_direct	-	
+S1_lsp_ts_definition_direct	-
 S1_memory_py_find	13.35	{"search_ok":true,"value":"src/billing/billing.service.ts"}
 S1_memory_ts_store	18.36	{"store_ok":true,"search_ok":true,"value":"src/billing/billing.service.ts"}
 S1_qdrant_py_find_global	7.47	{"find_ok":true,"top_text":"BillingService is implemented in src/billing/billing.service.ts"}

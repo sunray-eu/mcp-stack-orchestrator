@@ -26,11 +26,13 @@ Date: 2026-02-20
 
 ## Runtime Containers (canonical naming)
 - `ai-mcp-qdrant`
+- `ai-mcp-surreal-mcp-compat`
 - `ai-mcp-surreal-mcp`
 - `ai-mcp-surrealdb`
 - `ai-mcp-surrealist`
 - `ai-mcp-archon-server`
 - `ai-mcp-archon-mcp`
+- `ai-mcp-archon-mcp-compat`
 - `ai-mcp-archon-ui`
 - `ai-mcp-docs-mcp`
 
@@ -41,6 +43,7 @@ Date: 2026-02-20
 - SurrealDB RPC: `http://127.0.0.1:18083/rpc`
 - Surrealist UI: `http://127.0.0.1:18082`
 - Archon MCP: `http://127.0.0.1:18051/mcp`
+- Archon MCP Upstream (internal/native): `http://127.0.0.1:18052/mcp`
 - Archon API Health: `http://127.0.0.1:18081/health`
 - Archon MCP Health: `http://127.0.0.1:18051/health`
 - Archon UI: `http://127.0.0.1:13737`
@@ -51,11 +54,13 @@ Health checks:
 - Qdrant Dashboard status: `200`
 - Archon health HTTP status: `200`
 - Archon UI status: `200`
-- Surreal MCP probe status: `406` (expected for plain HTTP probe against MCP streamable endpoint)
+- Surreal MCP probe status: `401` or `406` (both are acceptable for MCP endpoint probes depending on client/request shape)
 - SurrealDB RPC probe status: `400` (expected for non-upgrade/non-RPC probe; confirms endpoint is reachable)
 - Surrealist UI status: `200`
 - Docs MCP UI status: `200`
 - Docs MCP `/mcp` probe status: `405` (endpoint exists; GET probe is not allowed)
+- Client compatibility note: resolved with `surrealmcp-compat` plus SurrealDB `2.3.x` pin; in-session `mcpx-surrealdb-http` tool calls now pass end-to-end.
+- Archon MCP client compatibility note: `archon-mcp-compat` now normalizes session/bootstrap edge-cases so direct `mcpx-archon-http` tool calls work in-session.
 
 ## Surrealist Managed Connection
 - Managed connection config runtime file: `<STACK_ROOT>/tmp/surrealist-instance.json`
@@ -84,11 +89,11 @@ Health checks:
 ## Versioning / Upgrades
 - Managed image matrix: `<STACK_ROOT>/infra/versions.env`
 - Version commands:
-  - `<STACK_ROOT>/scripts/stack_versions.sh show`
-  - `<STACK_ROOT>/scripts/stack_versions.sh check`
-  - `<STACK_ROOT>/scripts/stack_versions.sh refresh`
+  - `task quality:versions:show`
+  - `task quality:versions:check`
+  - `task quality:versions:refresh`
 - Post-upgrade verification:
-  - `<STACK_ROOT>/scripts/stack_doctor.sh full`
+  - `task quality:doctor PROFILE=full`
 
 ## Docker MCP Filesystem Access
 - Mount policy: read-only host filesystem access for MCP containers.
@@ -112,3 +117,9 @@ Health checks:
 ## MCP Snapshot Artifacts
 - `<STACK_ROOT>/report/ui_endpoint_status.tsv`
 - `<STACK_ROOT>/report/WEB_UI_AUDIT.md`
+- `<STACK_ROOT>/report/FINAL_RUNTIME_TOOL_INTERACTION_TEST.md`
+- `<STACK_ROOT>/report/data/final_runtime_perf.tsv`
+- `<STACK_ROOT>/report/data/final_runtime_feature_matrix.tsv`
+
+Latest stress refresh:
+- `label=refresh_20260220-184129` (via `task quality:stress`)

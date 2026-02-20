@@ -12,20 +12,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Task
+        uses: arduino/setup-task@v2
+
       - name: Install tooling
         run: |
           sudo apt-get update
           sudo apt-get install -y shellcheck jq
 
-      - name: Shell syntax and lint
-        run: |
-          bash -n scripts/*.sh
-          shellcheck scripts/*.sh
-
-      - name: Python syntax
-        run: |
-          python3 -m py_compile scripts/stack_apply.py
-
-      - name: Manifest JSON validity
-        run: |
-          jq empty configs/mcp_stack_manifest.json
+      - name: Run stack quality checks
+        run: task quality:check

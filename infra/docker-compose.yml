@@ -65,7 +65,7 @@ services:
     image: ${SURREALMCP_IMAGE:-surrealdb/surrealmcp:latest}
     container_name: ai-mcp-surreal-mcp
     ports:
-      - "18080:8080"
+      - "18084:8080"
     volumes:
       - ${MCP_HOST_FS_ROOT:-/}:/hostfs:ro
       - ${MCP_HOST_FS_USERS:-/Users}:/Users:ro
@@ -75,12 +75,44 @@ services:
         "--auth-disabled",
         "--bind-address",
         "0.0.0.0:8080",
+        "--rate-limit-rps",
+        "${SURREAL_MCP_RATE_LIMIT_RPS:-2000}",
+        "--rate-limit-burst",
+        "${SURREAL_MCP_RATE_LIMIT_BURST:-4000}",
         "--server-url",
-        "http://127.0.0.1:18080",
+        "${SURREAL_MCP_SERVER_URL:-http://127.0.0.1:18080}",
       ]
+    healthcheck:
+      test: ["CMD", "/surrealmcp", "--version"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  surrealmcp-compat:
+    image: ${SURREALMCP_COMPAT_IMAGE:-node:20-alpine}
+    container_name: ai-mcp-surreal-mcp-compat
+    depends_on:
+      surrealmcp:
+        condition: service_started
+    ports:
+      - "18080:8080"
+    volumes:
+      - ./compat/surrealmcp-compat.mjs:/app/surrealmcp-compat.mjs:ro
+    command: ["node", "/app/surrealmcp-compat.mjs"]
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://localhost:8080/health').then(r=>process.exit(r.status===200?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   surrealdb:
-    image: ${SURREALDB_IMAGE:-surrealdb/surrealdb:latest}
+    image: ${SURREALDB_IMAGE:-surrealdb/surrealdb:v2.3.10}
     container_name: ai-mcp-surrealdb
     ports:
       - "${SURREALDB_RPC_PORT:-18083}:8000"
@@ -95,10 +127,6 @@ services:
         "${SURREALDB_ROOT_USER:-root}",
         "--pass",
         "${SURREALDB_ROOT_PASS:-root}",
-        "--default-namespace",
-        "${SURREALDB_DEFAULT_NS:-mcp}",
-        "--default-database",
-        "${SURREALDB_DEFAULT_DB:-workspace}",
         "rocksdb:///data/surrealdb",
       ]
     volumes:

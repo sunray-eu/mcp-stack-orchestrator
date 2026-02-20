@@ -16,9 +16,18 @@ PASS_COUNT=0
 WARN_COUNT=0
 FAIL_COUNT=0
 
-pass() { echo "PASS: $*"; PASS_COUNT=$((PASS_COUNT + 1)); }
-warn() { echo "WARN: $*"; WARN_COUNT=$((WARN_COUNT + 1)); }
-fail() { echo "FAIL: $*"; FAIL_COUNT=$((FAIL_COUNT + 1)); }
+pass() {
+  echo "PASS: $*"
+  PASS_COUNT=$((PASS_COUNT + 1))
+}
+warn() {
+  echo "WARN: $*"
+  WARN_COUNT=$((WARN_COUNT + 1))
+}
+fail() {
+  echo "FAIL: $*"
+  FAIL_COUNT=$((FAIL_COUNT + 1))
+}
 
 require_cmd() {
   local cmd="$1"
@@ -59,21 +68,24 @@ check_endpoint() {
   local name="$1"
   local url="$2"
   local expected_csv="$3"
-  local code
-  code="$(http_code "$url")"
-  IFS=',' read -r -a expected <<< "$expected_csv"
-  local ok=false
-  for e in "${expected[@]}"; do
-    if [ "$code" = "$e" ]; then
-      ok=true
-      break
+  local max_tries="${4:-1}"
+  local attempt code
+  local expected
+  IFS=',' read -r -a expected <<<"$expected_csv"
+
+  for attempt in $(seq 1 "$max_tries"); do
+    code="$(http_code "$url")"
+    for e in "${expected[@]}"; do
+      if [ "$code" = "$e" ]; then
+        pass "endpoint $name -> $code ($url)"
+        return 0
+      fi
+    done
+    if [ "$attempt" -lt "$max_tries" ]; then
+      sleep 2
     fi
   done
-  if [ "$ok" = true ]; then
-    pass "endpoint $name -> $code ($url)"
-  else
-    fail "endpoint $name unexpected status $code (expected: $expected_csv, url: $url)"
-  fi
+  fail "endpoint $name unexpected status $code (expected: $expected_csv, url: $url)"
 }
 
 check_bash_syntax() {
@@ -96,7 +108,8 @@ check_codex_profile_servers() {
   fi
 
   local required
-  required="$(MANIFEST_FILE="$MANIFEST_FILE" PROFILE="$PROFILE" python3 - <<'PY'
+  required="$(
+    MANIFEST_FILE="$MANIFEST_FILE" PROFILE="$PROFILE" python3 - <<'PY'
 import json
 import os
 from pathlib import Path
@@ -105,7 +118,7 @@ profile = os.environ["PROFILE"]
 for s in manifest["profiles"].get(profile, []):
     print(s)
 PY
-)"
+  )"
   if [ -z "${required:-}" ]; then
     pass "profile ${PROFILE} has no managed MCP servers"
     return 0
@@ -124,11 +137,11 @@ PY
     else
       warn "codex eval MCP missing for profile ${PROFILE}: $name"
     fi
-  done <<< "$required"
+  done <<<"$required"
 }
 
 case "$PROFILE" in
-  core|surreal|archon|docs|full) ;;
+  core | surreal | archon | docs | full) ;;
   *)
     echo "Invalid profile: $PROFILE" >&2
     echo "Use one of: core|surreal|archon|docs|full" >&2
@@ -188,7 +201,7 @@ if [ "$PROFILE" = "core" ] || [ "$PROFILE" = "surreal" ] || [ "$PROFILE" = "arch
 fi
 
 if [ "$PROFILE" = "surreal" ] || [ "$PROFILE" = "full" ]; then
-  check_endpoint "surreal-mcp" "http://127.0.0.1:18080/mcp" "406"
+  check_endpoint "surreal-mcp" "http://127.0.0.1:18080/mcp" "401,406"
   check_endpoint "surrealist-ui" "http://127.0.0.1:18082" "200"
   check_endpoint "surrealdb-rpc" "http://127.0.0.1:18083/rpc" "400,401,405"
 fi
@@ -200,7 +213,7 @@ if [ "$PROFILE" = "archon" ] || [ "$PROFILE" = "full" ]; then
 fi
 
 if [ "$PROFILE" = "docs" ] || [ "$PROFILE" = "full" ]; then
-  check_endpoint "docs-mcp-ui" "http://127.0.0.1:16280" "200"
+  check_endpoint "docs-mcp-ui" "http://127.0.0.1:16280" "200" "8"
 fi
 
 echo

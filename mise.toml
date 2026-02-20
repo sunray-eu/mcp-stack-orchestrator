@@ -1,0 +1,21 @@
+[tools]
+task = "3.48.0"
+python = "3.13.2"
+pre-commit = "4.5.1"
+shellcheck = "0.11.0"
+shfmt = "3.12.0"
+jq = "1.8.1"
+yq = "4.52.4"
+
+[tasks.install]
+description = "Install toolchain from mise.toml"
+run = "mise install"
+
+[tasks.setup]
+description = "Install toolchain and pre-commit hooks"
+run = "mise run install && pre-commit install --install-hooks"
+
+[tasks.check]
+description = "Run local CI checks"
+run = "task quality:check"
+

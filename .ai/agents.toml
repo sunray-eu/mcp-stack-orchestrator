@@ -1,0 +1,26 @@
+version = 1
+
+[company]
+id = "multi-company"
+name = "multi-company"
+
+[project]
+id = "mcp-stack-orchestrator"
+name = "mcp-stack-orchestrator"
+language = "polyglot"
+
+[mcp]
+default_profile = "full"
+optional_profiles = ["core-surreal", "core-archon", "full"]
+memory_namespace = "mcp-stack-orchestrator"
+qdrant_collection = "proj-mcp-stack-orchestrator"
+
+[guidelines]
+global = "${STACK_ROOT}/guidelines/global/default.md"
+company = ".ai/guidelines/company.md"
+project = ".ai/guidelines/project.md"
+
+[prompts]
+bootstrap = ".ai/prompts/bootstrap_project_context.md"
+update_memory = ".ai/prompts/update_project_memory.md"
+

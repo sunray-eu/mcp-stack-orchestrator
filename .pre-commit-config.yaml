@@ -1,0 +1,52 @@
+---
+fail_fast: false
+default_stages:
+  - pre-commit
+  - pre-push
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-added-large-files
+        args: [--maxkb=512]
+      - id: check-merge-conflict
+      - id: check-json
+      - id: check-toml
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+
+  - repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: 0.33.3
+    hooks:
+      - id: check-taskfile
+      - id: check-compose-spec
+      - id: check-github-workflows
+
+  - repo: https://github.com/koalaman/shellcheck-precommit
+    rev: v0.11.0
+    hooks:
+      - id: shellcheck
+        args: [-x]
+
+  - repo: https://github.com/scop/pre-commit-shfmt
+    rev: v3.12.0-1
+    hooks:
+      - id: shfmt
+        args: [-w, -i, "2", -ci]
+
+  - repo: https://github.com/DavidAnson/markdownlint-cli2
+    rev: v0.18.1
+    hooks:
+      - id: markdownlint-cli2
+
+  - repo: local
+    hooks:
+      - id: stack-ci-validate
+        name: stack-ci-validate
+        entry: ./scripts/ci_validate.sh
+        language: system
+        pass_filenames: false
+        stages: [pre-push]
+

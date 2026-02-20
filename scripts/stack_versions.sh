@@ -46,7 +46,7 @@ upsert_var() {
     $1 == k { print k "=" v; done = 1; next }
     { print $0 }
     END { if (!done) print k "=" v }
-  ' "$VERSIONS_ENV" > "$tmp"
+  ' "$VERSIONS_ENV" >"$tmp"
   mv "$tmp" "$VERSIONS_ENV"
 }
 
@@ -68,7 +68,8 @@ print_table_row() {
 floating_key_pairs() {
   cat <<'EOF'
 SURREALMCP_IMAGE surrealdb/surrealmcp:latest
-SURREALDB_IMAGE surrealdb/surrealdb:latest
+# Keep SurrealDB on 2.3.x channel for current SurrealMCP compatibility.
+SURREALDB_IMAGE surrealdb/surrealdb:v2.3.10
 SURREALIST_IMAGE surrealdb/surrealist:latest
 DOCS_MCP_IMAGE ghcr.io/arabold/docs-mcp-server:latest
 EOF
@@ -82,10 +83,10 @@ cmd_show() {
   while IFS='=' read -r key value; do
     [ -n "${key}" ] || continue
     case "$key" in
-      \#*|"") continue ;;
+      \#* | "") continue ;;
     esac
     print_table_row "$key" "$value" "$(local_digest_or_na "$value")"
-  done < "$VERSIONS_ENV"
+  done <"$VERSIONS_ENV"
   echo
   echo "== compose resolved images =="
   compose_cmd config --images | sort -u

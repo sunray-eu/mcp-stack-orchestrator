@@ -1,0 +1,43 @@
+---
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+version: "3"
+
+vars:
+  PROFILE: '{{default "full" .PROFILE}}'
+  AGENTS: '{{default "codex,claude,opencode" .AGENTS}}'
+  CODEX_TARGET: '{{default "both" .CODEX_TARGET}}'
+  REPO: '{{default "." .REPO}}'
+  COMPANY: '{{default "example-company" .COMPANY}}'
+  PROJECT: '{{default "example-project" .PROJECT}}'
+  LANGUAGE: '{{default "polyglot" .LANGUAGE}}'
+
+includes:
+  infra: .taskfiles/infra.yml
+  profile: .taskfiles/profile.yml
+  quality: .taskfiles/quality.yml
+  agents: .taskfiles/agents.yml
+  env: .taskfiles/env.yml
+
+tasks:
+  default:
+    silent: true
+    cmds:
+      - task --list-all
+
+  help:
+    desc: Show available tasks.
+    silent: true
+    cmds:
+      - task --list-all
+
+  setup:
+    desc: Install local toolchain and hooks (`mise` + `pre-commit`).
+    cmds:
+      - mise install
+      - pre-commit install --install-hooks
+
+  ci:
+    desc: Run fast local CI checks.
+    cmds:
+      - task: quality:check
+

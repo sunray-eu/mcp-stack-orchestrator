@@ -1,0 +1,39 @@
+---
+version: "3"
+
+vars:
+  PROFILE: '{{default "full" .PROFILE}}'
+
+tasks:
+  bootstrap:
+    desc: Bootstrap dependencies for a profile.
+    cmds:
+      - ./scripts/stack_infra.sh bootstrap {{.PROFILE}}
+
+  up:
+    desc: Start infrastructure for a profile (`core|surreal|archon|docs|full`).
+    cmds:
+      - ./scripts/stack_infra.sh up {{.PROFILE}}
+
+  down:
+    desc: Stop infrastructure for a profile.
+    cmds:
+      - ./scripts/stack_infra.sh down {{.PROFILE}}
+
+  status:
+    desc: Print infra status.
+    cmds:
+      - ./scripts/stack_infra.sh status {{.PROFILE}}
+
+  full-up:
+    desc: Convenience alias for full stack up.
+    cmds:
+      - task: up
+        vars: { PROFILE: "full" }
+
+  full-down:
+    desc: Convenience alias for full stack down.
+    cmds:
+      - task: down
+        vars: { PROFILE: "full" }
+

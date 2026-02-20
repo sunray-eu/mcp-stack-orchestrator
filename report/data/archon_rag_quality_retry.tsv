@@ -1,0 +1,6 @@
+query_id	query	expected_token	lat_ms	success	total_found	top_source_id	matched
+Q1	authentication strategy	auth.md	3885.5	true	5	file_auth_md_8a364eb6	1
+Q2	device bootstrap endpoint	/api/v1/public/device/bootstrap	7481.5	true	5	file_auth_md_8a364eb6	1
+Q3	python openapi export command	OpenAPI	3468.9	true	5	file_py-openapi-endpoints_md_a3ed7423	1
+Q4	pyproject dependencies and tooling	pyproject	3518.8	true	5	file_pyproject_toml_3d2310f6	1
+Q5	list api paths from python openapi	py-openapi-endpoints	3375.7	true	5	file_py-openapi-endpoints_md_a3ed7423	1

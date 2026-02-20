@@ -26,7 +26,7 @@ load_workspace_overrides() {
 
   while IFS= read -r line || [ -n "$line" ]; do
     case "$line" in
-      ''|'#'*) continue ;;
+      '' | '#'*) continue ;;
       *=*) ;;
       *) continue ;;
     esac
@@ -36,17 +36,23 @@ load_workspace_overrides() {
     key="$(echo "$key" | tr -d '[:space:]')"
 
     case "$val" in
-      \"*\") val="${val#\"}"; val="${val%\"}" ;;
-      \'*\') val="${val#\'}"; val="${val%\'}" ;;
+      \"*\")
+        val="${val#\"}"
+        val="${val%\"}"
+        ;;
+      \'*\')
+        val="${val#\'}"
+        val="${val%\'}"
+        ;;
     esac
 
     case "$key" in
-      MCP_LSP_MODE|MCP_LSP_PREFERENCE|MCP_LSP_FALLBACK|MCP_LANGUAGE_SERVER_BIN|MCP_TS_LSP|MCP_PY_LSP)
+      MCP_LSP_MODE | MCP_LSP_PREFERENCE | MCP_LSP_FALLBACK | MCP_LANGUAGE_SERVER_BIN | MCP_TS_LSP | MCP_PY_LSP)
         export "$key=$val"
         ;;
       *) ;;
     esac
-  done < "$file"
+  done <"$file"
 }
 
 has_ts_markers() {

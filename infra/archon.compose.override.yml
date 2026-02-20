@@ -7,9 +7,40 @@ services:
 
   archon-mcp:
     container_name: ai-mcp-archon-mcp
+    ports:
+      - "18052:18052"
     volumes:
       - ${MCP_HOST_FS_ROOT:-/}:/hostfs:ro
       - ${MCP_HOST_FS_USERS:-/Users}:/Users:ro
+
+  archon-mcp-compat:
+    image: ${ARCHON_MCP_COMPAT_IMAGE:-node:20-alpine}
+    container_name: ai-mcp-archon-mcp-compat
+    depends_on:
+      archon-mcp:
+        condition: service_started
+    ports:
+      - "18051:8080"
+    environment:
+      ARCHON_MCP_UPSTREAM_HOST: archon-mcp
+      ARCHON_MCP_UPSTREAM_PORT: "18052"
+      PORT: "8080"
+    volumes:
+      - ../../infra/compat/archonmcp-compat.mjs:/app/archonmcp-compat.mjs:ro
+    command: ["node", "/app/archonmcp-compat.mjs"]
+    networks:
+      - app-network
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://localhost:8080/health').then(r=>process.exit(r.status===200?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   archon-frontend:
     container_name: ai-mcp-archon-ui

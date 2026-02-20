@@ -1,0 +1,82 @@
+server	feature	status	evidence	notes
+mcpx-basic-memory	list_memory_projects	pass	tool_call	Project inventory returned expected set including mcp-final-runtime.
+mcpx-basic-memory	create_memory_project	pass	tool_call	Created mcp-final-runtime and temporary mcp-delete-me projects.
+mcpx-basic-memory	delete_project	pass	tool_call	Deleted mcp-delete-me successfully.
+mcpx-basic-memory	write_note	pass	tool_call	Created global and project-scoped notes.
+mcpx-basic-memory	read_note	pass	tool_call	Read project note with frontmatter and body.
+mcpx-basic-memory	view_note	pass	tool_call	Rendered artifact payload.
+mcpx-basic-memory	edit_note_append	pass	tool_call	Append operation updated note.
+mcpx-basic-memory	edit_note_prepend	pass	tool_call	Prepend operation updated note.
+mcpx-basic-memory	edit_note_find_replace	pass	tool_call	String replacement applied.
+mcpx-basic-memory	edit_note_replace_section	pass	tool_call	Section replacement applied.
+mcpx-basic-memory	list_directory	pass	tool_call	Directory and note state reflected create/move/delete changes.
+mcpx-basic-memory	search_notes	pass	tool_call	Hybrid and FTS search returned expected matches.
+mcpx-basic-memory	search_by_metadata	pass	tool_call	Metadata filter repo_type=ts returned TS note.
+mcpx-basic-memory	recent_activity	pass	tool_call	Recent notes listed for today timeframe.
+mcpx-basic-memory	read_content	pass	tool_call	Raw markdown content returned with frontmatter.
+mcpx-basic-memory	build_context	pass	tool_call	Wildcard path context assembled with depth=2.
+mcpx-basic-memory	build_context_invalid_depth	fail_expected	tool_call	String depth 'deep' rejected; integer required.
+mcpx-basic-memory	canvas	pass	tool_call	Canvas file created successfully.
+mcpx-basic-memory	move_note	pass	tool_call	Moved note to archive path.
+mcpx-basic-memory	delete_note	pass	tool_call	Deleted moved note successfully.
+mcpx-basic-memory	fetch	fail	tool_call	Fetch lookup resolved against main project and failed for non-main IDs.
+mcpx-qdrant	qdrant_store	pass	tool_call	Stored multiple runtime context entries in active collection.
+mcpx-qdrant	qdrant_find	pass	tool_call	Semantic recall returned expected decision snippets.
+mcpx-qdrant	qdrant_store_with_metadata	fail	tool_call	Metadata payload rejected by current schema.
+mcpx-chroma	create_collection	pass	tool_call	Created mcp_final_eval and temporary collections.
+mcpx-chroma	get_collection_info	pass	tool_call	Collection metadata and sample documents returned.
+mcpx-chroma	add_documents	pass	tool_call	Added plain and metadata-tagged docs.
+mcpx-chroma	get_collection_count	pass	tool_call	Count matched inserted/deleted records.
+mcpx-chroma	peek_collection	pass	tool_call	Embedding + document preview returned.
+mcpx-chroma	query_documents	pass	tool_call	Semantic query ranked expected doc first.
+mcpx-chroma	query_documents_where_filter	pass	tool_call	Where filter repo=ts returned only TS row.
+mcpx-chroma	get_documents	pass	tool_call	ID fetch and content filter worked.
+mcpx-chroma	update_documents	pass	tool_call	Document text updated and verified.
+mcpx-chroma	modify_collection	pass	tool_call	Collection rename succeeded.
+mcpx-chroma	list_collections	pass	tool_call	Returned current local collection set.
+mcpx-chroma	delete_documents	pass	tool_call	Targeted delete succeeded.
+mcpx-chroma	delete_collection	pass	tool_call	Cleanup completed for temporary collections.
+mcpx-chroma	fork_collection	fail_expected	tool_call	Local backend reports forking not implemented.
+mcpx-surrealdb-http	connect_endpoint_memory	pass	tool_call	Connected to in-memory endpoint.
+mcpx-surrealdb-http	use_namespace	pass	tool_call	Switched namespace to mcp_eval_ns.
+mcpx-surrealdb-http	use_database	pass	tool_call	Switched database to mcp_eval_db.
+mcpx-surrealdb-http	create	pass	tool_call	Created note record.
+mcpx-surrealdb-http	insert	pass	tool_call	Inserted batch task records.
+mcpx-surrealdb-http	select	pass	tool_call	Selected filtered/sorted tasks.
+mcpx-surrealdb-http	update	pass	tool_call	Merged done=true on filtered tasks.
+mcpx-surrealdb-http	upsert	pass	tool_call	Upserted task:benchmark record.
+mcpx-surrealdb-http	query	pass	tool_call	Executed multi-statement query and count queries.
+mcpx-surrealdb-http	relate	pass	tool_call	Relation create call succeeded.
+mcpx-surrealdb-http	delete	pass	tool_call	Deleted filtered rows.
+mcpx-surrealdb-http	list_namespaces	pass	tool_call	Namespace list reflected created namespace.
+mcpx-surrealdb-http	list_databases	pass	tool_call	Database list reflected created database.
+mcpx-surrealdb-http	disconnect_endpoint	pass	tool_call	Disconnected successfully.
+mcpx-surrealdb-http	cloud_ops_without_token	fail_expected	tool_call	Cloud methods returned no-auth-token errors.
+mcpx-surrealdb-http	local_container_connect	fail	tool_call	Connect attempts to local docker endpoint failed; later service returned MCP 429 and transport instability.
+mcpx-archon-http	health_check	pass	tool_call	API healthy true.
+mcpx-archon-http	session_info	pass	tool_call	Session stats returned.
+mcpx-archon-http	manage_project_create	pass	tool_call	Created and later deleted temp projects.
+mcpx-archon-http	find_projects	pass	tool_call	Query and direct project lookup worked.
+mcpx-archon-http	manage_task_create	pass	tool_call	Created tasks for TS/PY runtime.
+mcpx-archon-http	manage_task_update	pass	tool_call	Status/assignee update persisted.
+mcpx-archon-http	find_tasks	pass	tool_call	List/filter/get task by id worked.
+mcpx-archon-http	manage_task_delete	pass	tool_call	Archive (delete) succeeded.
+mcpx-archon-http	manage_document_create	pass	tool_call	Created note document.
+mcpx-archon-http	manage_document_update	pass	tool_call	Updated content/tags.
+mcpx-archon-http	manage_document_delete	pass	tool_call	Deleted temp docs.
+mcpx-archon-http	find_documents	pass	tool_call	List/query/get document worked.
+mcpx-archon-http	manage_version_create	pass	tool_call	Created docs version with dict content.
+mcpx-archon-http	manage_version_create_invalid_content	fail_expected	tool_call	422 returned when content is list instead of dict.
+mcpx-archon-http	find_versions	pass	tool_call	Listed and fetched specific version.
+mcpx-archon-http	manage_version_restore	pass	tool_call	Restored docs to older version.
+mcpx-archon-http	get_project_features	pass	tool_call	Returned empty feature set (expected for fresh project).
+mcpx-archon-http	rag_get_available_sources	pass	tool_call	No sources configured (count=0).
+mcpx-archon-http	rag_search_knowledge_base	pass_with_limit	tool_call	Returned empty results; return_mode response drifted to chunks.
+mcpx-archon-http	rag_search_code_examples	pass_with_limit	tool_call	Returned empty results due no ingested sources.
+mcpx-archon-http	rag_list_pages_for_source	pass_with_limit	tool_call	Nonexistent source returned empty list without error.
+mcpx-archon-http	rag_read_full_page_invalid	fail_expected	tool_call	Invalid page_id returned HTTP 500 with backend detail.
+mcpx-lsp	startup_ts_workspace	pass	exec_probe	mcp-language-server initialized TypeScript workspace and opened ~1946 TS files.
+mcpx-lsp	startup_py_workspace	pass	exec_probe	mcp-language-server initialized Python workspace watchers.
+mcpx-lsp	symbol_quality_metrics	pass	historical_metrics	report/data/codex_exec_metrics.tsv includes successful TS/PY definition runs.
+mcpx-qdrant	workspace_auto_mapping_ts	pass	exec_probe	Dry run selected collection proj-<ts-repo-slug>.
+mcpx-qdrant	workspace_auto_mapping_py	pass	exec_probe	Dry run selected collection proj-<py-repo-slug>.

@@ -1,0 +1,41 @@
+---
+version: "3"
+
+vars:
+  PROFILE: '{{default "full" .PROFILE}}'
+
+tasks:
+  check:
+    desc: Run local CI checks (shell/python/manifest/taskfile).
+    cmds:
+      - ./scripts/ci_validate.sh
+
+  doctor:
+    desc: Run stack doctor for a profile.
+    cmds:
+      - ./scripts/stack_doctor.sh {{.PROFILE}}
+
+  versions:show:
+    desc: Show configured image refs and local digest state.
+    cmds:
+      - ./scripts/stack_versions.sh show
+
+  versions:check:
+    desc: Compare pinned digests to upstream refs.
+    cmds:
+      - ./scripts/stack_versions.sh check
+
+  versions:refresh:
+    desc: Refresh pinned digests in `infra/versions.env`.
+    cmds:
+      - ./scripts/stack_versions.sh refresh
+
+  pre-commit:
+    desc: Run pre-commit hooks for all files.
+    cmds:
+      - pre-commit run --all-files
+
+  stress:
+    desc: Run runtime stress loop and append fresh perf rows.
+    cmds:
+      - ./scripts/runtime_stress_refresh.sh

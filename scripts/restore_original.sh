@@ -14,8 +14,7 @@ pick_latest_backup() {
     "$HOME/mcp-eval/.latest-stack-apply-backup" \
     "$HOME/mcp-eval/.latest-final-rollout-backup" \
     "$HOME/mcp-eval/.latest-stack-rollout-backup" \
-    "$HOME/mcp-eval/.latest-backup-path"
-  do
+    "$HOME/mcp-eval/.latest-backup-path"; do
     if [ -f "$f" ]; then
       cat "$f"
       return 0
@@ -109,8 +108,7 @@ for c in \
   memory-mcp-rabbitmq \
   memory-mcp-redis \
   memory-mcp-celery-worker \
-  memory-mcp-frontend
-  do
+  memory-mcp-frontend; do
   docker rm -f "$c" >/dev/null 2>&1 || true
 done
 
@@ -120,10 +118,10 @@ OUT_CODEX_EVAL="$STACK_ROOT/logs/restore_codex_eval_mcp_list_${STAMP}.txt"
 OUT_CLAUDE="$STACK_ROOT/logs/restore_claude_mcp_list_${STAMP}.txt"
 OUT_OPENCODE="$STACK_ROOT/logs/restore_opencode_mcp_list_${STAMP}.txt"
 
-codex mcp list > "$OUT_CODEX" || true
-CODEX_HOME="$HOME/.codex-mcp-eval" codex mcp list > "$OUT_CODEX_EVAL" || true
-claude mcp list > "$OUT_CLAUDE" || true
-opencode mcp list > "$OUT_OPENCODE" || true
+codex mcp list >"$OUT_CODEX" || true
+CODEX_HOME="$HOME/.codex-mcp-eval" codex mcp list >"$OUT_CODEX_EVAL" || true
+claude mcp list >"$OUT_CLAUDE" || true
+opencode mcp list >"$OUT_OPENCODE" || true
 
 echo "Restore completed."
 echo "Snapshots:"

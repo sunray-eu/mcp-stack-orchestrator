@@ -1,0 +1,45 @@
+---
+version: "3"
+
+vars:
+  REPO: '{{default "" .REPO}}'
+  COMPANY: '{{default "example-company" .COMPANY}}'
+  PROJECT: '{{default "example-project" .PROJECT}}'
+  LANGUAGE: '{{default "polyglot" .LANGUAGE}}'
+  PROFILE: '{{default "core" .PROFILE}}'
+
+tasks:
+  init:
+    desc: Scaffold per-repo AI guidance and render `AGENTS.md`.
+    requires:
+      vars: [REPO]
+    cmds:
+      - >-
+        python3 ./scripts/agents_scaffold.py init
+        --repo {{.REPO}}
+        --company {{.COMPANY}}
+        --project {{.PROJECT}}
+        --language {{.LANGUAGE}}
+        --profile {{.PROFILE}}
+
+  render:
+    desc: Re-render `AGENTS.md` from `.ai/agents.toml`.
+    requires:
+      vars: [REPO]
+    cmds:
+      - python3 ./scripts/agents_scaffold.py render --repo {{.REPO}}
+
+  prompt:bootstrap:
+    desc: Print bootstrap/indexing prompt for a repo.
+    requires:
+      vars: [REPO]
+    cmds:
+      - python3 ./scripts/agents_scaffold.py prompt --repo {{.REPO}} --kind bootstrap
+
+  prompt:update:
+    desc: Print project-memory update prompt for a repo.
+    requires:
+      vars: [REPO]
+    cmds:
+      - python3 ./scripts/agents_scaffold.py prompt --repo {{.REPO}} --kind update
+

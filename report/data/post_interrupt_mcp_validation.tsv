@@ -1,0 +1,13 @@
+date	component	check	result	notes
+2026-02-20	mcpx-archon-http	rag_get_available_sources	pass	Direct MCP tool call returned 9 sources
+2026-02-20	mcpx-archon-http	rag_search_knowledge_base	pass	Returned sync-proof source with expected model metadata
+2026-02-20	mcpx-archon-http	rag_search_code_examples	pass	Returned ranked code examples
+2026-02-20	mcpx-archon-http	project_task_document_crud	pass	Created/listed/deleted temp project/task/document via MCP tools
+2026-02-20	archon-orchestrator	settings_auto_sync_after_up	pass	LLM_PROVIDER=openai; MODEL_CHOICE=gpt-5.2; EMBEDDING_MODEL=text-embedding-3-large; flags=true
+2026-02-20	mcpx-surrealdb-http	connect_endpoint	fail	Transport error: Unexpected content type: None
+2026-02-20	mcpx-surrealdb-http	connect_endpoint	pass	Connected via docker DNS endpoint http://surrealdb:8000 (namespace=local,db=mcp)
+2026-02-20	mcpx-surrealdb-http	crud_query	pass	create/select/query verified on note:test_mcp
+2026-02-20	mcpx-archon-http	health_check	pass	Direct MCP call succeeds after archon-mcp-compat bootstrap/session normalization
+2026-02-20	mcpx-archon-http	session_info	pass	Direct MCP call returns session management payload
+2026-02-20	surrealmcp-http	manual_mcp_jsonrpc_flow	pass	initialize/tools-list/connect/query sequence successful
+2026-02-20	surrealist-ui	local_db_visibility	pass	Query in UI returned seeded demo data

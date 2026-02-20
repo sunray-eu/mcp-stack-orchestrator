@@ -2,49 +2,46 @@ PROFILE ?= full
 AGENTS ?= codex,claude,opencode
 CODEX_TARGET ?= both
 
-.PHONY: help bootstrap up down status apply activate doctor versions-show versions-check versions-refresh restore
+.PHONY: help bootstrap up down status apply activate doctor versions-show versions-check versions-refresh restore setup check
 
 help:
-	@echo "Targets:"
-	@echo "  make bootstrap PROFILE=archon"
-	@echo "  make up PROFILE=core|surreal|archon|docs|full"
-	@echo "  make down PROFILE=..."
-	@echo "  make status PROFILE=..."
-	@echo "  make apply PROFILE=... AGENTS=codex,claude,opencode CODEX_TARGET=both"
-	@echo "  make activate PROFILE=none|core|core-surreal|core-archon|core-docs|full"
-	@echo "  make doctor PROFILE=..."
-	@echo "  make versions-show|versions-check|versions-refresh"
-	@echo "  make restore"
+	@task --list-all
 
 bootstrap:
-	./scripts/stack_infra.sh bootstrap $(PROFILE)
+	@task infra:bootstrap PROFILE=$(PROFILE)
 
 up:
-	./scripts/stack_infra.sh up $(PROFILE)
+	@task infra:up PROFILE=$(PROFILE)
 
 down:
-	./scripts/stack_infra.sh down $(PROFILE)
+	@task infra:down PROFILE=$(PROFILE)
 
 status:
-	./scripts/stack_infra.sh status $(PROFILE)
+	@task infra:status PROFILE=$(PROFILE)
 
 apply:
-	./scripts/stack_apply.sh $(PROFILE) --agents $(AGENTS) --codex-target $(CODEX_TARGET)
+	@task profile:apply PROFILE=$(PROFILE) AGENTS=$(AGENTS) CODEX_TARGET=$(CODEX_TARGET)
 
 activate:
-	./scripts/stack_activate.sh $(PROFILE)
+	@task profile:activate PROFILE=$(PROFILE)
 
 doctor:
-	./scripts/stack_doctor.sh $(PROFILE)
+	@task quality:doctor PROFILE=$(PROFILE)
 
 versions-show:
-	./scripts/stack_versions.sh show
+	@task quality:versions:show
 
 versions-check:
-	./scripts/stack_versions.sh check
+	@task quality:versions:check
 
 versions-refresh:
-	./scripts/stack_versions.sh refresh
+	@task quality:versions:refresh
 
 restore:
-	./scripts/restore_original.sh
+	@task profile:restore
+
+setup:
+	@task setup
+
+check:
+	@task quality:check

@@ -22,7 +22,7 @@ load_workspace_overrides() {
 
   while IFS= read -r line || [ -n "$line" ]; do
     case "$line" in
-      ''|'#'*) continue ;;
+      '' | '#'*) continue ;;
     esac
     case "$line" in
       *=*) ;;
@@ -35,25 +35,30 @@ load_workspace_overrides() {
 
     # Strip one pair of surrounding quotes if present.
     case "$val" in
-      \"*\") val="${val#\"}"; val="${val%\"}" ;;
-      \'*\') val="${val#\'}"; val="${val%\'}" ;;
+      \"*\")
+        val="${val#\"}"
+        val="${val%\"}"
+        ;;
+      \'*\')
+        val="${val#\'}"
+        val="${val%\'}"
+        ;;
     esac
 
     case "$key" in
-      MCP_QDRANT_COLLECTION_MODE|MCP_QDRANT_COLLECTION|QDRANT_URL|QDRANT_API_KEY|EMBEDDING_MODEL|TOOL_STORE_DESCRIPTION|TOOL_FIND_DESCRIPTION)
+      MCP_QDRANT_COLLECTION_MODE | MCP_QDRANT_COLLECTION | QDRANT_URL | QDRANT_API_KEY | EMBEDDING_MODEL | TOOL_STORE_DESCRIPTION | TOOL_FIND_DESCRIPTION)
         export "$key=$val"
         ;;
-      *)
-        ;;
+      *) ;;
     esac
-  done < "$file"
+  done <"$file"
 }
 
 slugify() {
   local raw="$1"
-  echo "$raw" \
-    | tr '[:upper:]' '[:lower:]' \
-    | sed -E 's/[^a-z0-9]+/-/g; s/^-+//; s/-+$//'
+  echo "$raw" |
+    tr '[:upper:]' '[:lower:]' |
+    sed -E 's/[^a-z0-9]+/-/g; s/^-+//; s/-+$//'
 }
 
 workspace="$(resolve_workspace)"

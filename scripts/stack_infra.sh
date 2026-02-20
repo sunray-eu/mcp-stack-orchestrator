@@ -40,6 +40,18 @@ SurrealDB runtime overrides (optional in ${SECRETS_FILE}):
   - SURREALDB_ROOT_USER, SURREALDB_ROOT_PASS
   - SURREALDB_DEFAULT_NS, SURREALDB_DEFAULT_DB
   - SURREALDB_RPC_PORT, SURREALDB_WS_HOST, SURREALIST_CONNECTION_NAME
+  - SURREAL_MCP_SERVER_URL
+  - SURREAL_MCP_RATE_LIMIT_RPS, SURREAL_MCP_RATE_LIMIT_BURST
+
+Archon settings sync (optional in ${SECRETS_FILE}):
+  - ARCHON_LLM_PROVIDER (default: openai)
+  - ARCHON_MODEL_CHOICE (default: gpt-5.2)
+  - ARCHON_EMBEDDING_PROVIDER (default: openai)
+  - ARCHON_EMBEDDING_MODEL (default: text-embedding-3-large)
+  - ARCHON_USE_AGENTIC_RAG (default: true)
+  - ARCHON_USE_HYBRID_SEARCH (default: true)
+  - ARCHON_USE_RERANKING (default: true)
+  - ARCHON_USE_CONTEXTUAL_EMBEDDINGS (default: true)
 
 Archon bootstrap:
   - repo URL: ${ARCHON_REPO_URL}
@@ -84,6 +96,84 @@ infra_compose() {
 
 archon_compose() {
   docker compose -p "$ARCHON_PROJECT" -f "$ARCHON_BASE_COMPOSE" -f "$ARCHON_OVERRIDE_COMPOSE" "$@"
+}
+
+archon_wait_ready() {
+  local tries="${1:-90}"
+  local i code
+  for i in $(seq 1 "$tries"); do
+    code="$(curl -sS -o /dev/null -w '%{http_code}' --max-time 3 "http://127.0.0.1:18081/api/health" 2>/dev/null || true)"
+    if [ "$code" = "200" ]; then
+      return 0
+    fi
+    sleep 1
+  done
+  echo "Archon API did not become healthy in time." >&2
+  return 1
+}
+
+archon_sync_setting() {
+  local key="$1"
+  local value="$2"
+  local category="${3:-rag_strategy}"
+  local payload_file code
+  payload_file="$(mktemp)"
+  python3 - "$key" "$value" "$category" >"$payload_file" <<'PY'
+import json
+import sys
+key, value, category = sys.argv[1], sys.argv[2], sys.argv[3]
+print(json.dumps({
+    "key": key,
+    "value": value,
+    "is_encrypted": False,
+    "category": category,
+    "description": "Managed by stack_infra.sh",
+}))
+PY
+  code="$(curl -sS -o /dev/null -w '%{http_code}' --max-time 10 \
+    -X PUT "http://127.0.0.1:18081/api/credentials/${key}" \
+    -H 'Content-Type: application/json' \
+    --data @"$payload_file" || true)"
+  rm -f "$payload_file"
+  if [ "$code" != "200" ]; then
+    echo "Archon setting sync failed for ${key} (HTTP ${code})." >&2
+    return 1
+  fi
+  return 0
+}
+
+archon_sync_settings() {
+  require_file "$SECRETS_FILE"
+  local llm_provider model_choice embedding_provider embedding_model
+  local use_agentic_rag use_hybrid_search use_reranking use_contextual_embeddings
+
+  llm_provider="$(read_env_var "ARCHON_LLM_PROVIDER" "$SECRETS_FILE")"
+  model_choice="$(read_env_var "ARCHON_MODEL_CHOICE" "$SECRETS_FILE")"
+  embedding_provider="$(read_env_var "ARCHON_EMBEDDING_PROVIDER" "$SECRETS_FILE")"
+  embedding_model="$(read_env_var "ARCHON_EMBEDDING_MODEL" "$SECRETS_FILE")"
+  use_agentic_rag="$(read_env_var "ARCHON_USE_AGENTIC_RAG" "$SECRETS_FILE")"
+  use_hybrid_search="$(read_env_var "ARCHON_USE_HYBRID_SEARCH" "$SECRETS_FILE")"
+  use_reranking="$(read_env_var "ARCHON_USE_RERANKING" "$SECRETS_FILE")"
+  use_contextual_embeddings="$(read_env_var "ARCHON_USE_CONTEXTUAL_EMBEDDINGS" "$SECRETS_FILE")"
+
+  if [ -z "${llm_provider:-}" ]; then llm_provider="openai"; fi
+  if [ -z "${model_choice:-}" ]; then model_choice="gpt-5.2"; fi
+  if [ -z "${embedding_provider:-}" ]; then embedding_provider="openai"; fi
+  if [ -z "${embedding_model:-}" ]; then embedding_model="text-embedding-3-large"; fi
+  if [ -z "${use_agentic_rag:-}" ]; then use_agentic_rag="true"; fi
+  if [ -z "${use_hybrid_search:-}" ]; then use_hybrid_search="true"; fi
+  if [ -z "${use_reranking:-}" ]; then use_reranking="true"; fi
+  if [ -z "${use_contextual_embeddings:-}" ]; then use_contextual_embeddings="true"; fi
+
+  archon_wait_ready
+  archon_sync_setting "LLM_PROVIDER" "$llm_provider"
+  archon_sync_setting "MODEL_CHOICE" "$model_choice"
+  archon_sync_setting "EMBEDDING_PROVIDER" "$embedding_provider"
+  archon_sync_setting "EMBEDDING_MODEL" "$embedding_model"
+  archon_sync_setting "USE_AGENTIC_RAG" "$use_agentic_rag"
+  archon_sync_setting "USE_HYBRID_SEARCH" "$use_hybrid_search"
+  archon_sync_setting "USE_RERANKING" "$use_reranking"
+  archon_sync_setting "USE_CONTEXTUAL_EMBEDDINGS" "$use_contextual_embeddings"
 }
 
 ensure_archon_repo() {
@@ -137,7 +227,7 @@ write_archon_runtime_env() {
     echo "SUPABASE_SERVICE_KEY=${supabase_service_key}"
     echo "HOST=${host_value:-localhost}"
     echo "ARCHON_SERVER_PORT=18081"
-    echo "ARCHON_MCP_PORT=18051"
+    echo "ARCHON_MCP_PORT=18052"
     echo "ARCHON_UI_PORT=13737"
     echo "AGENTS_ENABLED=false"
     echo "LOG_LEVEL=${log_level:-INFO}"
@@ -147,7 +237,7 @@ write_archon_runtime_env() {
     if [ -n "${openai_api_key:-}" ]; then
       echo "OPENAI_API_KEY=${openai_api_key}"
     fi
-  } > "$ARCHON_RUNTIME_ENV"
+  } >"$ARCHON_RUNTIME_ENV"
   chmod 600 "$ARCHON_RUNTIME_ENV"
 }
 
@@ -162,13 +252,13 @@ write_surrealist_instance_config() {
 
   mkdir -p "$(dirname "$SURREALIST_INSTANCE_RUNTIME")"
   SURREALDB_USER="$surrealdb_user" \
-  SURREALDB_PASS="$surrealdb_pass" \
-  SURREALDB_HOST="$surrealdb_host" \
-  SURREALDB_RPC_PORT="$surrealdb_rpc_port" \
-  SURREALDB_NS="$surrealdb_ns" \
-  SURREALDB_DB="$surrealdb_db" \
-  SURREALIST_CONNECTION_NAME="$surrealist_connection_name" \
-  python3 - <<'PY' > "$SURREALIST_INSTANCE_RUNTIME"
+    SURREALDB_PASS="$surrealdb_pass" \
+    SURREALDB_HOST="$surrealdb_host" \
+    SURREALDB_RPC_PORT="$surrealdb_rpc_port" \
+    SURREALDB_NS="$surrealdb_ns" \
+    SURREALDB_DB="$surrealdb_db" \
+    SURREALIST_CONNECTION_NAME="$surrealist_connection_name" \
+    python3 - <<'PY' >"$SURREALIST_INSTANCE_RUNTIME"
 import json
 import os
 
@@ -207,6 +297,7 @@ write_infra_runtime_env() {
   local mcp_host_fs_root mcp_host_fs_users
   local surrealdb_root_user surrealdb_root_pass surrealdb_default_ns surrealdb_default_db
   local surrealdb_rpc_port surrealdb_ws_host surrealist_connection_name
+  local surreal_mcp_server_url surreal_mcp_rate_limit_rps surreal_mcp_rate_limit_burst
   local provider_credentials_found
 
   openai_api_key="$(read_env_var "OPENAI_API_KEY" "$SECRETS_FILE")"
@@ -230,6 +321,9 @@ write_infra_runtime_env() {
   surrealdb_rpc_port="$(read_env_var "SURREALDB_RPC_PORT" "$SECRETS_FILE")"
   surrealdb_ws_host="$(read_env_var "SURREALDB_WS_HOST" "$SECRETS_FILE")"
   surrealist_connection_name="$(read_env_var "SURREALIST_CONNECTION_NAME" "$SECRETS_FILE")"
+  surreal_mcp_server_url="$(read_env_var "SURREAL_MCP_SERVER_URL" "$SECRETS_FILE")"
+  surreal_mcp_rate_limit_rps="$(read_env_var "SURREAL_MCP_RATE_LIMIT_RPS" "$SECRETS_FILE")"
+  surreal_mcp_rate_limit_burst="$(read_env_var "SURREAL_MCP_RATE_LIMIT_BURST" "$SECRETS_FILE")"
 
   if [ -z "${docs_embedding_model:-}" ] && [ -n "${openai_api_key:-}" ]; then
     docs_embedding_model="text-embedding-3-small"
@@ -254,6 +348,9 @@ write_infra_runtime_env() {
   if [ -z "${surrealdb_rpc_port:-}" ]; then surrealdb_rpc_port="18083"; fi
   if [ -z "${surrealdb_ws_host:-}" ]; then surrealdb_ws_host="127.0.0.1"; fi
   if [ -z "${surrealist_connection_name:-}" ]; then surrealist_connection_name="Local SurrealDB (Docker)"; fi
+  if [ -z "${surreal_mcp_server_url:-}" ]; then surreal_mcp_server_url="http://127.0.0.1:18080"; fi
+  if [ -z "${surreal_mcp_rate_limit_rps:-}" ]; then surreal_mcp_rate_limit_rps="2000"; fi
+  if [ -z "${surreal_mcp_rate_limit_burst:-}" ]; then surreal_mcp_rate_limit_burst="4000"; fi
 
   write_surrealist_instance_config \
     "$surrealdb_root_user" \
@@ -285,8 +382,11 @@ write_infra_runtime_env() {
     echo "SURREALDB_DEFAULT_NS=${surrealdb_default_ns}"
     echo "SURREALDB_DEFAULT_DB=${surrealdb_default_db}"
     echo "SURREALDB_RPC_PORT=${surrealdb_rpc_port}"
+    echo "SURREAL_MCP_SERVER_URL=${surreal_mcp_server_url}"
+    echo "SURREAL_MCP_RATE_LIMIT_RPS=${surreal_mcp_rate_limit_rps}"
+    echo "SURREAL_MCP_RATE_LIMIT_BURST=${surreal_mcp_rate_limit_burst}"
     echo "SURREALIST_INSTANCE_FILE=${SURREALIST_INSTANCE_RUNTIME}"
-  } > "$INFRA_RUNTIME_ENV"
+  } >"$INFRA_RUNTIME_ENV"
   chmod 600 "$INFRA_RUNTIME_ENV"
 }
 
@@ -305,13 +405,13 @@ qdrant_down() {
 surreal_up() {
   require_file "$INFRA_COMPOSE"
   write_infra_runtime_env false
-  infra_compose up -d surrealmcp surrealdb surrealist
+  infra_compose up -d surrealmcp surrealmcp-compat surrealdb surrealist
 }
 
 surreal_down() {
   require_file "$INFRA_COMPOSE"
-  infra_compose rm -sf surrealmcp surrealdb surrealist >/dev/null 2>&1 || true
-  docker rm -f ai-mcp-surreal-mcp ai-mcp-surrealdb ai-mcp-surrealist mcp-eval-surrealmcp >/dev/null 2>&1 || true
+  infra_compose rm -sf surrealmcp-compat surrealmcp surrealdb surrealist >/dev/null 2>&1 || true
+  docker rm -f ai-mcp-surreal-mcp-compat ai-mcp-surreal-mcp ai-mcp-surrealdb ai-mcp-surrealist mcp-eval-surrealmcp >/dev/null 2>&1 || true
 }
 
 docs_up() {
@@ -330,7 +430,12 @@ archon_up() {
   ensure_archon_repo
   require_file "$ARCHON_OVERRIDE_COMPOSE"
   write_archon_runtime_env
-  (cd "$ARCHON_DIR" && archon_compose --env-file "$ARCHON_RUNTIME_ENV" up -d archon-server archon-mcp archon-frontend)
+  (
+    cd "$ARCHON_DIR" &&
+      archon_compose --env-file "$ARCHON_RUNTIME_ENV" up -d \
+        archon-server archon-mcp archon-mcp-compat archon-frontend
+  )
+  archon_sync_settings
 }
 
 archon_down() {
@@ -339,13 +444,29 @@ archon_down() {
   fi
   require_file "$ARCHON_OVERRIDE_COMPOSE"
   if [ -f "$ARCHON_RUNTIME_ENV" ]; then
-    (cd "$ARCHON_DIR" && archon_compose --env-file "$ARCHON_RUNTIME_ENV" stop archon-mcp archon-server archon-frontend >/dev/null 2>&1 || true)
-    (cd "$ARCHON_DIR" && archon_compose --env-file "$ARCHON_RUNTIME_ENV" rm -sf archon-mcp archon-server archon-frontend >/dev/null 2>&1 || true)
+    (
+      cd "$ARCHON_DIR" &&
+        archon_compose --env-file "$ARCHON_RUNTIME_ENV" stop \
+          archon-mcp-compat archon-mcp archon-server archon-frontend >/dev/null 2>&1 || true
+    )
+    (
+      cd "$ARCHON_DIR" &&
+        archon_compose --env-file "$ARCHON_RUNTIME_ENV" rm -sf \
+          archon-mcp-compat archon-mcp archon-server archon-frontend >/dev/null 2>&1 || true
+    )
   else
-    (cd "$ARCHON_DIR" && archon_compose stop archon-mcp archon-server archon-frontend >/dev/null 2>&1 || true)
-    (cd "$ARCHON_DIR" && archon_compose rm -sf archon-mcp archon-server archon-frontend >/dev/null 2>&1 || true)
+    (
+      cd "$ARCHON_DIR" &&
+        archon_compose stop archon-mcp-compat archon-mcp archon-server archon-frontend >/dev/null 2>&1 || true
+    )
+    (
+      cd "$ARCHON_DIR" &&
+        archon_compose rm -sf archon-mcp-compat archon-mcp archon-server archon-frontend >/dev/null 2>&1 || true
+    )
   fi
-  docker rm -f ai-mcp-archon-server ai-mcp-archon-mcp ai-mcp-archon-ui archon-server archon-mcp archon-ui >/dev/null 2>&1 || true
+  docker rm -f \
+    ai-mcp-archon-server ai-mcp-archon-mcp ai-mcp-archon-mcp-compat ai-mcp-archon-ui \
+    archon-server archon-mcp archon-mcp-compat archon-ui >/dev/null 2>&1 || true
 }
 
 http_code() {
@@ -405,7 +526,7 @@ action="$1"
 profile="${2:-full}"
 
 case "$profile" in
-  core|surreal|archon|docs|full) ;;
+  core | surreal | archon | docs | full) ;;
   *)
     echo "Invalid profile: $profile" >&2
     usage

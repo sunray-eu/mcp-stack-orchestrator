@@ -1,0 +1,7 @@
+label	file	progress_id	upload_status	source_id	seconds
+ts_readme	README.md	a77f4a77-6cb9-4836-9fac-bca27cd20aec	completed	file_README_md_0bc6c106	4
+ts_architecture	architecture.md	210e74d4-b260-4250-9aad-f658e7b688fe	completed	file_architecture_md_3f997c12	15
+ts_auth	auth.md	8a17068a-c2a5-44b5-9a37-823342828696	completed	file_auth_md_8a364eb6	18
+py_readme	README.md	0f0790a3-f4f3-4413-bbac-9d568d699f9b	completed	file_README_md_d233748b	13
+py_pyproject	pyproject.toml	31043404-dfba-4e93-8f82-c4a6013026ac	unknown		328
+py_openapi	openapi.json	0937a88a-eae9-4fe0-9474-790b0f187d98	unknown		325

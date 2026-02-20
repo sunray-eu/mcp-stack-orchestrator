@@ -1,0 +1,26 @@
+version = 1
+
+[company]
+id = "{{COMPANY_SLUG}}"
+name = "{{COMPANY_NAME}}"
+
+[project]
+id = "{{PROJECT_SLUG}}"
+name = "{{PROJECT_NAME}}"
+language = "{{PROJECT_LANGUAGE}}"
+
+[mcp]
+default_profile = "{{DEFAULT_PROFILE}}"
+optional_profiles = ["core-surreal", "core-archon", "full"]
+memory_namespace = "{{MEMORY_NAMESPACE}}"
+qdrant_collection = "{{QDRANT_COLLECTION}}"
+
+[guidelines]
+global = "${STACK_ROOT}/guidelines/global/default.md"
+company = ".ai/guidelines/company.md"
+project = ".ai/guidelines/project.md"
+
+[prompts]
+bootstrap = ".ai/prompts/bootstrap_project_context.md"
+update_memory = ".ai/prompts/update_project_memory.md"
+
