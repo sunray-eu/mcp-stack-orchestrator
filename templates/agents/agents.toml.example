@@ -22,7 +22,12 @@ project = ".ai/guidelines/project.md"
 
 [context]
 repo_map = ".ai/context/repo_context.md"
+platform_overview = ".ai/context/platform_overview.md"
 
 [prompts]
 bootstrap = ".ai/prompts/bootstrap_project_context.md"
+initialize = ".ai/prompts/initialize_repository_knowledge.md"
 update_memory = ".ai/prompts/update_project_memory.md"
+
+[process]
+initialization = ".ai/process/repository_initialization.md"

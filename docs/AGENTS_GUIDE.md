@@ -40,6 +40,7 @@ Print reusable prompts:
 
 ```bash
 task agents:prompt:bootstrap REPO=/path/to/repo
+task agents:prompt:initialize REPO=/path/to/repo
 task agents:prompt:update REPO=/path/to/repo
 ```
 
@@ -50,7 +51,10 @@ task agents:prompt:update REPO=/path/to/repo
 - `.ai/guidelines/company.md`
 - `.ai/guidelines/project.md`
 - `.ai/prompts/bootstrap_project_context.md`
+- `.ai/prompts/initialize_repository_knowledge.md`
 - `.ai/prompts/update_project_memory.md`
+- `.ai/process/repository_initialization.md`
+- `.ai/context/platform_overview.md`
 - `.ai/context/repo_context.md`
 - `.mcp-stack.env` (if missing)
 
@@ -62,9 +66,11 @@ task agents:prompt:update REPO=/path/to/repo
 
 ## Suggested Memory Initialization
 
-After `agents:onboard`, seed durable memory for the repo:
+After `agents:onboard`, run deep initialization and seed durable memory for the repo:
 
-1. Read `.ai/context/repo_context.md` and key analysis docs.
-2. Store concise architectural/operational decisions in `mcpx-basic-memory`.
-3. Store high-signal semantic snippets in `mcpx-qdrant` for fast retrieval.
-4. Optionally create an Archon project and add curated documents for team-visible RAG.
+1. Run `task agents:prompt:initialize REPO=/path/to/repo` and execute that prompt.
+2. Populate `.ai/context/platform_overview.md` and `.ai/context/repo_context.md` from evidence.
+3. Generate supporting deep-context artifacts in `.ai/context/*` (architecture/workflows/integrations/risks/runbook).
+4. Store concise architectural/operational decisions in `mcpx-basic-memory`.
+5. Store high-signal semantic snippets in `mcpx-qdrant` for fast retrieval.
+6. Optionally create/update Archon project docs for team-visible RAG.

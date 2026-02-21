@@ -36,6 +36,13 @@ tasks:
     cmds:
       - python3 ./scripts/agents_scaffold.py prompt --repo {{.REPO}} --kind bootstrap
 
+  prompt:initialize:
+    desc: Print deep repository/platform initialization prompt for a repo.
+    requires:
+      vars: [REPO]
+    cmds:
+      - python3 ./scripts/agents_scaffold.py prompt --repo {{.REPO}} --kind initialize
+
   prompt:update:
     desc: Print project-memory update prompt for a repo.
     requires:

@@ -60,6 +60,31 @@ def load_config(repo_root: pathlib.Path) -> dict:
     return tomllib.loads(config_path.read_text(encoding="utf-8"))
 
 
+def build_tokens_from_config(repo_root: pathlib.Path, config: dict) -> Dict[str, str]:
+    project = config.get("project", {})
+    company = config.get("company", {})
+    mcp = config.get("mcp", {})
+
+    project_name = project.get("name", repo_root.name)
+    project_slug = slugify(project.get("id", project_name))
+    company_name = company.get("name", "Company")
+    company_slug = slugify(company.get("id", company_name))
+    project_language = project.get("language", "polyglot")
+    default_profile = mcp.get("default_profile", "core")
+
+    return {
+        "STACK_ROOT": str(STACK_ROOT),
+        "COMPANY_NAME": company_name,
+        "COMPANY_SLUG": company_slug,
+        "PROJECT_NAME": project_name,
+        "PROJECT_SLUG": project_slug,
+        "PROJECT_LANGUAGE": project_language,
+        "DEFAULT_PROFILE": default_profile,
+        "MEMORY_NAMESPACE": mcp.get("memory_namespace", project_slug),
+        "QDRANT_COLLECTION": mcp.get("qdrant_collection", f"proj-{project_slug}"),
+    }
+
+
 def resolve_reference(repo_root: pathlib.Path, value: str) -> pathlib.Path:
     replaced = (
         value.replace("${STACK_ROOT}", str(STACK_ROOT)).replace("${REPO_ROOT}", str(repo_root))
@@ -77,6 +102,7 @@ def build_agents_markdown(repo_root: pathlib.Path, config: dict) -> str:
     context = config.get("context", {})
     guidelines = config.get("guidelines", {})
     prompts = config.get("prompts", {})
+    process = config.get("process", {})
 
     project_name = project.get("name", "Project")
     company_name = company.get("name", "Company")
@@ -90,21 +116,30 @@ def build_agents_markdown(repo_root: pathlib.Path, config: dict) -> str:
     company_ref = guidelines.get("company", ".ai/guidelines/company.md")
     project_ref = guidelines.get("project", ".ai/guidelines/project.md")
     context_ref = context.get("repo_map", ".ai/context/repo_context.md")
+    platform_ref = context.get("platform_overview", ".ai/context/platform_overview.md")
 
     global_path = resolve_reference(repo_root, global_ref)
     company_path = resolve_reference(repo_root, company_ref)
     project_path = resolve_reference(repo_root, project_ref)
     context_path = resolve_reference(repo_root, context_ref)
+    platform_path = resolve_reference(repo_root, platform_ref)
 
     bootstrap_prompt_path = resolve_reference(
         repo_root, prompts.get("bootstrap", ".ai/prompts/bootstrap_project_context.md")
     )
+    initialize_prompt_path = resolve_reference(
+        repo_root, prompts.get("initialize", ".ai/prompts/initialize_repository_knowledge.md")
+    )
     update_prompt_path = resolve_reference(
         repo_root, prompts.get("update_memory", ".ai/prompts/update_project_memory.md")
     )
+    init_process_ref = process.get("initialization", ".ai/process/repository_initialization.md")
+    init_process_path = resolve_reference(repo_root, init_process_ref)
 
     bootstrap_prompt = render_guideline(bootstrap_prompt_path)
+    initialize_prompt = render_guideline(initialize_prompt_path)
     update_prompt = render_guideline(update_prompt_path)
+    init_process = render_guideline(init_process_path)
 
     return (
         f"""# AGENTS.md
@@ -134,17 +169,30 @@ Apply instructions in this order:
 - `mcpx-surrealdb-http` (when enabled): structured graph/document operations and local DB-backed experiments.
 
 ## Standard Workflow
-1. Confirm active profile and stack health:
+1. If MCP stack orchestrator is available, confirm profile and health from stack root:
+   - `cd {STACK_ROOT}`
    - `task infra:status`
    - `task quality:doctor PROFILE={default_profile}`
+   If orchestrator tooling is unavailable in this environment, skip this step.
 2. Read the repository context map first (path below), then run the bootstrap prompt.
-3. Store stable decisions in memory (`mcpx-qdrant` and/or `mcpx-basic-memory`).
-4. For company-sensitive tasks, apply company guideline overrides before coding.
+3. For first-time setup or when context is stale, execute the deep initialization prompt and process.
+4. Store stable decisions in memory (`mcpx-qdrant` and/or `mcpx-basic-memory`).
+5. For company-sensitive tasks, apply company guideline overrides before coding.
 
 ## Repository Context Map
 - Source: `{context_ref}`
 - Resolved path: `{context_path}`
 - Status: {"present" if context_path.exists() else "missing"}
+
+## Repository & Platform Knowledge (Living Source of Truth)
+- Source: `{platform_ref}`
+- Resolved path: `{platform_path}`
+- Status: {"present" if platform_path.exists() else "missing"}
+- Maintenance policy:
+  - Update this file whenever repository purpose, service boundaries, integrations, runtime behavior, or ops commands change.
+  - Keep this file aligned with `.ai/context/repo_context.md` and write durable changes to project memory stores.
+
+{render_guideline(platform_path)}
 
 ## Bootstrap Prompt
 ```text
@@ -154,6 +202,19 @@ Apply instructions in this order:
 ## Memory Update Prompt
 ```text
 {update_prompt}
+```
+
+## Repository Initialization Process
+- Source: `{init_process_ref}`
+- Resolved path: `{init_process_path}`
+- Status: {"present" if init_process_path.exists() else "missing"}
+```text
+{init_process}
+```
+
+## Deep Initialization Prompt
+```text
+{initialize_prompt}
 ```
 
 ## Global Guidelines
@@ -195,10 +256,12 @@ def init_repo(args: argparse.Namespace) -> int:
     ai_dir = repo_root / ".ai"
     guidelines_dir = ai_dir / "guidelines"
     prompts_dir = ai_dir / "prompts"
+    process_dir = ai_dir / "process"
     context_dir = ai_dir / "context"
     ai_dir.mkdir(parents=True, exist_ok=True)
     guidelines_dir.mkdir(parents=True, exist_ok=True)
     prompts_dir.mkdir(parents=True, exist_ok=True)
+    process_dir.mkdir(parents=True, exist_ok=True)
     context_dir.mkdir(parents=True, exist_ok=True)
 
     created = []
@@ -223,10 +286,25 @@ def init_repo(args: argparse.Namespace) -> int:
     if write_if_missing(bootstrap_prompt_path, bootstrap_prompt_content, force=args.force):
         created.append(bootstrap_prompt_path)
 
+    initialize_prompt_content = fill_tokens(read_template("prompt.initialize.md"), tokens)
+    initialize_prompt_path = prompts_dir / "initialize_repository_knowledge.md"
+    if write_if_missing(initialize_prompt_path, initialize_prompt_content, force=args.force):
+        created.append(initialize_prompt_path)
+
     update_prompt_content = fill_tokens(read_template("prompt.update.md"), tokens)
     update_prompt_path = prompts_dir / "update_project_memory.md"
     if write_if_missing(update_prompt_path, update_prompt_content, force=args.force):
         created.append(update_prompt_path)
+
+    init_process_content = fill_tokens(read_template("process.repository_initialization.md"), tokens)
+    init_process_path = process_dir / "repository_initialization.md"
+    if write_if_missing(init_process_path, init_process_content, force=args.force):
+        created.append(init_process_path)
+
+    platform_overview_content = fill_tokens(read_template("context.platform_overview.md"), tokens)
+    platform_overview_path = context_dir / "platform_overview.md"
+    if write_if_missing(platform_overview_path, platform_overview_content, force=args.force):
+        created.append(platform_overview_path)
 
     stack_env_path = repo_root / ".mcp-stack.env"
     stack_env_template = STACK_ROOT / "configs" / "mcp-stack.env.example"
@@ -264,13 +342,14 @@ def render_repo(args: argparse.Namespace) -> int:
 def print_prompt(args: argparse.Namespace) -> int:
     repo_root = pathlib.Path(args.repo).expanduser().resolve()
     config = load_config(repo_root)
-    prompts = config.get("prompts", {})
     if args.kind == "bootstrap":
-        ref = prompts.get("bootstrap", ".ai/prompts/bootstrap_project_context.md")
+        template_name = "prompt.bootstrap.md"
+    elif args.kind == "initialize":
+        template_name = "prompt.initialize.md"
     else:
-        ref = prompts.get("update_memory", ".ai/prompts/update_project_memory.md")
-    path = resolve_reference(repo_root, ref)
-    print(render_guideline(path), end="\n")
+        template_name = "prompt.update.md"
+    tokens = build_tokens_from_config(repo_root, config)
+    print(fill_tokens(read_template(template_name), tokens), end="\n")
     return 0
 
 
@@ -304,7 +383,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     prompt_cmd = sub.add_parser("prompt", help="Print generated operational prompts")
     prompt_cmd.add_argument("--repo", required=True, help="Repository root path")
-    prompt_cmd.add_argument("--kind", choices=["bootstrap", "update"], default="bootstrap")
+    prompt_cmd.add_argument("--kind", choices=["bootstrap", "initialize", "update"], default="bootstrap")
     prompt_cmd.set_defaults(func=print_prompt)
 
     return parser

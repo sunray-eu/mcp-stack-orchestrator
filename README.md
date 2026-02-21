@@ -9,6 +9,7 @@ Reproducible evaluation artifacts and production-grade orchestration for a multi
 - Workspace-aware wrappers for Qdrant collection routing and LSP selection
 - Taskfile-first operator workflow (`task ...`) with shell scripts as internal runtime engines
 - AGENTS scaffolding generator with layered global/company/project guidelines
+- Deep repository initialization process + prompt templates for full platform analysis and memory seeding
 - Canonical always-on engineering policy (`guidelines/global/engineering-always.md`)
 - Safety-first config rollout with backups and one-command restore
 - Full research outputs and scoring artifacts from large MCP candidate sweeps
@@ -99,6 +100,7 @@ For full stack (maximum context/runtime profile):
 - `task env:where` (prints canonical vs legacy duplicate stack paths)
 - `task agents:init REPO=/path/to/repo COMPANY=example-co PROJECT=example-api LANGUAGE=typescript PROFILE=core`
 - `task agents:onboard REPO=/path/to/repo COMPANY=example-co PROJECT=example-api LANGUAGE=typescript PROFILE=core`
+- `task agents:prompt:initialize REPO=/path/to/repo`
 
 Legacy compatibility:
 - `make` targets remain available as wrappers around `task` commands.

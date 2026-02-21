@@ -89,6 +89,17 @@ Stop and escalate when:
 5. Use global memory only for stable cross-project standards, preferences, and conventions.
 6. Use external docs/search tools when local/project context is insufficient or version-accurate semantics must be verified.
 
+#### Repository Knowledge Baseline (Mandatory)
+
+- Every initialized repository must maintain a living platform/repository knowledge file at `.ai/context/platform_overview.md`.
+- `AGENTS.md` must include or reference this knowledge so agents can understand:
+  - what the repository is for,
+  - how it fits into the platform,
+  - what services/integrations it depends on,
+  - which runtime/ops commands are authoritative.
+- Agents must update `.ai/context/platform_overview.md` and `.ai/context/repo_context.md` in the same change when architecture, service topology, contracts, or operational workflows change.
+- Durable new findings from these updates must be persisted to project-scoped memory MCPs (never including secrets).
+
 #### Progressive Expansion and Stop Rule
 
 - Start with the smallest set of high-signal sources required for the task.

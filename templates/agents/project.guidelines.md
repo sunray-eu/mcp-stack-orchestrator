@@ -10,6 +10,8 @@
 - Keep operational commands reproducible and documented.
 - Use stable naming for services, environments, and generated artifacts.
 - Keep `.ai/context/repo_context.md` current after notable architecture/tooling changes.
+- Keep `.ai/context/platform_overview.md` current whenever repository role, platform topology, services, integrations, or operational flows change.
+- For first-time onboarding (or major topology shifts), execute `.ai/prompts/initialize_repository_knowledge.md` and follow `.ai/process/repository_initialization.md`.
 
 ## MCP Usage Defaults
 - Default profile: `{{DEFAULT_PROFILE}}`
