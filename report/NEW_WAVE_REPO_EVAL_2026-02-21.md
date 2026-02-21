@@ -7,6 +7,7 @@ This addendum covers the extra repository set requested after the prior sweep an
 - `report/data/candidate_static_risk.tsv`
 - `report/data/candidate_outcomes.tsv`
 - `report/data/second_wave_smoke.tsv`
+- `report/data/new_wave_compat_probes.tsv`
 
 ## Candidate Set
 
@@ -25,9 +26,9 @@ This addendum covers the extra repository set requested after the prior sweep an
 |---|---|---|
 | `entrepeneur4lyf/code-graph-mcp` | pass (TS + PY) | Passed `get_usage_guide` and `analyze_codebase` calls under Codex MCP. |
 | `neo4j/mcp` | pass | Passed `get-schema` using local `Neo4j 5.26.19 + APOC` in read-only mode. |
-| `CodeGraphContext/CodeGraphContext` | fail | Initialize handshake closed in current Codex runtime path. |
-| `danyQe/codebase-mcp` | fail | Initialize handshake closed; dual-process backend+proxy architecture increases setup friction. |
-| `NgoTaiCo/mcp-codebase-index` | fail | Initialize handshake closed (including quiet retry); default flow requires Gemini+Qdrant creds. |
+| `CodeGraphContext/CodeGraphContext` | pass (compat) | Works with legacy newline JSON-RPC transport; fails only against framed stdio clients without adapter. |
+| `danyQe/codebase-mcp` | pass (compat) | Works with legacy newline JSON-RPC transport; requires separate FastAPI backend for full functionality. |
+| `NgoTaiCo/mcp-codebase-index` | pass (compat) | Works when stdout logs are redirected off protocol channel; still requires valid Gemini+Qdrant credentials for healthy indexing. |
 | `thakkaryash94/chroma-ui` | n/a | Useful GUI, not an MCP server. |
 | `ChrisRoyse/CodeGraph` | n/a | Analyzer platform; MCP component not production-ready as a standalone Codex MCP. |
 | `ADORSYS-GIS/experimental-code-graph` | n/a | Experimental fork; no stable Codex-ready MCP distribution path observed. |
@@ -38,12 +39,18 @@ This addendum covers the extra repository set requested after the prior sweep an
 |---|---|---:|---|
 | `neo4j/mcp` | tested | 7.5 | Recommended optional graph profile (not default). |
 | `entrepeneur4lyf/code-graph-mcp` | tested | 7.2 | Recommended optional graph profile (not default). |
-| `CodeGraphContext/CodeGraphContext` | tested | 5.4 | Keep out of production profile until handshake compatibility is fixed. |
-| `danyQe/codebase-mcp` | tested | 4.7 | Not recommended for this stack. |
-| `NgoTaiCo/mcp-codebase-index` | tested | 4.6 | Not recommended for this stack. |
+| `CodeGraphContext/CodeGraphContext` | tested | 6.0 | Viable only via protocol compatibility adapter; keep out of default profile. |
+| `danyQe/codebase-mcp` | tested | 5.3 | Transport can be adapted, but backend+proxy dual-process flow keeps setup friction high. |
+| `NgoTaiCo/mcp-codebase-index` | tested | 5.1 | Transport/logging can be adapted, but it still depends on valid Gemini+Qdrant credentials. |
 | `ChrisRoyse/CodeGraph` | evaluated | 4.9 | Not recommended as MCP server in current form. |
 | `ADORSYS-GIS/experimental-code-graph` | evaluated | 4.4 | Not recommended. |
 | `thakkaryash94/chroma-ui` | evaluated | 3.8 | Optional human GUI only, out of MCP profile scope. |
+
+## Compatibility Root Cause Findings
+
+- `CodeGraphContext` and `codebase-mcp` use legacy newline JSON-RPC over stdio rather than framed `Content-Length` transport expected by stricter MCP clients.
+- `mcp-codebase-index` uses SDK stdio transport but emits frequent runtime logs to stdout, contaminating the protocol channel for strict framed clients.
+- All three can be made operational with compatibility handling, but the additional adapter/guardrails increase maintenance overhead compared to native-compatible servers.
 
 ## Neo4j MCP: What It Is and When It Helps
 

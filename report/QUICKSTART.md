@@ -13,14 +13,14 @@ Prerequisite for docs-mcp vector search:
 - Optional override: `DOCS_MCP_EMBEDDING_MODEL` in `<STACK_ROOT>/.secrets.env`.
 - If `DOCS_MCP_EMBEDDING_MODEL` is omitted and `OPENAI_API_KEY` exists, stack scripts default to `text-embedding-3-small`.
 
-Full stack (Qdrant + Surreal + Archon + Docs MCP Web UI):
+Full stack (Qdrant + Chroma + Chroma UI + Neo4j + Surreal + Archon + Docs MCP Web UI):
 
 ```bash
 cd <STACK_ROOT>
 task infra:up PROFILE=full
 ```
 
-Full stack plus Neo4j graph runtime:
+Legacy compatibility alias for graph-enabled full stack:
 
 ```bash
 task infra:up PROFILE=full-graph
@@ -95,7 +95,7 @@ Maximum context profile:
 task profile:apply PROFILE=full AGENTS=codex,claude,opencode CODEX_TARGET=both
 ```
 
-Optional graph-enabled profiles:
+Optional profile variants (use only when you intentionally want to trim one graph add-on from `full`):
 
 ```bash
 task profile:apply PROFILE=core-code-graph AGENTS=codex,claude,opencode CODEX_TARGET=both
@@ -126,8 +126,8 @@ task profile:apply PROFILE=none AGENTS=codex,claude,opencode CODEX_TARGET=both
 Global dynamic MCP behavior:
 - `mcpx-qdrant` automatically maps current repo to a collection (`proj-<repo-slug>`).
 - `mcpx-lsp` automatically picks workspace root from current directory and chooses Python vs TypeScript LSP by repo markers.
-- `mcpx-code-graph` optionally uses current workspace root for structural graph analysis (`core-code-graph` / `full-code-graph`).
-- `mcpx-neo4j` is read-only by default and targets local Neo4j+APOC (`core-neo4j` / `full-neo4j` / `full-graph`).
+- `mcpx-code-graph` is part of `full` by default and uses current workspace root for structural analysis.
+- `mcpx-neo4j` is part of `full` by default, read-only by default, and targets local Neo4j+APOC.
 - This keeps global agent configs project-agnostic.
 
 Optional per-repo overrides:
@@ -159,7 +159,8 @@ task quality:doctor PROFILE=full
 
 UI endpoints in `full` profile:
 - `http://127.0.0.1:6333/dashboard/` (Qdrant)
-- `http://127.0.0.1:17474` (Neo4j Browser, when using Neo4j-enabled profiles)
+- `http://127.0.0.1:18110` (Chroma UI)
+- `http://127.0.0.1:17474` (Neo4j Browser)
 - `http://127.0.0.1:13737` (Archon UI)
 - `http://127.0.0.1:18082` (Surrealist)
 - `http://127.0.0.1:18083/rpc` (SurrealDB RPC endpoint)

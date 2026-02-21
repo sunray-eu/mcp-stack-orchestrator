@@ -67,18 +67,26 @@
 
 `core`
 - qdrant
+- chroma
+- chroma-ui
 
 `core-code-graph`
 - qdrant
+- chroma
+- chroma-ui
 - code-graph MCP (stdio, no additional container)
 
 `core-neo4j`
 - qdrant
+- chroma
+- chroma-ui
 - neo4j
 - neo4j MCP (stdio wrapper, no separate MCP container)
 
 `surreal`
 - qdrant
+- chroma
+- chroma-ui
 - surrealdb
 - surrealmcp-compat (frontend on `:18080`)
 - surrealmcp
@@ -86,6 +94,8 @@
 
 `archon`
 - qdrant
+- chroma
+- chroma-ui
 - archon-server
 - archon-mcp
 - archon-mcp-compat (frontend on `:18051`, upstream native MCP on `:18052`)
@@ -93,21 +103,37 @@
 
 `docs`
 - qdrant
+- chroma
+- chroma-ui
 - docs-mcp-web
 
+`full`
+- qdrant
+- chroma
+- chroma-ui
+- neo4j
+- surrealdb
+- surrealmcp-compat (frontend on `:18080`)
+- surrealmcp
+- surrealist
+- archon-server
+- archon-mcp
+- archon-mcp-compat (frontend on `:18051`, upstream native MCP on `:18052`)
+- archon-frontend
+- docs-mcp-web
+- code-graph MCP + neo4j MCP (combined graph-analysis add-ons)
+
 `full-code-graph`
-- full container topology
+- full container topology without neo4j
 - code-graph MCP (stdio add-on)
 
 `full-neo4j`
-- full container topology
+- full container topology without code-graph MCP
 - neo4j
 - neo4j MCP (stdio add-on)
 
 `full-graph`
-- full container topology
-- neo4j
-- code-graph MCP + neo4j MCP (combined graph-analysis add-ons)
+- compatibility alias of `full` graph-enabled topology
 
 ## Compatibility
 

@@ -18,12 +18,12 @@ Date: 2026-02-21
 Use a **profiled stack** instead of one static config:
 
 - `core` (recommended default): qdrant-backed retrieval + baseline MCP servers with dashboard visibility.
-- `full`: includes `core + SurrealDB MCP + Archon MCP + docs-mcp web/MCP runtime`.
+- `full`: includes `core + code-graph MCP + neo4j MCP + SurrealDB MCP + Archon MCP + docs-mcp web/MCP runtime`.
 - `core-code-graph`: `core + code-graph MCP` (optional structural-analysis profile).
-- `full-code-graph`: `full + code-graph MCP` (optional structural-analysis profile).
+- `full-code-graph`: compatibility variant of `full` without neo4j MCP/runtime.
 - `core-neo4j`: `core + neo4j MCP` (optional graph-query profile).
-- `full-neo4j`: `full + neo4j MCP` (optional graph-query profile).
-- `full-graph`: `full + code-graph MCP + neo4j MCP` (maximum graph-analysis profile).
+- `full-neo4j`: compatibility variant of `full` without code-graph MCP.
+- `full-graph`: compatibility alias of the maximum graph-analysis profile (`same server set as full`).
 
 This lets you keep correctness and speed in normal coding, while enabling heavy context workflows on demand.
 
@@ -74,6 +74,8 @@ Managed MCP names:
 - `mcpx-qdrant`
 - `mcpx-chroma`
 - `mcpx-lsp`
+- `mcpx-code-graph`
+- `mcpx-neo4j`
 - `mcpx-surrealdb-http`
 - `mcpx-archon-http`
 - `mcpx-docs-mcp-http`
@@ -87,7 +89,9 @@ Legacy managed names retained only for automatic cleanup during profile re-apply
 
 UI/infra services started by `task infra:up` (profile-dependent):
 - `ai-mcp-qdrant`
-- `ai-mcp-neo4j` (neo4j-enabled profiles)
+- `ai-mcp-chroma`
+- `ai-mcp-chroma-ui`
+- `ai-mcp-neo4j` (enabled by `full`, `core-neo4j`, `full-neo4j`, `full-graph`)
 - `ai-mcp-surreal-mcp`
 - `ai-mcp-surrealist`
 - `ai-mcp-archon-server`
@@ -123,7 +127,7 @@ One-command activator (infra + profile):
 
 ## Infra Lifecycle
 
-Start full infra (Qdrant + Surreal + Archon + Docs MCP web):
+Start full infra (Qdrant + Chroma + Chroma UI + Neo4j + Surreal + Archon + Docs MCP web):
 
 ```bash
 task infra:up PROFILE=full
@@ -177,10 +181,10 @@ task profile:apply PROFILE=none AGENTS=codex,claude,opencode CODEX_TARGET=both
 ## When To Use Which Profile
 
 - Use `core` when implementing/refactoring/debugging inside TS+PY repos.
-- Use `full` when you need additional memory/workflow layers (Archon task/doc graph + Surreal-backed operations + docs-mcp UI/runtime).
-- Use `core-code-graph` or `full-code-graph` when you need deeper dependency/call-graph analysis across large codebases.
-- Use `core-neo4j`/`full-neo4j` when relationship-heavy graph queries and schema introspection materially improve reasoning.
-- Use `full-graph` when you want both local structural code graphing and Neo4j-backed graph querying in the same session.
+- Use `full` as the maximum-context profile (includes graph add-ons + workflow layers + docs runtime).
+- Use `core-code-graph` or `full-code-graph` only when you need structural graph analysis and want to avoid running Neo4j.
+- Use `core-neo4j`/`full-neo4j` when relationship-heavy graph queries are required and you do not need local code-graph MCP simultaneously.
+- Use `full-graph` only as compatibility alias where existing automation expects it.
 
 ## Global Dynamic Behavior
 
@@ -196,10 +200,11 @@ Per-repo overrides (only when needed):
 ## Web UI Endpoints (Always-On in `full`)
 
 - Qdrant dashboard: `http://127.0.0.1:6333/dashboard/`
+- Chroma UI: `http://127.0.0.1:18110`
 - Archon UI: `http://127.0.0.1:13737`
 - Surrealist UI: `http://127.0.0.1:18082`
 - Docs MCP UI: `http://127.0.0.1:16280`
-- Neo4j Browser (Neo4j-enabled profiles): `http://127.0.0.1:17474`
+- Neo4j Browser (`full` and Neo4j-enabled profiles): `http://127.0.0.1:17474`
 
 Live status snapshot:
 - `<STACK_ROOT>/report/ui_endpoint_status.tsv`

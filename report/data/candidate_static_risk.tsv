@@ -48,10 +48,10 @@ thedotmack claude-mem	thedotmack/claude-mem	ok	true	-	-	-	false	true	true	true	t
 cbunting99 enhanced-mcp-memory	cbunting99/enhanced-mcp-memory	ok	false	-	-	-	true	false	true	true	true	
 arabold docs-mcp-server	arabold/docs-mcp-server	ok	true	-	echo 'Skipping Playwright browser install. See README.md for details.'	husky || true	false	true	true	true	true	install scripts present
 thakkaryash94 chroma-ui	thakkaryash94/chroma-ui	ok	true	-	-	-	false	false	false	false	true	UI utility, not an MCP server
-danyQe codebase-mcp	danyQe/codebase-mcp	ok	false	-	-	-	false	false	true	true	true	Dual-process architecture (FastAPI backend + MCP proxy); high setup friction and broad command/file mutation surface.
-NgoTaiCo mcp-codebase-index	NgoTaiCo/mcp-codebase-index	ok	true	-	-	npm run build	false	false	true	true	true	install scripts present; shell execution patterns present; destructive capabilities may exist; requires Gemini API and Qdrant API keys in default path
+danyQe codebase-mcp	danyQe/codebase-mcp	ok	false	-	-	-	false	false	true	true	true	Dual-process architecture (FastAPI backend + MCP proxy); legacy newline transport (not framed stdio) requires compatibility adapter for strict clients.
+NgoTaiCo mcp-codebase-index	NgoTaiCo/mcp-codebase-index	ok	true	-	-	npm run build	false	false	true	true	true	install scripts present; stdout logging contaminates MCP stdio channel by default; requires log redirection + valid Gemini/Qdrant credentials.
 entrepeneur4lyf code-graph-mcp	entrepeneur4lyf/code-graph-mcp	ok	false	-	-	-	true	false	false	true	false	Local-first Python MCP server; file watcher and analyzer execution are expected and bounded to workspace path.
-CodeGraphContext CodeGraphContext	CodeGraphContext/CodeGraphContext	ok	false	-	-	-	true	true	true	true	true	CLI wrapper emits non-protocol output on MCP startup path in this environment; requires compatibility fix.
+CodeGraphContext CodeGraphContext	CodeGraphContext/CodeGraphContext	ok	false	-	-	-	true	true	true	true	true	Server uses legacy newline JSON-RPC transport; strict framed stdio clients require compatibility adapter.
 ChrisRoyse CodeGraph	ChrisRoyse/CodeGraph	ok	true	-	-	-	false	false	false	false	true	Analyzer project with MCP-adjacent components; not maintained as a standalone Codex-ready MCP package.
 ADORSYS-GIS experimental-code-graph	ADORSYS-GIS/experimental-code-graph	ok	true	-	-	-	false	false	false	false	true	Analyzer project with MCP-adjacent components; not maintained as a standalone Codex-ready MCP package.
 neo4j mcp	neo4j/mcp	ok	false	-	-	-	false	true	true	true	true	Official server with optional telemetry (disabled in tests); requires Neo4j + APOC runtime.

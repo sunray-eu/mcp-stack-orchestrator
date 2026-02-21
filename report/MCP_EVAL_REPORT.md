@@ -33,9 +33,9 @@ Safety controls enforced:
 
 New **tested** entries:
 - `entrepeneur4lyf code-graph-mcp` (tested, 7.2)
-- `CodeGraphContext CodeGraphContext` (tested, 5.4)
-- `danyQe codebase-mcp` (tested, 4.7)
-- `NgoTaiCo mcp-codebase-index` (tested, 4.6)
+- `CodeGraphContext CodeGraphContext` (tested, 6.0)
+- `danyQe codebase-mcp` (tested, 5.3)
+- `NgoTaiCo mcp-codebase-index` (tested, 5.1)
 - `neo4j mcp` (tested, 7.5)
 
 New **evaluated** entries:
@@ -47,7 +47,7 @@ Notes:
 
 - `neo4j/mcp` was validated against local `Neo4j 5.26.19 + APOC` and passed read-only schema smoke (`get-schema`).
 - `code-graph-mcp` passed Codex smoke on both TS and PY target repositories (guide + analysis calls).
-- `CodeGraphContext`, `codebase-mcp`, and `mcp-codebase-index` all failed MCP initialize handshake in this Codex runtime profile despite startup-path retries.
+- `CodeGraphContext`, `codebase-mcp`, and `mcp-codebase-index` were re-tested and found recoverable through compatibility handling (legacy newline transport and stdout-log isolation), but are still not recommended for default production profile.
 - `chroma-ui` is useful as a GUI but is not an MCP server candidate.
 
 ## Third-Wave Coverage Added
@@ -84,6 +84,7 @@ Notes:
 Focused live validation artifact:
 
 - `<STACK_ROOT>/report/ARCHON_SURREAL_RUNTIME_VALIDATION.md` (full SurrealDB MCP and Archon remote-Supabase run details)
+- `<STACK_ROOT>/report/NEW_WAVE_COMPAT_RETEST_2026-02-21.md` (root-cause + compatibility remediation for the 3 previously failing new-wave MCPs)
 
 Web UI focused follow-up artifacts:
 
@@ -311,10 +312,10 @@ If `<backup_dir>` is omitted, the script falls back to `<STACK_ROOT>/.latest-bac
 | Docfork | docs-context | evaluated | 6.0 | MCP docs-context SaaS with good freshness claims, but cloud-first service and limited local/offline control lower risk-adjusted score. |
 | LlamaIndex MCP examples | method | evaluated | 6.1 | Useful MCP integration examples and client patterns, but reference docs rather than a standalone server candidate. |
 | thakkaryash94 chroma-ui | method-ui | evaluated | 3.8 | Helpful Chroma GUI for humans, but not an MCP server and not directly useful for Codex MCP routing. |
-| danyQe codebase-mcp | repo-assistant | tested | 4.7 | Interesting architecture, but initialize handshake failed in this environment and backend+proxy dual-process setup adds friction. |
-| NgoTaiCo mcp-codebase-index | repo-search | tested | 4.6 | Relevant idea, but handshake failed repeatedly; default path requires Gemini + Qdrant API credentials. |
+| danyQe codebase-mcp | repo-assistant | tested | 5.3 | Transport compatibility is achievable, but backend+proxy dual-process architecture still adds significant setup/operational friction. |
+| NgoTaiCo mcp-codebase-index | repo-search | tested | 5.1 | Transport/logging compatibility is achievable, but reliable use still depends on valid Gemini + Qdrant credentials and quota behavior. |
 | entrepeneur4lyf code-graph-mcp | repo-graph | tested | 7.2 | Clean local-first MCP with successful smoke calls on both TS and PY targets; strong optional structural analysis add-on. |
-| CodeGraphContext CodeGraphContext | repo-graph | tested | 5.4 | Rich graph capabilities, but startup path was protocol-incompatible for stable Codex MCP handshake in this run profile. |
+| CodeGraphContext CodeGraphContext | repo-graph | tested | 6.0 | Rich graph capabilities; workable via legacy-transport compatibility path, but not a native strict-MCP stdio fit yet. |
 | ChrisRoyse CodeGraph | repo-graph-platform | evaluated | 4.9 | Analyzer platform with MCP-adjacent module; bundled MCP implementation is not production-ready for Codex workflows. |
 | ADORSYS-GIS experimental-code-graph | repo-graph-platform | evaluated | 4.4 | Experimental fork with lower maintenance activity and no stable Codex-ready MCP distribution path. |
 | neo4j mcp | graph-db | tested | 7.5 | Official Neo4j MCP passed local read-only schema smoke cleanly; excellent graph bridge when Neo4j+APOC infra is justified. |

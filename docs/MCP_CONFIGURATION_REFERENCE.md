@@ -24,6 +24,7 @@ It is intentionally split by:
 - Basic Memory: <https://github.com/basicmachines-co/basic-memory>
 - Qdrant MCP: <https://github.com/qdrant/mcp-server-qdrant>
 - Chroma MCP: <https://github.com/chroma-core/chroma-mcp>
+- Chroma UI: <https://github.com/thakkaryash94/chroma-ui>
 - MCP Language Server: <https://github.com/isaacphi/mcp-language-server>
 - SurrealMCP: <https://github.com/surrealdb/surrealmcp>
 - Archon: <https://github.com/coleam00/Archon>
@@ -39,6 +40,10 @@ Use `.secrets.env.example` as the template.
 ### Shared / Infra
 
 - `MCP_HOST_FS_ROOT`, `MCP_HOST_FS_USERS`
+- Chroma UI runtime:
+  - `CHROMA_UI_PORT` (default: `18110`)
+  - `CHROMA_UI_IMAGE` (default: `node:20-alpine`)
+  - `CHROMA_UI_SUGGESTED_URL` (default: `http://127.0.0.1:18000`)
 - Surreal runtime:
   - `SURREALDB_ROOT_USER`, `SURREALDB_ROOT_PASS`
   - `SURREALDB_DEFAULT_NS`, `SURREALDB_DEFAULT_DB`
@@ -170,6 +175,7 @@ These are parsed as strict `KEY=VALUE` lines by wrapper scripts.
 
 - Managed server IDs
 - Profile composition (`core`, `core-code-graph`, `core-neo4j`, `core-surreal`, `core-archon`, `full`, `full-code-graph`, `full-neo4j`, `full-graph`)
+- `full` now includes both graph add-ons (`mcpx-code-graph` + `mcpx-neo4j`) by default
 - Per-agent transport wiring (Codex/Claude/OpenCode)
 
 Operational flow:

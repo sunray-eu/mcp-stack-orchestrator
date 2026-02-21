@@ -58,6 +58,8 @@
       "mcpx-qdrant",
       "mcpx-chroma",
       "mcpx-lsp",
+      "mcpx-code-graph",
+      "mcpx-neo4j",
       "mcpx-surrealdb-http",
       "mcpx-archon-http",
       "mcpx-docs-mcp-http"

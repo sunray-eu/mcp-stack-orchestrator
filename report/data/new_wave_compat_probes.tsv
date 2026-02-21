@@ -1,0 +1,7 @@
+timestamp	candidate	probe_mode	initialize_ok	tools_list_ok	tool_call_ok	root_cause	resolution_path
+2026-02-21T13:35:00Z	CodeGraphContext/CodeGraphContext	framed-stdio	false	false	false	legacy newline JSON-RPC transport (no Content-Length framing)	use newline transport adapter for strict MCP clients; optional wrapper required
+2026-02-21T13:37:00Z	CodeGraphContext/CodeGraphContext	newline-jsonrpc	true	true	true	legacy transport only	server functional after protocol adaptation; kept out of default profile due adapter overhead
+2026-02-21T13:44:00Z	danyQe/codebase-mcp	framed-stdio	false	false	false	legacy newline JSON-RPC transport (FastMCP compatibility layer)	use newline transport adapter; server proxy works but requires separate FastAPI backend for full features
+2026-02-21T13:46:00Z	danyQe/codebase-mcp	newline-jsonrpc	true	true	true	backend dependency (localhost:6789) for operational tools	start and supervise FastAPI backend alongside MCP proxy; high setup friction remains
+2026-02-21T13:53:00Z	NgoTaiCo/mcp-codebase-index	framed-stdio	false	false	false	stdout logging contaminates MCP channel + credential-sensitive startup	redirect runtime logs to stderr and keep protocol channel clean
+2026-02-21T13:56:00Z	NgoTaiCo/mcp-codebase-index	newline-jsonrpc+stderr-log-redirect	true	true	true	requires valid GEMINI_API_KEY and QDRANT configuration for stable indexing	use compatibility launch wrapper plus credential validation; keep out of default production profile

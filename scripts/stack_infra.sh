@@ -23,7 +23,7 @@ Usage:
   stack_infra.sh <bootstrap|up|down|status> [core|core-code-graph|core-neo4j|surreal|archon|docs|full|full-code-graph|full-neo4j|full-graph]
 
 Profiles:
-  core     -> qdrant backend + dashboard on 127.0.0.1:6333
+  core     -> qdrant + chroma + chroma-ui on 127.0.0.1:6333/18000/18110
   surreal  -> core + local SurrealDB + surrealdb MCP + Surrealist UI (127.0.0.1:18080/18082/18083)
   archon   -> core + archon server + mcp + web ui (127.0.0.1:18081/18051/13737)
   docs     -> core + docs-mcp-server web ui/http endpoint (127.0.0.1:16280)
@@ -32,11 +32,11 @@ Profiles:
               supports private GitHub indexing via GITHUB_TOKEN / GH_TOKEN
               runs in standalone server mode (embedded worker included upstream)
   core-neo4j -> core + local Neo4j+APOC (127.0.0.1:17474/17687)
-  full     -> core + surreal + archon + docs
+  full     -> core + local Neo4j+APOC + surreal + archon + docs
   core-code-graph -> core infra + optional code-graph MCP profile
-  full-code-graph -> full infra + optional code-graph MCP profile
-  full-neo4j -> full + local Neo4j+APOC
-  full-graph -> full + local Neo4j+APOC (for Neo4j + code-graph MCP profile)
+  full-code-graph -> full compatibility variant without Neo4j runtime
+  full-neo4j -> full compatibility variant without code-graph MCP
+  full-graph -> compatibility alias of full graph-enabled runtime
 
 Filesystem access (MCP containers):
   - Host root is mounted read-only to /hostfs
@@ -567,6 +567,18 @@ qdrant_down() {
   docker rm -f ai-mcp-qdrant mcp-eval-qdrant >/dev/null 2>&1 || true
 }
 
+chroma_up() {
+  require_file "$INFRA_COMPOSE"
+  write_infra_runtime_env false
+  infra_compose up -d chroma chroma-ui
+}
+
+chroma_down() {
+  require_file "$INFRA_COMPOSE"
+  infra_compose rm -sf chroma-ui chroma >/dev/null 2>&1 || true
+  docker rm -f ai-mcp-chroma-ui ai-mcp-chroma >/dev/null 2>&1 || true
+}
+
 neo4j_up() {
   require_file "$INFRA_COMPOSE"
   write_infra_runtime_env false
@@ -672,6 +684,7 @@ tcp_probe() {
 show_endpoints() {
   local surrealdb_rpc_port
   local docs_mcp_public_port
+  local chroma_ui_port
   local neo4j_http_port
   local neo4j_bolt_port
   surrealdb_rpc_port="$(read_env_var "SURREALDB_RPC_PORT" "$INFRA_RUNTIME_ENV")"
@@ -690,11 +703,17 @@ show_endpoints() {
   if [ -z "${docs_mcp_public_port:-}" ]; then
     docs_mcp_public_port="16280"
   fi
+  chroma_ui_port="$(read_env_var "CHROMA_UI_PORT" "$INFRA_RUNTIME_ENV")"
+  if [ -z "${chroma_ui_port:-}" ]; then
+    chroma_ui_port="18110"
+  fi
   echo
   echo "== Endpoint checks =="
   printf "%-24s %-32s %s\n" "service" "url" "http"
   printf "%-24s %-32s %s\n" "qdrant-api" "http://127.0.0.1:6333/healthz" "$(http_code 'http://127.0.0.1:6333/healthz')"
   printf "%-24s %-32s %s\n" "qdrant-dashboard" "http://127.0.0.1:6333/dashboard/" "$(http_code 'http://127.0.0.1:6333/dashboard/')"
+  printf "%-24s %-32s %s\n" "chroma-api" "http://127.0.0.1:18000/api/v2/heartbeat" "$(http_code 'http://127.0.0.1:18000/api/v2/heartbeat')"
+  printf "%-24s %-32s %s\n" "chroma-ui" "http://127.0.0.1:${chroma_ui_port}" "$(http_code "http://127.0.0.1:${chroma_ui_port}")"
   if docker ps --format '{{.Names}}' | grep -Fx "ai-mcp-neo4j" >/dev/null 2>&1; then
     printf "%-24s %-32s %s\n" "neo4j-http" "http://127.0.0.1:${neo4j_http_port}" "$(http_code "http://127.0.0.1:${neo4j_http_port}")"
     printf "%-24s %-32s %s\n" "neo4j-bolt-probe" "tcp://127.0.0.1:${neo4j_bolt_port}" "$(tcp_probe "127.0.0.1" "${neo4j_bolt_port}")"
@@ -755,40 +774,50 @@ case "$action" in
     case "$profile" in
       core)
         qdrant_up
+        chroma_up
         ;;
       core-code-graph)
         qdrant_up
+        chroma_up
         ;;
       core-neo4j)
         qdrant_up
+        chroma_up
         neo4j_up
         ;;
       surreal)
         qdrant_up
+        chroma_up
         surreal_up
         ;;
       archon)
         qdrant_up
+        chroma_up
         archon_up
         ;;
       docs)
         qdrant_up
+        chroma_up
         docs_up
         ;;
       full)
         qdrant_up
+        chroma_up
+        neo4j_up
         surreal_up
         archon_up
         docs_up
         ;;
       full-code-graph)
         qdrant_up
+        chroma_up
         surreal_up
         archon_up
         docs_up
         ;;
       full-neo4j)
         qdrant_up
+        chroma_up
         neo4j_up
         surreal_up
         archon_up
@@ -796,6 +825,7 @@ case "$action" in
         ;;
       full-graph)
         qdrant_up
+        chroma_up
         neo4j_up
         surreal_up
         archon_up
@@ -807,37 +837,46 @@ case "$action" in
   down)
     case "$profile" in
       core)
+        chroma_down
         qdrant_down
         ;;
       core-code-graph)
+        chroma_down
         qdrant_down
         ;;
       core-neo4j)
         neo4j_down
+        chroma_down
         qdrant_down
         ;;
       surreal)
         surreal_down
+        chroma_down
         qdrant_down
         ;;
       archon)
         archon_down
+        chroma_down
         qdrant_down
         ;;
       docs)
         docs_down
+        chroma_down
         qdrant_down
         ;;
       full)
         docs_down
         archon_down
         surreal_down
+        neo4j_down
+        chroma_down
         qdrant_down
         ;;
       full-code-graph)
         docs_down
         archon_down
         surreal_down
+        chroma_down
         qdrant_down
         ;;
       full-neo4j)
@@ -845,6 +884,7 @@ case "$action" in
         archon_down
         surreal_down
         neo4j_down
+        chroma_down
         qdrant_down
         ;;
       full-graph)
@@ -852,6 +892,7 @@ case "$action" in
         archon_down
         surreal_down
         neo4j_down
+        chroma_down
         qdrant_down
         ;;
     esac

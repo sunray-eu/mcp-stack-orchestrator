@@ -212,9 +212,11 @@ check_codex_profile_servers
 if [ "$PROFILE" = "core" ] || [ "$PROFILE" = "core-code-graph" ] || [ "$PROFILE" = "core-neo4j" ] || [ "$PROFILE" = "surreal" ] || [ "$PROFILE" = "archon" ] || [ "$PROFILE" = "docs" ] || [ "$PROFILE" = "full" ] || [ "$PROFILE" = "full-code-graph" ] || [ "$PROFILE" = "full-neo4j" ] || [ "$PROFILE" = "full-graph" ]; then
   check_endpoint "qdrant-api" "http://127.0.0.1:6333/healthz" "200"
   check_endpoint "qdrant-dashboard" "http://127.0.0.1:6333/dashboard/" "200"
+  check_endpoint "chroma-api" "http://127.0.0.1:18000/api/v2/heartbeat" "200"
+  check_endpoint "chroma-ui" "http://127.0.0.1:18110" "200"
 fi
 
-if [ "$PROFILE" = "core-neo4j" ] || [ "$PROFILE" = "full-neo4j" ] || [ "$PROFILE" = "full-graph" ]; then
+if [ "$PROFILE" = "core-neo4j" ] || [ "$PROFILE" = "full" ] || [ "$PROFILE" = "full-neo4j" ] || [ "$PROFILE" = "full-graph" ]; then
   check_endpoint "neo4j-http" "http://127.0.0.1:17474" "200,302"
 fi
 
