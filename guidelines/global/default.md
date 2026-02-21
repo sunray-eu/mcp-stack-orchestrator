@@ -16,6 +16,10 @@ Minimum expectations:
 - Exact typing and boundary validation (no cast-to-compile workarounds).
 - Small, reversible changes with explicit test evidence.
 - Documentation and operational impact updated with code changes.
-- Use any relevant available MCP/internal/web-search/skill capability to maximize correctness and speed.
+- Use any relevant MCP/internal/web-search/skill capability with priority-based retrieval:
+  - project-local and LSP context first,
+  - then project-scoped memory/indexes,
+  - then graph/global memory as needed,
+  - then external sources when required.
 - Persist durable, non-sensitive knowledge to enabled memory MCP backends with consistent metadata.
 - Agents are allowed to improve guidelines, indexing, memory procedures, and workflows to increase quality and effectiveness (with safety/reversibility preserved).

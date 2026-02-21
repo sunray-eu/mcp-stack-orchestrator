@@ -56,3 +56,11 @@ memory	cbunting99 enhanced-mcp-memory	https://github.com/cbunting99/enhanced-mcp
 other	arabold docs-mcp-server	https://github.com/arabold/docs-mcp-server	github	arabold/docs-mcp-server
 other	Docfork	https://docfork.com/	website	-
 method	LlamaIndex MCP examples	https://developers.llamaindex.ai/python/examples/tools/mcp/	website	-
+method	thakkaryash94 chroma-ui	https://github.com/thakkaryash94/chroma-ui	github	thakkaryash94/chroma-ui
+other	danyQe codebase-mcp	https://github.com/danyQe/codebase-mcp	github	danyQe/codebase-mcp
+other	NgoTaiCo mcp-codebase-index	https://github.com/NgoTaiCo/mcp-codebase-index	github	NgoTaiCo/mcp-codebase-index
+other	entrepeneur4lyf code-graph-mcp	https://github.com/entrepeneur4lyf/code-graph-mcp	github	entrepeneur4lyf/code-graph-mcp
+other	CodeGraphContext CodeGraphContext	https://github.com/CodeGraphContext/CodeGraphContext	github	CodeGraphContext/CodeGraphContext
+method	ChrisRoyse CodeGraph	https://github.com/ChrisRoyse/CodeGraph	github	ChrisRoyse/CodeGraph
+method	ADORSYS-GIS experimental-code-graph	https://github.com/ADORSYS-GIS/experimental-code-graph	github	ADORSYS-GIS/experimental-code-graph
+other	neo4j mcp	https://github.com/neo4j/mcp	github	neo4j/mcp

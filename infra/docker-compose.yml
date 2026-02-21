@@ -71,6 +71,24 @@ services:
       timeout: 5s
       retries: 10
 
+  neo4j:
+    image: ${NEO4J_IMAGE:-neo4j:5.26.19}
+    container_name: ai-mcp-neo4j
+    ports:
+      - "${NEO4J_HTTP_PORT:-17474}:7474"
+      - "${NEO4J_BOLT_PORT:-17687}:7687"
+    environment:
+      NEO4J_AUTH: ${NEO4J_DOCKER_AUTH:-neo4j/testpass}
+      NEO4J_PLUGINS: '["apoc"]'
+    volumes:
+      - ./volumes/neo4j:/data
+      - ./volumes/neo4j-logs:/logs
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c '</dev/tcp/127.0.0.1/7687'"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+
   surrealmcp:
     image: ${SURREALMCP_IMAGE:-surrealdb/surrealmcp:latest}
     container_name: ai-mcp-surreal-mcp

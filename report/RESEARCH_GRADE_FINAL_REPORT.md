@@ -1,12 +1,12 @@
 # Research-Grade Final Report: MCP Stack Evaluation, Hardening, and Post-Evaluation Normalization
 
-Date: 2026-02-20
+Date: 2026-02-21
 Authoring mode: reproducible engineering study
 Scope: end-to-end MCP evaluation + productionization + cleanup/archival controls
 
 ## Abstract
 
-This report presents a structured, reproducible evaluation of MCP servers and agent-integration pathways under a security-first local-development posture. The study covers candidate discovery, static risk analysis, runtime validation, dual-language project applicability, final stack synthesis, stress testing, and post-evaluation normalization. The resulting production profile is a layered MCP architecture centered on `basic-memory`, `qdrant`, `chroma`, `lsp`, and optional workflow/graph extensions (`Archon`, `SurrealDB`) behind compatibility guards. Final operational integrity remained intact after cleanup: runtime doctor checks returned `PASS=36, WARN=0, FAIL=0`.
+This report presents a structured, reproducible evaluation of MCP servers and agent-integration pathways under a security-first local-development posture. The study covers candidate discovery, static risk analysis, runtime validation, dual-language project applicability, final stack synthesis, stress testing, and post-evaluation normalization. The resulting production profile is a layered MCP architecture centered on `basic-memory`, `qdrant`, `chroma`, `lsp`, and optional workflow/graph extensions (`Archon`, `SurrealDB`, `code-graph`, `neo4j/mcp`) behind compatibility guards. Final operational integrity remained intact after cleanup: runtime doctor checks returned `PASS=36, WARN=0, FAIL=0`.
 
 ## 1. Research Questions
 
@@ -28,9 +28,9 @@ Both were used for comparative validation and dynamic workspace routing checks.
 ### 2.2 Candidate Universe and Coverage
 
 Candidate inventory outcomes (from `report/data/candidate_outcomes.tsv`):
-- total entries: `57`
-- `tested`: `40`
-- `evaluated` (non-MCP / workflow frameworks): `12`
+- total entries: `65`
+- `tested`: `45`
+- `evaluated` (non-MCP / workflow frameworks): `15`
 - `skipped` (unsupported/unsafe/non-actionable): `5`
 
 ### 2.3 Scoring Model
@@ -42,13 +42,13 @@ Each candidate was scored on a 0–10 scale under weighted criteria:
 - setup friction
 - maintenance health
 
-Empirical mean score across all entries: `5.698`.
+Empirical mean score across all entries: `5.651`.
 
 Top observed scores:
 1. `basic-memory` (`7.8`)
 2. `qdrant mcp-server-qdrant` (`7.7`)
 3. `chroma-mcp` (`7.6`)
-4. `code-graph-rag-mcp` (`7.5`)
+4. `code-graph-rag-mcp` (`7.5`) and `neo4j/mcp` (`7.5`)
 
 ## 3. Methodological Controls
 
@@ -122,6 +122,7 @@ Interpretation:
 
 - **Default (`core`)**: `basic-memory + qdrant + chroma + lsp`
 - **Extended (`full`)**: `core + Archon + SurrealDB + docs UI/runtime`
+- **Optional graph profiles**: `core-code-graph`, `full-code-graph`, `core-neo4j`, `full-neo4j`, `full-graph`
 
 Reasoning:
 - default path optimizes coding speed/correctness ratio
@@ -135,6 +136,8 @@ Reasoning:
 - Local vector fallback and filtering: `mcpx-chroma`
 - Workflow/project/document governance: `mcpx-archon-http`
 - Structured record/graph operations: `mcpx-surrealdb-http`
+- Structural code graph analysis: `mcpx-code-graph` (optional)
+- Graph database schema/query reasoning: `mcpx-neo4j` (optional, read-only default)
 
 ### 5.3 Why Not “Always Use Everything Equally”
 

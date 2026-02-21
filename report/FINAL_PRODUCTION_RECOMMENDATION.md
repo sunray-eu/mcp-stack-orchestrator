@@ -1,6 +1,6 @@
 # Final Production MCP Recommendation
 
-Date: 2026-02-20
+Date: 2026-02-21
 
 ## Final Ranking (from full sweep)
 
@@ -10,6 +10,8 @@ Date: 2026-02-20
 4. `isaacphi/mcp-language-server` (best practical code navigation quality)
 5. `SurrealDB MCP` (validated, robust; backend/tooling role)
 6. `Archon` (validated, high-context workflow; high setup cost)
+7. `entrepeneur4lyf/code-graph-mcp` (new-wave tested add-on; strong structural analysis)
+8. `neo4j/mcp` (new-wave tested add-on; robust graph query bridge when Neo4j+APOC is available)
 
 ## Final Production Decision
 
@@ -17,6 +19,11 @@ Use a **profiled stack** instead of one static config:
 
 - `core` (recommended default): qdrant-backed retrieval + baseline MCP servers with dashboard visibility.
 - `full`: includes `core + SurrealDB MCP + Archon MCP + docs-mcp web/MCP runtime`.
+- `core-code-graph`: `core + code-graph MCP` (optional structural-analysis profile).
+- `full-code-graph`: `full + code-graph MCP` (optional structural-analysis profile).
+- `core-neo4j`: `core + neo4j MCP` (optional graph-query profile).
+- `full-neo4j`: `full + neo4j MCP` (optional graph-query profile).
+- `full-graph`: `full + code-graph MCP + neo4j MCP` (maximum graph-analysis profile).
 
 This lets you keep correctness and speed in normal coding, while enabling heavy context workflows on demand.
 
@@ -69,6 +76,7 @@ Managed MCP names:
 - `mcpx-lsp`
 - `mcpx-surrealdb-http`
 - `mcpx-archon-http`
+- `mcpx-docs-mcp-http`
 
 Legacy managed names retained only for automatic cleanup during profile re-apply:
 - `mcpx-qdrant-global`
@@ -79,6 +87,7 @@ Legacy managed names retained only for automatic cleanup during profile re-apply
 
 UI/infra services started by `task infra:up` (profile-dependent):
 - `ai-mcp-qdrant`
+- `ai-mcp-neo4j` (neo4j-enabled profiles)
 - `ai-mcp-surreal-mcp`
 - `ai-mcp-surrealist`
 - `ai-mcp-archon-server`
@@ -149,6 +158,16 @@ Apply `full` to all agents:
 task profile:apply PROFILE=full AGENTS=codex,claude,opencode CODEX_TARGET=both
 ```
 
+Apply graph-enabled optional profiles:
+
+```bash
+task profile:apply PROFILE=core-code-graph AGENTS=codex,claude,opencode CODEX_TARGET=both
+task profile:apply PROFILE=full-code-graph AGENTS=codex,claude,opencode CODEX_TARGET=both
+task profile:apply PROFILE=core-neo4j AGENTS=codex,claude,opencode CODEX_TARGET=both
+task profile:apply PROFILE=full-neo4j AGENTS=codex,claude,opencode CODEX_TARGET=both
+task profile:apply PROFILE=full-graph AGENTS=codex,claude,opencode CODEX_TARGET=both
+```
+
 Disable managed MCP stack (keep non-managed MCPs untouched):
 
 ```bash
@@ -159,6 +178,9 @@ task profile:apply PROFILE=none AGENTS=codex,claude,opencode CODEX_TARGET=both
 
 - Use `core` when implementing/refactoring/debugging inside TS+PY repos.
 - Use `full` when you need additional memory/workflow layers (Archon task/doc graph + Surreal-backed operations + docs-mcp UI/runtime).
+- Use `core-code-graph` or `full-code-graph` when you need deeper dependency/call-graph analysis across large codebases.
+- Use `core-neo4j`/`full-neo4j` when relationship-heavy graph queries and schema introspection materially improve reasoning.
+- Use `full-graph` when you want both local structural code graphing and Neo4j-backed graph querying in the same session.
 
 ## Global Dynamic Behavior
 
@@ -177,6 +199,7 @@ Per-repo overrides (only when needed):
 - Archon UI: `http://127.0.0.1:13737`
 - Surrealist UI: `http://127.0.0.1:18082`
 - Docs MCP UI: `http://127.0.0.1:16280`
+- Neo4j Browser (Neo4j-enabled profiles): `http://127.0.0.1:17474`
 
 Live status snapshot:
 - `<STACK_ROOT>/report/ui_endpoint_status.tsv`
@@ -195,6 +218,10 @@ Live status snapshot:
   - Read-only direct user path mount: `/Users` -> `/Users`
   - This enables direct indexing of local repo files while preventing in-container writes to host filesystem.
   - Mount sources are configurable via `MCP_HOST_FS_ROOT` and `MCP_HOST_FS_USERS` in `<STACK_ROOT>/.secrets.env`.
+- Neo4j MCP policy:
+  - Default wrapper mode is read-only (`NEO4J_READ_ONLY=true`).
+  - Local dev runtime uses `neo4j:5.26.19` + APOC and exposes Browser on `127.0.0.1:17474`.
+  - Enable only for graph-centric tasks (`core-neo4j`, `full-neo4j`, `full-graph`) to avoid unnecessary infra overhead.
 - No secrets are printed by stack scripts.
 - Qdrant MCP instances now share `QDRANT_URL=http://127.0.0.1:6333` with per-server `COLLECTION_NAME` isolation, enabling dashboard visibility without data-file lock collisions.
 - Managed infra image refs are centralized and digest-pinned in `<STACK_ROOT>/infra/versions.env`.

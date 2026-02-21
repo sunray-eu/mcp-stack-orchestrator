@@ -1,11 +1,13 @@
 {
-  "version": "2026-02-20-global-dynamic",
+  "version": "2026-02-21-global-dynamic",
   "notes": "Standardized global MCP stack profiles across Codex, Claude Code, and OpenCode with runtime workspace inference.",
   "managed_servers": [
     "mcpx-basic-memory",
     "mcpx-qdrant",
     "mcpx-chroma",
     "mcpx-lsp",
+    "mcpx-code-graph",
+    "mcpx-neo4j",
     "mcpx-surrealdb-http",
     "mcpx-archon-http",
     "mcpx-docs-mcp-http",
@@ -22,6 +24,20 @@
       "mcpx-qdrant",
       "mcpx-chroma",
       "mcpx-lsp"
+    ],
+    "core-code-graph": [
+      "mcpx-basic-memory",
+      "mcpx-qdrant",
+      "mcpx-chroma",
+      "mcpx-lsp",
+      "mcpx-code-graph"
+    ],
+    "core-neo4j": [
+      "mcpx-basic-memory",
+      "mcpx-qdrant",
+      "mcpx-chroma",
+      "mcpx-lsp",
+      "mcpx-neo4j"
     ],
     "core-surreal": [
       "mcpx-basic-memory",
@@ -42,6 +58,37 @@
       "mcpx-qdrant",
       "mcpx-chroma",
       "mcpx-lsp",
+      "mcpx-surrealdb-http",
+      "mcpx-archon-http",
+      "mcpx-docs-mcp-http"
+    ],
+    "full-code-graph": [
+      "mcpx-basic-memory",
+      "mcpx-qdrant",
+      "mcpx-chroma",
+      "mcpx-lsp",
+      "mcpx-code-graph",
+      "mcpx-surrealdb-http",
+      "mcpx-archon-http",
+      "mcpx-docs-mcp-http"
+    ],
+    "full-neo4j": [
+      "mcpx-basic-memory",
+      "mcpx-qdrant",
+      "mcpx-chroma",
+      "mcpx-lsp",
+      "mcpx-neo4j",
+      "mcpx-surrealdb-http",
+      "mcpx-archon-http",
+      "mcpx-docs-mcp-http"
+    ],
+    "full-graph": [
+      "mcpx-basic-memory",
+      "mcpx-qdrant",
+      "mcpx-chroma",
+      "mcpx-lsp",
+      "mcpx-code-graph",
+      "mcpx-neo4j",
       "mcpx-surrealdb-http",
       "mcpx-archon-http",
       "mcpx-docs-mcp-http"
@@ -210,6 +257,82 @@
           "MCP_PY_LSP": "pyright-langserver"
         },
         "timeout": 120000,
+        "enabled": true
+      }
+    },
+    "mcpx-code-graph": {
+      "summary": "Code-graph MCP for cross-language structural analysis (optional add-on profile).",
+      "codex": {
+        "kind": "stdio",
+        "command": "${STACK_ROOT}/scripts/mcpx_code_graph_auto.sh",
+        "args": [],
+        "env": {},
+        "startup_timeout_sec": 120
+      },
+      "claude": {
+        "transport": "stdio",
+        "command": [
+          "${STACK_ROOT}/scripts/mcpx_code_graph_auto.sh"
+        ],
+        "env": {}
+      },
+      "opencode": {
+        "type": "local",
+        "command": [
+          "${STACK_ROOT}/scripts/mcpx_code_graph_auto.sh"
+        ],
+        "environment": {},
+        "timeout": 120000,
+        "enabled": true
+      }
+    },
+    "mcpx-neo4j": {
+      "summary": "Neo4j MCP bridge for graph-aware schema/query analysis (optional add-on profile).",
+      "codex": {
+        "kind": "stdio",
+        "command": "${STACK_ROOT}/scripts/mcpx_neo4j_auto.sh",
+        "args": [],
+        "env": {
+          "NEO4J_URI": "bolt://127.0.0.1:17687",
+          "NEO4J_USERNAME": "neo4j",
+          "NEO4J_PASSWORD": "testpass",
+          "NEO4J_DATABASE": "neo4j",
+          "NEO4J_READ_ONLY": "true",
+          "NEO4J_TELEMETRY": "false",
+          "MCP_NEO4J_VERSION": "v1.4.1"
+        },
+        "startup_timeout_sec": 180
+      },
+      "claude": {
+        "transport": "stdio",
+        "command": [
+          "${STACK_ROOT}/scripts/mcpx_neo4j_auto.sh"
+        ],
+        "env": {
+          "NEO4J_URI": "bolt://127.0.0.1:17687",
+          "NEO4J_USERNAME": "neo4j",
+          "NEO4J_PASSWORD": "testpass",
+          "NEO4J_DATABASE": "neo4j",
+          "NEO4J_READ_ONLY": "true",
+          "NEO4J_TELEMETRY": "false",
+          "MCP_NEO4J_VERSION": "v1.4.1"
+        }
+      },
+      "opencode": {
+        "type": "local",
+        "command": [
+          "${STACK_ROOT}/scripts/mcpx_neo4j_auto.sh"
+        ],
+        "environment": {
+          "NEO4J_URI": "bolt://127.0.0.1:17687",
+          "NEO4J_USERNAME": "neo4j",
+          "NEO4J_PASSWORD": "testpass",
+          "NEO4J_DATABASE": "neo4j",
+          "NEO4J_READ_ONLY": "true",
+          "NEO4J_TELEMETRY": "false",
+          "MCP_NEO4J_VERSION": "v1.4.1"
+        },
+        "timeout": 180000,
         "enabled": true
       }
     },

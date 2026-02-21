@@ -70,6 +70,7 @@ Stop and escalate when:
 
 - For best task completion, use any available and relevant capability: MCP servers, internal tools, skills, and web search.
 - At task start, discover available tools and choose the best-fit path instead of defaulting to a single tool.
+- Use priority-based retrieval and routing; do not query every available memory/index/graph backend by default.
 - Prefer local-first and low-risk execution paths, but use remote/provider tools when they materially improve correctness or speed.
 - For framework/library behavior, verify against primary sources (official docs, upstream repos, version-accurate references) before implementation.
 - Use specialized tools by intent:
@@ -78,6 +79,31 @@ Stop and escalate when:
   - Runtime/infra tools for health checks, logs, and environment verification.
   - Security/scanning tools for sensitive or high-risk changes.
 - Apply relevant skills whenever a matching skill exists for the task.
+
+#### Context Retrieval Order (Mandatory)
+
+1. Start with project-local truth: `AGENTS.md`, `.ai/context/*`, repository code, and tests.
+2. Use `mcpx-lsp` by default for symbol navigation, references/definitions, diagnostics, and safe refactors.
+3. Query project-scoped memory/indexes first (`mcpx-qdrant`, `mcpx-basic-memory`, project namespace/collection equivalents).
+4. Use graph/structured memory tools (`mcpx-surrealdb-http`, memory graph, Archon) when relationship or cross-service reasoning is required.
+5. Use global memory only for stable cross-project standards, preferences, and conventions.
+6. Use external docs/search tools when local/project context is insufficient or version-accurate semantics must be verified.
+
+#### Progressive Expansion and Stop Rule
+
+- Start with the smallest set of high-signal sources required for the task.
+- Expand to additional MCPs only when evidence is insufficient, conflicting, or missing.
+- Stop retrieval expansion once confidence is high and evidence is adequate to execute safely.
+
+#### Conflict Resolution Rule
+
+- Resolve conflicts using this priority:
+  - runtime behavior and tests,
+  - repository code and contracts,
+  - project-scoped memory/indexes,
+  - global memory,
+  - external sources.
+- If conflict remains, state the conflict explicitly and proceed with the highest-priority evidence.
 
 #### Memory Persistence Policy
 
@@ -91,6 +117,11 @@ Stop and escalate when:
 - Keep memory entries structured and searchable with consistent tags/metadata (company, project, namespace).
 - Never store secrets, tokens, personal data, or transient/debug noise in memory systems.
 - When multiple memory stores are enabled, keep records semantically aligned (same facts, adapted format) to reduce retrieval drift.
+- After meaningful task completion, write back durable outcomes to project memory stores:
+  - decisions,
+  - invariants,
+  - validated operational commands,
+  - root-cause findings and mitigations.
 
 ### 1.7 Continuous Self-Improvement Policy
 

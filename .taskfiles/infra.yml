@@ -11,7 +11,7 @@ tasks:
       - ./scripts/stack_infra.sh bootstrap {{.PROFILE}}
 
   up:
-    desc: Start infrastructure for a profile (`core|surreal|archon|docs|full`).
+    desc: Start infrastructure for a profile (`core|core-code-graph|core-neo4j|surreal|archon|docs|full|full-code-graph|full-neo4j|full-graph`).
     cmds:
       - ./scripts/stack_infra.sh up {{.PROFILE}}
 
@@ -36,4 +36,3 @@ tasks:
     cmds:
       - task: down
         vars: { PROFILE: "full" }
-

@@ -1,49 +1,57 @@
 name	repo	status	has_package_json	preinstall	postinstall	prepare	has_pyproject	has_dockerfile	mentions_api_key	mentions_telemetry	mentions_remote_service	notes
 shinpr mcp-local-rag	shinpr/mcp-local-rag	ok	true	-	-	husky	false	false	true	false	true	install scripts present
 yikizi mcp-local-rag	yikizi/mcp-local-rag	ok	true	-	-	husky	false	false	true	false	true	install scripts present
-chroma-core chroma-mcp	chroma-core/chroma-mcp	ok	false	-	-	-	true	true	true	false	true
+chroma-core chroma-mcp	chroma-core/chroma-mcp	ok	false	-	-	-	true	true	true	false	true	
 marlian claude-qdrant-mcp	marlian/claude-qdrant-mcp	ok	true	-	node scripts/postinstall.js	npm run build	false	false	true	false	true	install scripts present
 mhalder qdrant-mcp-server	mhalder/qdrant-mcp-server	ok	true	-	-	husky	false	false	true	false	true	install scripts present
-doITmagic rag-code-mcp	doITmagic/rag-code-mcp	ok	false	-	-	-	false	false	true	false	true
-joinQuantish codebase-rag	joinQuantish/codebase-rag	ok	true	-	-	-	false	false	true	false	true
-qdrant mcp-server-qdrant	qdrant/mcp-server-qdrant	ok	false	-	-	-	true	true	true	false	true
+doITmagic rag-code-mcp	doITmagic/rag-code-mcp	ok	false	-	-	-	false	false	true	false	true	
+joinQuantish codebase-rag	joinQuantish/codebase-rag	ok	true	-	-	-	false	false	true	false	true	
+qdrant mcp-server-qdrant	qdrant/mcp-server-qdrant	ok	false	-	-	-	true	true	true	false	true	
 er77 code-graph-rag-mcp	er77/code-graph-rag-mcp	ok	true	-	-	simple-git-hooks	false	false	true	true	true	install scripts present
-MCP servers memory ref	modelcontextprotocol/servers	ok	true	-	-	-	false	false	false	false	false
-memory-graph	memory-graph/memory-graph	ok	false	-	-	-	true	true	true	true	true
-puliczek mcp-memory	puliczek/mcp-memory	ok	true	-	-	-	false	false	true	false	true
-basicmachines basic-memory	basicmachines-co/basic-memory	ok	false	-	-	-	true	true	true	false	true
-ardaaltinors MemCP	ardaaltinors/MemCP	ok	false	-	-	-	true	true	true	false	true
-doobidoo mcp-memory-service	doobidoo/mcp-memory-service	ok	false	-	-	-	true	false	true	true	true
-st3v3nmw sourcerer-mcp	st3v3nmw/sourcerer-mcp	ok	false	-	-	-	false	false	true	false	true
+MCP servers memory ref	modelcontextprotocol/servers	ok	true	-	-	-	false	false	false	false	false	
+memory-graph	memory-graph/memory-graph	ok	false	-	-	-	true	true	true	true	true	
+puliczek mcp-memory	puliczek/mcp-memory	ok	true	-	-	-	false	false	true	false	true	
+basicmachines basic-memory	basicmachines-co/basic-memory	ok	false	-	-	-	true	true	true	false	true	
+ardaaltinors MemCP	ardaaltinors/MemCP	ok	false	-	-	-	true	true	true	false	true	
+doobidoo mcp-memory-service	doobidoo/mcp-memory-service	ok	false	-	-	-	true	false	true	true	true	
+st3v3nmw sourcerer-mcp	st3v3nmw/sourcerer-mcp	ok	false	-	-	-	false	false	true	false	true	
 tecnomanu pampa	tecnomanu/pampa	ok	true	-	-	husky install	false	false	true	false	true	install scripts present
-Wildcard deepcontext-mcp	Wildcard-Official/deepcontext-mcp	ok	true	-	-	-	false	false	true	false	false
-jbenshetler mcp-ragex	jbenshetler/mcp-ragex	ok	false	-	-	-	true	false	true	false	true
-adam-hanna semantic-search-mcp	adam-hanna/semantic-search-mcp	ok	false	-	-	-	true	false	false	false	false
-oculairmedia Letta-MCP-server	oculairmedia/Letta-MCP-server	ok	false	-	-	-	false	false	false	false	true
-esxr langgraph-mcp	esxr/langgraph-mcp	ok	false	-	-	-	true	false	true	false	true
-ceorkm kratos-mcp	ceorkm/kratos-mcp	ok	true	-	-	-	false	false	true	false	true
+Wildcard deepcontext-mcp	Wildcard-Official/deepcontext-mcp	ok	true	-	-	-	false	false	true	false	false	
+jbenshetler mcp-ragex	jbenshetler/mcp-ragex	ok	false	-	-	-	true	false	true	false	true	
+adam-hanna semantic-search-mcp	adam-hanna/semantic-search-mcp	ok	false	-	-	-	true	false	false	false	false	
+oculairmedia Letta-MCP-server	oculairmedia/Letta-MCP-server	ok	false	-	-	-	false	false	false	false	true	
+esxr langgraph-mcp	esxr/langgraph-mcp	ok	false	-	-	-	true	false	true	false	true	
+ceorkm kratos-mcp	ceorkm/kratos-mcp	ok	true	-	-	-	false	false	true	false	true	
 pi22by7 In-Memoria	pi22by7/In-Memoria	ok	true	-	npm rebuild better-sqlite3 || echo 'Note: better-sqlite3 rebuild failed, but this might still work'	-	false	true	true	true	false	install scripts present
-tuannvm codex-mcp-server	tuannvm/codex-mcp-server	ok	true	-	-	-	false	false	true	false	true
-lastmile-ai mcp-agent	lastmile-ai/mcp-agent	ok	false	-	-	-	true	false	true	true	true
-nosolosoft opencode-mcp	nosolosoft/opencode-mcp	ok	false	-	-	-	false	false	false	false	true
-teabranch agentic-developer-mcp	teabranch/agentic-developer-mcp	ok	true	-	-	-	false	true	false	false	true
+tuannvm codex-mcp-server	tuannvm/codex-mcp-server	ok	true	-	-	-	false	false	true	false	true	
+lastmile-ai mcp-agent	lastmile-ai/mcp-agent	ok	false	-	-	-	true	false	true	true	true	
+nosolosoft opencode-mcp	nosolosoft/opencode-mcp	ok	false	-	-	-	false	false	false	false	true	
+teabranch agentic-developer-mcp	teabranch/agentic-developer-mcp	ok	true	-	-	-	false	true	false	false	true	
 Tritlo lsp-mcp	Tritlo/lsp-mcp	ok	true	-	-	npm run build	false	false	false	false	true	install scripts present
 mizchi lsmcp	mizchi/lsmcp	ok	true	-	-	husky	false	false	false	false	false	install scripts present
-isaacphi mcp-language-server	isaacphi/mcp-language-server	ok	false	-	-	-	false	false	false	false	false
+isaacphi mcp-language-server	isaacphi/mcp-language-server	ok	false	-	-	-	false	false	false	false	false	
 jonrad lsp-mcp	jonrad/lsp-mcp	ok	true	-	-	yarn build	false	true	false	false	true	install scripts present
-Stryk91 lsp-mcp-rs	Stryk91/lsp-mcp-rs	ok	false	-	-	-	false	false	false	false	false
-beixiyo vsc-lsp-mcp	beixiyo/vsc-lsp-mcp	ok	true	-	-	-	false	false	true	false	false
+Stryk91 lsp-mcp-rs	Stryk91/lsp-mcp-rs	ok	false	-	-	-	false	false	false	false	false	
+beixiyo vsc-lsp-mcp	beixiyo/vsc-lsp-mcp	ok	true	-	-	-	false	false	true	false	false	
 alexwohletz language-server-mcp	alexwohletz/language-server-mcp	ok	true	-	-	npm run build	false	false	false	false	false	install scripts present
 BMAD-METHOD	bmad-code-org/BMAD-METHOD	ok	true	-	-	command -v husky >/dev/null 2>&1 && husky || exit 0	false	false	false	false	false	install scripts present
-HKUDS AutoAgent	HKUDS/AutoAgent	ok	false	-	-	-	true	false	true	false	true
-Significant-Gravitas AutoGPT	Significant-Gravitas/AutoGPT	ok	false	-	-	-	false	true	true	true	true
-westonbrown Cyber-AutoAgent	westonbrown/Cyber-AutoAgent	ok	false	-	-	-	true	true	true	true	true
-HKUDS RAG-Anything	HKUDS/RAG-Anything	ok	false	-	-	-	true	false	true	false	true
-getzep graphiti	getzep/graphiti	ok	false	-	-	-	true	true	true	true	true
-ItMeDiaTech rag-cli	ItMeDiaTech/rag-cli	ok	false	-	-	-	true	false	true	true	true
-SpillwaveSolutions agent-brain	SpillwaveSolutions/agent-brain	ok	false	-	-	-	false	false	true	false	true
-EvoAgentX	EvoAgentX/EvoAgentX	ok	false	-	-	-	true	false	true	false	true
-coleam00 Archon	coleam00/Archon	ok	false	-	-	-	false	true	true	true	true
-thedotmack claude-mem	thedotmack/claude-mem	ok	true	-	-	-	false	true	true	true	true
-cbunting99 enhanced-mcp-memory	cbunting99/enhanced-mcp-memory	ok	false	-	-	-	true	false	true	true	true
+HKUDS AutoAgent	HKUDS/AutoAgent	ok	false	-	-	-	true	false	true	false	true	
+Significant-Gravitas AutoGPT	Significant-Gravitas/AutoGPT	ok	false	-	-	-	false	true	true	true	true	
+westonbrown Cyber-AutoAgent	westonbrown/Cyber-AutoAgent	ok	false	-	-	-	true	true	true	true	true	
+HKUDS RAG-Anything	HKUDS/RAG-Anything	ok	false	-	-	-	true	false	true	false	true	
+getzep graphiti	getzep/graphiti	ok	false	-	-	-	true	true	true	true	true	
+ItMeDiaTech rag-cli	ItMeDiaTech/rag-cli	ok	false	-	-	-	true	false	true	true	true	
+SpillwaveSolutions agent-brain	SpillwaveSolutions/agent-brain	ok	false	-	-	-	false	false	true	false	true	
+EvoAgentX	EvoAgentX/EvoAgentX	ok	false	-	-	-	true	false	true	false	true	
+coleam00 Archon	coleam00/Archon	ok	false	-	-	-	false	true	true	true	true	
+thedotmack claude-mem	thedotmack/claude-mem	ok	true	-	-	-	false	true	true	true	true	
+cbunting99 enhanced-mcp-memory	cbunting99/enhanced-mcp-memory	ok	false	-	-	-	true	false	true	true	true	
 arabold docs-mcp-server	arabold/docs-mcp-server	ok	true	-	echo 'Skipping Playwright browser install. See README.md for details.'	husky || true	false	true	true	true	true	install scripts present
+thakkaryash94 chroma-ui	thakkaryash94/chroma-ui	ok	true	-	-	-	false	false	false	false	true	UI utility, not an MCP server
+danyQe codebase-mcp	danyQe/codebase-mcp	ok	false	-	-	-	false	false	true	true	true	Dual-process architecture (FastAPI backend + MCP proxy); high setup friction and broad command/file mutation surface.
+NgoTaiCo mcp-codebase-index	NgoTaiCo/mcp-codebase-index	ok	true	-	-	npm run build	false	false	true	true	true	install scripts present; shell execution patterns present; destructive capabilities may exist; requires Gemini API and Qdrant API keys in default path
+entrepeneur4lyf code-graph-mcp	entrepeneur4lyf/code-graph-mcp	ok	false	-	-	-	true	false	false	true	false	Local-first Python MCP server; file watcher and analyzer execution are expected and bounded to workspace path.
+CodeGraphContext CodeGraphContext	CodeGraphContext/CodeGraphContext	ok	false	-	-	-	true	true	true	true	true	CLI wrapper emits non-protocol output on MCP startup path in this environment; requires compatibility fix.
+ChrisRoyse CodeGraph	ChrisRoyse/CodeGraph	ok	true	-	-	-	false	false	false	false	true	Analyzer project with MCP-adjacent components; not maintained as a standalone Codex-ready MCP package.
+ADORSYS-GIS experimental-code-graph	ADORSYS-GIS/experimental-code-graph	ok	true	-	-	-	false	false	false	false	true	Analyzer project with MCP-adjacent components; not maintained as a standalone Codex-ready MCP package.
+neo4j mcp	neo4j/mcp	ok	false	-	-	-	false	true	true	true	true	Official server with optional telemetry (disabled in tests); requires Neo4j + APOC runtime.

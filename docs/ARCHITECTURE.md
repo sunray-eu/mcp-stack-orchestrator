@@ -4,7 +4,7 @@
 
 - Global MCP config that works across repositories without per-project hardcoding
 - Local-first, low-latency retrieval and language tooling
-- Optional high-context add-ons (SurrealDB MCP and Archon MCP)
+- Optional high-context add-ons (SurrealDB MCP, Archon MCP, Code Graph MCP, and Neo4j MCP)
 - Reproducible infra with digest pinning where practical
 
 ## Core Components
@@ -33,6 +33,12 @@
 - `scripts/mcpx_lsp_auto.sh`
   - Auto-detects TS/Python workspace markers
   - Chooses matching language server command
+- `scripts/mcpx_code_graph_auto.sh`
+  - Resolves current workspace root dynamically
+  - Runs `code-graph-mcp` for on-demand structural graph analysis
+- `scripts/mcpx_neo4j_auto.sh`
+  - Uses local Neo4j+APOC runtime defaults (read-only by default)
+  - Prefers `neo4j-mcp` binary with `go run` fallback for reproducible setup
 
 5. AGENTS scaffolding
 - `scripts/agents_scaffold.py`
@@ -62,6 +68,15 @@
 `core`
 - qdrant
 
+`core-code-graph`
+- qdrant
+- code-graph MCP (stdio, no additional container)
+
+`core-neo4j`
+- qdrant
+- neo4j
+- neo4j MCP (stdio wrapper, no separate MCP container)
+
 `surreal`
 - qdrant
 - surrealdb
@@ -79,6 +94,20 @@
 `docs`
 - qdrant
 - docs-mcp-web
+
+`full-code-graph`
+- full container topology
+- code-graph MCP (stdio add-on)
+
+`full-neo4j`
+- full container topology
+- neo4j
+- neo4j MCP (stdio add-on)
+
+`full-graph`
+- full container topology
+- neo4j
+- code-graph MCP + neo4j MCP (combined graph-analysis add-ons)
 
 ## Compatibility
 

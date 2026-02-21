@@ -4,8 +4,8 @@ Reproducible evaluation artifacts and production-grade orchestration for a multi
 
 ## What This Repository Provides
 
-- Repeatable MCP infra orchestration with Docker (`qdrant`, `surrealdb`, `surrealmcp`, `surrealmcp-compat`, `surrealist`, `docs-mcp` standalone, optional `Archon` + `archon-mcp-compat`)
-- Global dynamic MCP profiles for multiple agents (`core`, `core-surreal`, `core-archon`, `full`)
+- Repeatable MCP infra orchestration with Docker (`qdrant`, `neo4j`, `surrealdb`, `surrealmcp`, `surrealmcp-compat`, `surrealist`, `docs-mcp` standalone, optional `Archon` + `archon-mcp-compat`)
+- Global dynamic MCP profiles for multiple agents (`core`, `core-code-graph`, `core-neo4j`, `core-surreal`, `core-archon`, `full`, `full-code-graph`, `full-neo4j`, `full-graph`)
 - Workspace-aware wrappers for Qdrant collection routing and LSP selection
 - Taskfile-first operator workflow (`task ...`) with shell scripts as internal runtime engines
 - AGENTS scaffolding generator with layered global/company/project guidelines
@@ -58,9 +58,14 @@ For full stack (SurrealDB + Archon + docs-mcp):
 
 - `none`: remove managed MCP profile, stop managed infra
 - `core`: `basic-memory + qdrant + chroma + lsp`
+- `core-code-graph`: `core + code-graph MCP (optional structural analysis)`
+- `core-neo4j`: `core + Neo4j MCP (optional graph query analysis)`
 - `core-surreal`: `core + surrealdb MCP`
 - `core-archon`: `core + archon MCP`
 - `full`: `core + surrealdb MCP + archon MCP`
+- `full-code-graph`: `full + code-graph MCP (optional structural analysis)`
+- `full-neo4j`: `full + Neo4j MCP (optional graph query analysis)`
+- `full-graph`: `full + code-graph MCP + Neo4j MCP (maximum graph-analysis profile)`
 
 ## SurrealDB Compatibility Note
 

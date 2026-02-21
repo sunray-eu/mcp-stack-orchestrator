@@ -20,6 +20,12 @@ cd <STACK_ROOT>
 task infra:up PROFILE=full
 ```
 
+Full stack plus Neo4j graph runtime:
+
+```bash
+task infra:up PROFILE=full-graph
+```
+
 Surreal profile details:
 - Runs local `surrealdb` (`18083`) + Surrealist (`18082`) + two MCP layers:
   - `surrealmcp-compat` frontend on `18080` (recommended MCP endpoint)
@@ -89,6 +95,16 @@ Maximum context profile:
 task profile:apply PROFILE=full AGENTS=codex,claude,opencode CODEX_TARGET=both
 ```
 
+Optional graph-enabled profiles:
+
+```bash
+task profile:apply PROFILE=core-code-graph AGENTS=codex,claude,opencode CODEX_TARGET=both
+task profile:apply PROFILE=full-code-graph AGENTS=codex,claude,opencode CODEX_TARGET=both
+task profile:apply PROFILE=core-neo4j AGENTS=codex,claude,opencode CODEX_TARGET=both
+task profile:apply PROFILE=full-neo4j AGENTS=codex,claude,opencode CODEX_TARGET=both
+task profile:apply PROFILE=full-graph AGENTS=codex,claude,opencode CODEX_TARGET=both
+```
+
 One-command activate (infra + profile together):
 
 ```bash
@@ -110,6 +126,8 @@ task profile:apply PROFILE=none AGENTS=codex,claude,opencode CODEX_TARGET=both
 Global dynamic MCP behavior:
 - `mcpx-qdrant` automatically maps current repo to a collection (`proj-<repo-slug>`).
 - `mcpx-lsp` automatically picks workspace root from current directory and chooses Python vs TypeScript LSP by repo markers.
+- `mcpx-code-graph` optionally uses current workspace root for structural graph analysis (`core-code-graph` / `full-code-graph`).
+- `mcpx-neo4j` is read-only by default and targets local Neo4j+APOC (`core-neo4j` / `full-neo4j` / `full-graph`).
 - This keeps global agent configs project-agnostic.
 
 Optional per-repo overrides:
@@ -141,6 +159,7 @@ task quality:doctor PROFILE=full
 
 UI endpoints in `full` profile:
 - `http://127.0.0.1:6333/dashboard/` (Qdrant)
+- `http://127.0.0.1:17474` (Neo4j Browser, when using Neo4j-enabled profiles)
 - `http://127.0.0.1:13737` (Archon UI)
 - `http://127.0.0.1:18082` (Surrealist)
 - `http://127.0.0.1:18083/rpc` (SurrealDB RPC endpoint)

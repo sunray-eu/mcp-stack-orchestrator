@@ -5,6 +5,7 @@ This folder contains the evaluation evidence and final recommendations.
 ## Main Documents
 
 - `MCP_EVAL_REPORT.md`: full evaluation summary and ranking
+- `NEW_WAVE_REPO_EVAL_2026-02-21.md`: addendum for the extra 8 repositories and integration outcomes
 - `FINAL_PRODUCTION_RECOMMENDATION.md`: final stack recommendation
 - `FINAL_RUNTIME_TOOL_INTERACTION_TEST.md`: exhaustive in-session feature/stress validation of the active production stack
 - `RESEARCH_GRADE_FINAL_REPORT.md`: academic-style final synthesis with methods, evidence, threats to validity, and reproducibility

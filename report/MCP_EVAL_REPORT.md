@@ -4,7 +4,7 @@
 
 Production rollout and cross-agent standardized profile deployment are documented in `<STACK_ROOT>/report/FINAL_PRODUCTION_RECOMMENDATION.md`.
 
-Third-wave expansion is complete: **17 additional libraries/pages** were analyzed and merged into the same scoring pipeline, followed by full live validation of `SurrealDB MCP` and `Archon`. The recommendation for correctness + speed + context quality remains:
+Fourth-wave expansion is complete: **8 additional repositories** were analyzed and merged into the same scoring pipeline (on top of the previous 17-library wave), with live runtime smoke coverage added for viable MCP entries. The recommendation for correctness + speed + context quality remains:
 
 1. `basicmachines-co/basic-memory`
 2. `qdrant/mcp-server-qdrant`
@@ -28,6 +28,27 @@ Safety controls enforced:
 - Isolated evaluation home: `CODEX_HOME=/Users/<user>/.codex-mcp-eval`
 - Original config retained and backups preserved in `<STACK_ROOT>/backups/`
 - Local-first bias; external creds only where local alternatives were not practical
+
+## Fourth-Wave Coverage Added
+
+New **tested** entries:
+- `entrepeneur4lyf code-graph-mcp` (tested, 7.2)
+- `CodeGraphContext CodeGraphContext` (tested, 5.4)
+- `danyQe codebase-mcp` (tested, 4.7)
+- `NgoTaiCo mcp-codebase-index` (tested, 4.6)
+- `neo4j mcp` (tested, 7.5)
+
+New **evaluated** entries:
+- `thakkaryash94 chroma-ui` (evaluated, 3.8)
+- `ChrisRoyse CodeGraph` (evaluated, 4.9)
+- `ADORSYS-GIS experimental-code-graph` (evaluated, 4.4)
+
+Notes:
+
+- `neo4j/mcp` was validated against local `Neo4j 5.26.19 + APOC` and passed read-only schema smoke (`get-schema`).
+- `code-graph-mcp` passed Codex smoke on both TS and PY target repositories (guide + analysis calls).
+- `CodeGraphContext`, `codebase-mcp`, and `mcp-codebase-index` all failed MCP initialize handshake in this Codex runtime profile despite startup-path retries.
+- `chroma-ui` is useful as a GUI but is not an MCP server candidate.
 
 ## Third-Wave Coverage Added
 
@@ -76,17 +97,17 @@ UI-focused runtime integration update:
 
 ## Dataset Status
 
-- Candidate inventory: **57**
-- Outcomes rows: **57**
-- Status distribution: `tested=40`, `evaluated=12`, `skipped=5`
+- Candidate inventory: **65**
+- Outcomes rows: **65**
+- Status distribution: `tested=45`, `evaluated=15`, `skipped=5`
 - Name parity between inventory and outcomes: **1:1**
 
 Smoke dataset snapshot (`<STACK_ROOT>/report/second_wave_smoke.tsv`):
 
-- Rows: `63`
-- `setup_ok=true`: `63`
-- `exec_ok=true`: `62`
-- Strict success (`mcp_calls>0 && mcp_failed==0`): `22`
+- Rows: `69`
+- `setup_ok=true`: `69`
+- `exec_ok=true`: `65`
+- Strict success (`mcp_calls>0 && mcp_failed==0`): `25`
 
 ## Ranked Recommendation
 
@@ -96,17 +117,18 @@ Top tested scores (overall):
 2. `qdrant mcp-server-qdrant` — `7.7`
 3. `chroma-core chroma-mcp` — `7.6`
 4. `er77 code-graph-rag-mcp` — `7.5`
-5. `shinpr mcp-local-rag` — `7.4`
-6. `MCP servers memory ref` — `7.4`
-7. `isaacphi mcp-language-server` — `7.3`
-8. `doITmagic rag-code-mcp` — `7.1`
-9. `yikizi mcp-local-rag` — `7.0`
-10. `pi22by7 In-Memoria` — `7.0`
+5. `neo4j mcp` — `7.5`
+6. `shinpr mcp-local-rag` — `7.4`
+7. `MCP servers memory ref` — `7.4`
+8. `isaacphi mcp-language-server` — `7.3`
+9. `entrepeneur4lyf code-graph-mcp` — `7.2`
+10. `doITmagic rag-code-mcp` — `7.1`
 
 Validated but not in default top-3 stack:
 
 - `coleam00 Archon` (`6.8`): strong high-context project/task workflow MCP when you accept heavy setup and remote Supabase dependency.
 - `SurrealDB MCP` (`6.7`): robust local MCP runtime with excellent reliability; best treated as an optional backend/tooling layer, not a primary coding-context engine by itself.
+- `neo4j mcp` (`7.5`): excellent official graph-query MCP bridge when you need NL-to-Cypher introspection against a maintained Neo4j knowledge graph.
 
 ## Category Winners
 
@@ -123,10 +145,10 @@ Validated but not in default top-3 stack:
 
 From updated static + runtime artifacts:
 
-- `38/48` GitHub candidates mention outbound remote service usage in docs/code signals.
-- `36/48` mention API-key/token style credential flows.
-- `3/48` include explicit `postinstall` scripts.
-- `12/48` include non-trivial `prepare` scripts.
+- `45/56` GitHub candidates mention outbound remote service usage in docs/code signals.
+- `40/56` mention API-key/token style credential flows.
+- `3/56` include explicit `postinstall` scripts.
+- `13/56` include non-trivial `prepare` scripts.
 - Handshake fragility remains the largest runtime failure mode for lower-ranked MCPs.
 
 High-signal issues in the added wave:
@@ -198,9 +220,15 @@ startup_timeout_sec = 90
 Optional on-demand additions:
 
 - `er77/code-graph-rag-mcp` for impact/refactor analysis sessions
+- `entrepeneur4lyf/code-graph-mcp` for local structural graph/context analysis with low setup friction
+- `neo4j/mcp` for NL-to-Cypher graph introspection when a Neo4j+APOC knowledge graph is already part of your workflow
 - `doITmagic/rag-code-mcp` when local Ollama + Qdrant pipeline is active
 - `coleam00/Archon` for high-context project/task/doc workflow sessions (remote Supabase + Docker stack required)
 - `surrealdb/surrealmcp` when you need robust local MCP-backed data operations or a custom memory backend
+
+Integrated optional production profiles in the orchestrator:
+- `core-code-graph`, `full-code-graph` (code-graph add-on)
+- `core-neo4j`, `full-neo4j`, `full-graph` (Neo4j graph-query add-on, read-only by default)
 
 Required env var names (only):
 
@@ -282,3 +310,11 @@ If `<backup_dir>` is omitted, the script falls back to `<STACK_ROOT>/.latest-bac
 | arabold docs-mcp-server | docs-context | tested | 6.2 | Strong grounded-docs concept with active maintenance and local modes; in-session Codex handshake timeouts prevented stable tool execution. |
 | Docfork | docs-context | evaluated | 6.0 | MCP docs-context SaaS with good freshness claims, but cloud-first service and limited local/offline control lower risk-adjusted score. |
 | LlamaIndex MCP examples | method | evaluated | 6.1 | Useful MCP integration examples and client patterns, but reference docs rather than a standalone server candidate. |
+| thakkaryash94 chroma-ui | method-ui | evaluated | 3.8 | Helpful Chroma GUI for humans, but not an MCP server and not directly useful for Codex MCP routing. |
+| danyQe codebase-mcp | repo-assistant | tested | 4.7 | Interesting architecture, but initialize handshake failed in this environment and backend+proxy dual-process setup adds friction. |
+| NgoTaiCo mcp-codebase-index | repo-search | tested | 4.6 | Relevant idea, but handshake failed repeatedly; default path requires Gemini + Qdrant API credentials. |
+| entrepeneur4lyf code-graph-mcp | repo-graph | tested | 7.2 | Clean local-first MCP with successful smoke calls on both TS and PY targets; strong optional structural analysis add-on. |
+| CodeGraphContext CodeGraphContext | repo-graph | tested | 5.4 | Rich graph capabilities, but startup path was protocol-incompatible for stable Codex MCP handshake in this run profile. |
+| ChrisRoyse CodeGraph | repo-graph-platform | evaluated | 4.9 | Analyzer platform with MCP-adjacent module; bundled MCP implementation is not production-ready for Codex workflows. |
+| ADORSYS-GIS experimental-code-graph | repo-graph-platform | evaluated | 4.4 | Experimental fork with lower maintenance activity and no stable Codex-ready MCP distribution path. |
+| neo4j mcp | graph-db | tested | 7.5 | Official Neo4j MCP passed local read-only schema smoke cleanly; excellent graph bridge when Neo4j+APOC infra is justified. |

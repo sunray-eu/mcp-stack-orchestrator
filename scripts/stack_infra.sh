@@ -20,7 +20,7 @@ ARCHON_DEFAULT_REF="ecaece460c1924e9a81a409aebee692146f8a301"
 usage() {
   cat <<USAGE
 Usage:
-  stack_infra.sh <bootstrap|up|down|status> [core|surreal|archon|docs|full]
+  stack_infra.sh <bootstrap|up|down|status> [core|core-code-graph|core-neo4j|surreal|archon|docs|full|full-code-graph|full-neo4j|full-graph]
 
 Profiles:
   core     -> qdrant backend + dashboard on 127.0.0.1:6333
@@ -31,7 +31,12 @@ Profiles:
               defaults DOCS_MCP_EMBEDDING_MODEL=text-embedding-3-small when OPENAI_API_KEY is present
               supports private GitHub indexing via GITHUB_TOKEN / GH_TOKEN
               runs in standalone server mode (embedded worker included upstream)
+  core-neo4j -> core + local Neo4j+APOC (127.0.0.1:17474/17687)
   full     -> core + surreal + archon + docs
+  core-code-graph -> core infra + optional code-graph MCP profile
+  full-code-graph -> full infra + optional code-graph MCP profile
+  full-neo4j -> full + local Neo4j+APOC
+  full-graph -> full + local Neo4j+APOC (for Neo4j + code-graph MCP profile)
 
 Filesystem access (MCP containers):
   - Host root is mounted read-only to /hostfs
@@ -44,6 +49,17 @@ SurrealDB runtime overrides (optional in ${SECRETS_FILE}):
   - SURREALDB_RPC_PORT, SURREALDB_WS_HOST, SURREALIST_CONNECTION_NAME
   - SURREAL_MCP_SERVER_URL
   - SURREAL_MCP_RATE_LIMIT_RPS, SURREAL_MCP_RATE_LIMIT_BURST
+
+Neo4j runtime overrides (optional in ${SECRETS_FILE}):
+  - NEO4J_HOST (default: 127.0.0.1)
+  - NEO4J_HTTP_PORT (default: 17474)
+  - NEO4J_BOLT_PORT (default: 17687)
+  - NEO4J_USERNAME, NEO4J_PASSWORD
+  - NEO4J_DATABASE (default: neo4j)
+  - NEO4J_READ_ONLY (default: true)
+  - NEO4J_TELEMETRY (default: false)
+  - NEO4J_SCHEMA_SAMPLE_SIZE (default: 100)
+  - MCP_NEO4J_VERSION (default: v1.4.1)
 
 Docs MCP runtime overrides (optional in ${SECRETS_FILE}):
   - Provider keys: OPENAI_API_KEY, OPENAI_ORG_ID, OPENAI_API_BASE, GOOGLE_API_KEY,
@@ -319,6 +335,8 @@ write_infra_runtime_env() {
   local surrealdb_root_user surrealdb_root_pass surrealdb_default_ns surrealdb_default_db
   local surrealdb_rpc_port surrealdb_ws_host surrealist_connection_name
   local surreal_mcp_server_url surreal_mcp_rate_limit_rps surreal_mcp_rate_limit_burst
+  local neo4j_host neo4j_http_port neo4j_bolt_port neo4j_username neo4j_password
+  local neo4j_database neo4j_read_only neo4j_telemetry neo4j_schema_sample_size mcp_neo4j_version
   local provider_credentials_found
 
   openai_api_key="$(read_env_var "OPENAI_API_KEY" "$SECRETS_FILE")"
@@ -390,6 +408,16 @@ write_infra_runtime_env() {
   surreal_mcp_server_url="$(read_env_var "SURREAL_MCP_SERVER_URL" "$SECRETS_FILE")"
   surreal_mcp_rate_limit_rps="$(read_env_var "SURREAL_MCP_RATE_LIMIT_RPS" "$SECRETS_FILE")"
   surreal_mcp_rate_limit_burst="$(read_env_var "SURREAL_MCP_RATE_LIMIT_BURST" "$SECRETS_FILE")"
+  neo4j_host="$(read_env_var "NEO4J_HOST" "$SECRETS_FILE")"
+  neo4j_http_port="$(read_env_var "NEO4J_HTTP_PORT" "$SECRETS_FILE")"
+  neo4j_bolt_port="$(read_env_var "NEO4J_BOLT_PORT" "$SECRETS_FILE")"
+  neo4j_username="$(read_env_var "NEO4J_USERNAME" "$SECRETS_FILE")"
+  neo4j_password="$(read_env_var "NEO4J_PASSWORD" "$SECRETS_FILE")"
+  neo4j_database="$(read_env_var "NEO4J_DATABASE" "$SECRETS_FILE")"
+  neo4j_read_only="$(read_env_var "NEO4J_READ_ONLY" "$SECRETS_FILE")"
+  neo4j_telemetry="$(read_env_var "NEO4J_TELEMETRY" "$SECRETS_FILE")"
+  neo4j_schema_sample_size="$(read_env_var "NEO4J_SCHEMA_SAMPLE_SIZE" "$SECRETS_FILE")"
+  mcp_neo4j_version="$(read_env_var "MCP_NEO4J_VERSION" "$SECRETS_FILE")"
 
   if [ -z "${docs_embedding_model:-}" ] && [ -n "${openai_api_key:-}" ]; then
     docs_embedding_model="text-embedding-3-small"
@@ -417,6 +445,16 @@ write_infra_runtime_env() {
   if [ -z "${surreal_mcp_server_url:-}" ]; then surreal_mcp_server_url="http://127.0.0.1:18080"; fi
   if [ -z "${surreal_mcp_rate_limit_rps:-}" ]; then surreal_mcp_rate_limit_rps="2000"; fi
   if [ -z "${surreal_mcp_rate_limit_burst:-}" ]; then surreal_mcp_rate_limit_burst="4000"; fi
+  if [ -z "${neo4j_host:-}" ]; then neo4j_host="127.0.0.1"; fi
+  if [ -z "${neo4j_http_port:-}" ]; then neo4j_http_port="17474"; fi
+  if [ -z "${neo4j_bolt_port:-}" ]; then neo4j_bolt_port="17687"; fi
+  if [ -z "${neo4j_username:-}" ]; then neo4j_username="neo4j"; fi
+  if [ -z "${neo4j_password:-}" ]; then neo4j_password="testpass"; fi
+  if [ -z "${neo4j_database:-}" ]; then neo4j_database="neo4j"; fi
+  if [ -z "${neo4j_read_only:-}" ]; then neo4j_read_only="true"; fi
+  if [ -z "${neo4j_telemetry:-}" ]; then neo4j_telemetry="false"; fi
+  if [ -z "${neo4j_schema_sample_size:-}" ]; then neo4j_schema_sample_size="100"; fi
+  if [ -z "${mcp_neo4j_version:-}" ]; then mcp_neo4j_version="v1.4.1"; fi
 
   write_surrealist_instance_config \
     "$surrealdb_root_user" \
@@ -451,6 +489,18 @@ write_infra_runtime_env() {
   append_env "SURREAL_MCP_RATE_LIMIT_RPS" "$surreal_mcp_rate_limit_rps"
   append_env "SURREAL_MCP_RATE_LIMIT_BURST" "$surreal_mcp_rate_limit_burst"
   append_env "SURREALIST_INSTANCE_FILE" "$SURREALIST_INSTANCE_RUNTIME"
+  append_env "NEO4J_HOST" "$neo4j_host"
+  append_env "NEO4J_HTTP_PORT" "$neo4j_http_port"
+  append_env "NEO4J_BOLT_PORT" "$neo4j_bolt_port"
+  append_env "NEO4J_USERNAME" "$neo4j_username"
+  append_env "NEO4J_PASSWORD" "$neo4j_password"
+  append_env "NEO4J_DATABASE" "$neo4j_database"
+  append_env "NEO4J_READ_ONLY" "$neo4j_read_only"
+  append_env "NEO4J_TELEMETRY" "$neo4j_telemetry"
+  append_env "NEO4J_SCHEMA_SAMPLE_SIZE" "$neo4j_schema_sample_size"
+  append_env "MCP_NEO4J_VERSION" "$mcp_neo4j_version"
+  append_env "NEO4J_URI" "bolt://${neo4j_host}:${neo4j_bolt_port}"
+  append_env "NEO4J_DOCKER_AUTH" "${neo4j_username}/${neo4j_password}"
 
   append_if_set "OPENAI_API_KEY" "$openai_api_key"
   append_if_set "OPENAI_ORG_ID" "$openai_org_id"
@@ -515,6 +565,18 @@ qdrant_down() {
   require_file "$INFRA_COMPOSE"
   infra_compose rm -sf qdrant >/dev/null 2>&1 || true
   docker rm -f ai-mcp-qdrant mcp-eval-qdrant >/dev/null 2>&1 || true
+}
+
+neo4j_up() {
+  require_file "$INFRA_COMPOSE"
+  write_infra_runtime_env false
+  infra_compose up -d neo4j
+}
+
+neo4j_down() {
+  require_file "$INFRA_COMPOSE"
+  infra_compose rm -sf neo4j >/dev/null 2>&1 || true
+  docker rm -f ai-mcp-neo4j >/dev/null 2>&1 || true
 }
 
 surreal_up() {
@@ -597,12 +659,32 @@ http_code() {
   fi
 }
 
+tcp_probe() {
+  local host="$1"
+  local port="$2"
+  if bash -c "</dev/tcp/${host}/${port}" >/dev/null 2>&1; then
+    echo "OK"
+  else
+    echo "ERR"
+  fi
+}
+
 show_endpoints() {
   local surrealdb_rpc_port
   local docs_mcp_public_port
+  local neo4j_http_port
+  local neo4j_bolt_port
   surrealdb_rpc_port="$(read_env_var "SURREALDB_RPC_PORT" "$INFRA_RUNTIME_ENV")"
   if [ -z "${surrealdb_rpc_port:-}" ]; then
     surrealdb_rpc_port="18083"
+  fi
+  neo4j_http_port="$(read_env_var "NEO4J_HTTP_PORT" "$INFRA_RUNTIME_ENV")"
+  if [ -z "${neo4j_http_port:-}" ]; then
+    neo4j_http_port="17474"
+  fi
+  neo4j_bolt_port="$(read_env_var "NEO4J_BOLT_PORT" "$INFRA_RUNTIME_ENV")"
+  if [ -z "${neo4j_bolt_port:-}" ]; then
+    neo4j_bolt_port="17687"
   fi
   docs_mcp_public_port="$(read_env_var "DOCS_MCP_PUBLIC_PORT" "$INFRA_RUNTIME_ENV")"
   if [ -z "${docs_mcp_public_port:-}" ]; then
@@ -613,6 +695,10 @@ show_endpoints() {
   printf "%-24s %-32s %s\n" "service" "url" "http"
   printf "%-24s %-32s %s\n" "qdrant-api" "http://127.0.0.1:6333/healthz" "$(http_code 'http://127.0.0.1:6333/healthz')"
   printf "%-24s %-32s %s\n" "qdrant-dashboard" "http://127.0.0.1:6333/dashboard/" "$(http_code 'http://127.0.0.1:6333/dashboard/')"
+  if docker ps --format '{{.Names}}' | grep -Fx "ai-mcp-neo4j" >/dev/null 2>&1; then
+    printf "%-24s %-32s %s\n" "neo4j-http" "http://127.0.0.1:${neo4j_http_port}" "$(http_code "http://127.0.0.1:${neo4j_http_port}")"
+    printf "%-24s %-32s %s\n" "neo4j-bolt-probe" "tcp://127.0.0.1:${neo4j_bolt_port}" "$(tcp_probe "127.0.0.1" "${neo4j_bolt_port}")"
+  fi
   printf "%-24s %-32s %s\n" "surrealdb-rpc" "http://127.0.0.1:${surrealdb_rpc_port}/rpc" "$(http_code "http://127.0.0.1:${surrealdb_rpc_port}/rpc")"
   printf "%-24s %-32s %s\n" "surreal-mcp" "http://127.0.0.1:18080/mcp" "$(http_code 'http://127.0.0.1:18080/mcp')"
   printf "%-24s %-32s %s\n" "surrealist-ui" "http://127.0.0.1:18082" "$(http_code 'http://127.0.0.1:18082')"
@@ -648,7 +734,7 @@ action="$1"
 profile="${2:-full}"
 
 case "$profile" in
-  core | surreal | archon | docs | full) ;;
+  core | core-code-graph | core-neo4j | surreal | archon | docs | full | full-code-graph | full-neo4j | full-graph) ;;
   *)
     echo "Invalid profile: $profile" >&2
     usage
@@ -658,7 +744,7 @@ esac
 
 case "$action" in
   bootstrap)
-    if [ "$profile" = "archon" ] || [ "$profile" = "full" ]; then
+    if [ "$profile" = "archon" ] || [ "$profile" = "full" ] || [ "$profile" = "full-neo4j" ] || [ "$profile" = "full-graph" ]; then
       ensure_archon_repo
       echo "Archon repository ready at: $ARCHON_DIR"
     else
@@ -669,6 +755,13 @@ case "$action" in
     case "$profile" in
       core)
         qdrant_up
+        ;;
+      core-code-graph)
+        qdrant_up
+        ;;
+      core-neo4j)
+        qdrant_up
+        neo4j_up
         ;;
       surreal)
         qdrant_up
@@ -684,6 +777,26 @@ case "$action" in
         ;;
       full)
         qdrant_up
+        surreal_up
+        archon_up
+        docs_up
+        ;;
+      full-code-graph)
+        qdrant_up
+        surreal_up
+        archon_up
+        docs_up
+        ;;
+      full-neo4j)
+        qdrant_up
+        neo4j_up
+        surreal_up
+        archon_up
+        docs_up
+        ;;
+      full-graph)
+        qdrant_up
+        neo4j_up
         surreal_up
         archon_up
         docs_up
@@ -696,6 +809,13 @@ case "$action" in
       core)
         qdrant_down
         ;;
+      core-code-graph)
+        qdrant_down
+        ;;
+      core-neo4j)
+        neo4j_down
+        qdrant_down
+        ;;
       surreal)
         surreal_down
         qdrant_down
@@ -712,6 +832,26 @@ case "$action" in
         docs_down
         archon_down
         surreal_down
+        qdrant_down
+        ;;
+      full-code-graph)
+        docs_down
+        archon_down
+        surreal_down
+        qdrant_down
+        ;;
+      full-neo4j)
+        docs_down
+        archon_down
+        surreal_down
+        neo4j_down
+        qdrant_down
+        ;;
+      full-graph)
+        docs_down
+        archon_down
+        surreal_down
+        neo4j_down
         qdrant_down
         ;;
     esac

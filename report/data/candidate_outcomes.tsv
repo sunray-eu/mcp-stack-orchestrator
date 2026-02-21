@@ -56,3 +56,11 @@ cbunting99 enhanced-mcp-memory	memory	tested	5.8	Feature-rich MCP memory server 
 arabold docs-mcp-server	docs-context	tested	6.2	Strong grounded-docs concept with active maintenance and local modes; in-session Codex handshake timeouts prevented stable tool execution.
 Docfork	docs-context	evaluated	6.0	MCP docs-context SaaS with good freshness claims, but cloud-first service and limited local/offline control lower risk-adjusted score.
 LlamaIndex MCP examples	method	evaluated	6.1	Useful MCP integration examples and client patterns, but reference docs rather than a standalone server candidate.
+thakkaryash94 chroma-ui	method-ui	evaluated	3.8	Useful Chroma GUI, but not an MCP server and does not improve agent tool routing directly.
+danyQe codebase-mcp	repo-assistant	tested	4.7	Interesting all-in-one proxy design, but Codex startup handshake failed in this environment and server depends on separate FastAPI backend process.
+NgoTaiCo mcp-codebase-index	repo-search	tested	4.6	Concept is relevant, but MCP handshake failed repeatedly and default path depends on Gemini + Qdrant API credentials.
+entrepeneur4lyf code-graph-mcp	repo-graph	tested	7.2	Local-first MCP server with successful Codex smoke on both TS and Python repos; strong graph/context utility with moderate CPU/index overhead.
+CodeGraphContext CodeGraphContext	repo-graph	tested	5.4	Rich CLI/graph capabilities, but MCP startup path remained protocol-incompatible (initialize handshake closed) in current Codex runtime.
+ChrisRoyse CodeGraph	repo-graph-platform	evaluated	4.9	Primarily a code analyzer platform; bundled MCP component is not production-ready (hardcoded command/credentials pattern).
+ADORSYS-GIS experimental-code-graph	repo-graph-platform	evaluated	4.4	Experimental fork with MCP-adjacent pieces; lower maintenance activity and no clear stable Codex-ready MCP distribution.
+neo4j mcp	graph-db	tested	7.5	Official Neo4j MCP passed read-only schema smoke cleanly with local Neo4j+APOC; highest graph-query reliability but requires extra infra.

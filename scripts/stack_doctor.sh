@@ -151,10 +151,10 @@ PY
 }
 
 case "$PROFILE" in
-  core | surreal | archon | docs | full) ;;
+  core | core-code-graph | core-neo4j | surreal | archon | docs | full | full-code-graph | full-neo4j | full-graph) ;;
   *)
     echo "Invalid profile: $PROFILE" >&2
-    echo "Use one of: core|surreal|archon|docs|full" >&2
+    echo "Use one of: core|core-code-graph|core-neo4j|surreal|archon|docs|full|full-code-graph|full-neo4j|full-graph" >&2
     exit 2
     ;;
 esac
@@ -173,11 +173,15 @@ check_file "$STACK_ROOT/infra/docker-compose.yml"
 check_file "$STACK_ROOT/infra/versions.env"
 check_file "$STACK_ROOT/scripts/mcpx_qdrant_auto.sh"
 check_file "$STACK_ROOT/scripts/mcpx_lsp_auto.sh"
+check_file "$STACK_ROOT/scripts/mcpx_code_graph_auto.sh"
+check_file "$STACK_ROOT/scripts/mcpx_neo4j_auto.sh"
 
 check_bash_syntax "$INFRA_SCRIPT"
 check_bash_syntax "$VERSIONS_SCRIPT"
 check_bash_syntax "$STACK_ROOT/scripts/mcpx_qdrant_auto.sh"
 check_bash_syntax "$STACK_ROOT/scripts/mcpx_lsp_auto.sh"
+check_bash_syntax "$STACK_ROOT/scripts/mcpx_code_graph_auto.sh"
+check_bash_syntax "$STACK_ROOT/scripts/mcpx_neo4j_auto.sh"
 
 if [ -f "$SECRETS_FILE" ]; then
   pass "secrets file exists: $SECRETS_FILE"
@@ -205,24 +209,28 @@ fi
 
 check_codex_profile_servers
 
-if [ "$PROFILE" = "core" ] || [ "$PROFILE" = "surreal" ] || [ "$PROFILE" = "archon" ] || [ "$PROFILE" = "docs" ] || [ "$PROFILE" = "full" ]; then
+if [ "$PROFILE" = "core" ] || [ "$PROFILE" = "core-code-graph" ] || [ "$PROFILE" = "core-neo4j" ] || [ "$PROFILE" = "surreal" ] || [ "$PROFILE" = "archon" ] || [ "$PROFILE" = "docs" ] || [ "$PROFILE" = "full" ] || [ "$PROFILE" = "full-code-graph" ] || [ "$PROFILE" = "full-neo4j" ] || [ "$PROFILE" = "full-graph" ]; then
   check_endpoint "qdrant-api" "http://127.0.0.1:6333/healthz" "200"
   check_endpoint "qdrant-dashboard" "http://127.0.0.1:6333/dashboard/" "200"
 fi
 
-if [ "$PROFILE" = "surreal" ] || [ "$PROFILE" = "full" ]; then
-  check_endpoint "surreal-mcp" "http://127.0.0.1:18080/mcp" "401,406"
+if [ "$PROFILE" = "core-neo4j" ] || [ "$PROFILE" = "full-neo4j" ] || [ "$PROFILE" = "full-graph" ]; then
+  check_endpoint "neo4j-http" "http://127.0.0.1:17474" "200,302"
+fi
+
+if [ "$PROFILE" = "surreal" ] || [ "$PROFILE" = "full" ] || [ "$PROFILE" = "full-code-graph" ] || [ "$PROFILE" = "full-neo4j" ] || [ "$PROFILE" = "full-graph" ]; then
+  check_endpoint "surreal-mcp" "http://127.0.0.1:18080/mcp" "401,406,429"
   check_endpoint "surrealist-ui" "http://127.0.0.1:18082" "200"
   check_endpoint "surrealdb-rpc" "http://127.0.0.1:18083/rpc" "400,401,405"
 fi
 
-if [ "$PROFILE" = "archon" ] || [ "$PROFILE" = "full" ]; then
+if [ "$PROFILE" = "archon" ] || [ "$PROFILE" = "full" ] || [ "$PROFILE" = "full-code-graph" ] || [ "$PROFILE" = "full-neo4j" ] || [ "$PROFILE" = "full-graph" ]; then
   check_endpoint "archon-api" "http://127.0.0.1:18081/health" "200"
   check_endpoint "archon-mcp-health" "http://127.0.0.1:18051/health" "200"
   check_endpoint "archon-ui" "http://127.0.0.1:13737" "200"
 fi
 
-if [ "$PROFILE" = "docs" ] || [ "$PROFILE" = "full" ]; then
+if [ "$PROFILE" = "docs" ] || [ "$PROFILE" = "full" ] || [ "$PROFILE" = "full-code-graph" ] || [ "$PROFILE" = "full-neo4j" ] || [ "$PROFILE" = "full-graph" ]; then
   DOCS_MCP_PUBLIC_PORT="${DOCS_MCP_PUBLIC_PORT:-}"
   if [ -z "${DOCS_MCP_PUBLIC_PORT:-}" ]; then
     DOCS_MCP_PUBLIC_PORT="$(read_env_var "DOCS_MCP_PUBLIC_PORT" "$INFRA_RUNTIME_ENV")"

@@ -13,6 +13,8 @@ It is intentionally split by:
 - `mcpx-qdrant` (stdio wrapper, semantic memory)
 - `mcpx-chroma` (stdio, local persistent vector fallback)
 - `mcpx-lsp` (stdio wrapper, symbol-safe navigation/refactor)
+- `mcpx-code-graph` (stdio wrapper, optional structural code graph analysis)
+- `mcpx-neo4j` (stdio wrapper, optional graph-query MCP bridge)
 - `mcpx-surrealdb-http` (HTTP MCP via local SurrealMCP compat)
 - `mcpx-archon-http` (HTTP MCP via local Archon compat)
 - `mcpx-docs-mcp-http` (HTTP MCP via local docs-mcp container)
@@ -27,6 +29,8 @@ It is intentionally split by:
 - Archon: <https://github.com/coleam00/Archon>
 - Docs MCP Server: <https://github.com/arabold/docs-mcp-server>
 - Docs MCP config reference: <https://github.com/arabold/docs-mcp-server/blob/main/docs/setup/configuration.md>
+- Code Graph MCP: <https://github.com/entrepeneur4lyf/code-graph-mcp>
+- Neo4j MCP: <https://github.com/neo4j/mcp>
 
 ## Runtime Secrets (`.secrets.env`)
 
@@ -55,6 +59,18 @@ Use `.secrets.env.example` as the template.
   - `AZURE_OPENAI_API_DEPLOYMENT_NAME`, `AZURE_OPENAI_API_VERSION`
 - GitHub scraping auth (private repos / higher limits):
   - `GITHUB_TOKEN` (preferred), `GH_TOKEN` (fallback/alias)
+
+### Neo4j profile/runtime keys
+
+- `NEO4J_HOST` (default: `127.0.0.1`)
+- `NEO4J_HTTP_PORT` (default: `17474`)
+- `NEO4J_BOLT_PORT` (default: `17687`)
+- `NEO4J_USERNAME`, `NEO4J_PASSWORD`
+- `NEO4J_DATABASE` (default: `neo4j`)
+- `NEO4J_READ_ONLY` (default: `true`)
+- `NEO4J_TELEMETRY` (default: `false`)
+- `NEO4J_SCHEMA_SAMPLE_SIZE` (default: `100`)
+- `MCP_NEO4J_VERSION` (default: `v1.4.1`, used when `neo4j-mcp` binary is not installed)
 
 ### Docs MCP advanced passthrough (`DOCS_MCP_*`)
 
@@ -128,12 +144,32 @@ These are parsed as strict `KEY=VALUE` lines by wrapper scripts.
 - Logging:
   - `MCP_LSP_LOG_LEVEL` (forwarded to `LOG_LEVEL` for `mcp-language-server`)
 
+### `mcpx-code-graph` wrapper (`scripts/mcpx_code_graph_auto.sh`)
+
+- Root resolution:
+  - `MCP_CODE_GRAPH_PROJECT_ROOT` (optional explicit project root override)
+- Behavior:
+  - defaults to current workspace root and launches `code-graph-mcp` via `uvx`
+  - intended for on-demand structural/call-graph/dependency exploration sessions
+
+### `mcpx-neo4j` wrapper (`scripts/mcpx_neo4j_auto.sh`)
+
+- Connection/runtime:
+  - `NEO4J_URI`, `NEO4J_USERNAME`, `NEO4J_PASSWORD`, `NEO4J_DATABASE`
+  - `NEO4J_READ_ONLY`, `NEO4J_TELEMETRY`, `NEO4J_SCHEMA_SAMPLE_SIZE`
+- Wrapper behavior:
+  - Prefers `neo4j-mcp` binary when available
+  - Falls back to `go run github.com/neo4j/mcp/cmd/neo4j-mcp@<version>`
+  - Version pin override via `MCP_NEO4J_VERSION`
+  - Optional explicit command override via `MCP_NEO4J_CMD`
+  - Dry run via `MCP_NEO4J_DRY_RUN=1`
+
 ## Agent Profile Wiring
 
 `configs/mcp_stack_manifest.json` is the single source for:
 
 - Managed server IDs
-- Profile composition (`core`, `core-surreal`, `core-archon`, `full`)
+- Profile composition (`core`, `core-code-graph`, `core-neo4j`, `core-surreal`, `core-archon`, `full`, `full-code-graph`, `full-neo4j`, `full-graph`)
 - Per-agent transport wiring (Codex/Claude/OpenCode)
 
 Operational flow:
