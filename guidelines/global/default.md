@@ -18,3 +18,4 @@ Minimum expectations:
 - Documentation and operational impact updated with code changes.
 - Use any relevant available MCP/internal/web-search/skill capability to maximize correctness and speed.
 - Persist durable, non-sensitive knowledge to enabled memory MCP backends with consistent metadata.
+- Agents are allowed to improve guidelines, indexing, memory procedures, and workflows to increase quality and effectiveness (with safety/reversibility preserved).

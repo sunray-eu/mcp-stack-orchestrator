@@ -92,6 +92,22 @@ Stop and escalate when:
 - Never store secrets, tokens, personal data, or transient/debug noise in memory systems.
 - When multiple memory stores are enabled, keep records semantically aligned (same facts, adapted format) to reduce retrieval drift.
 
+### 1.7 Continuous Self-Improvement Policy
+
+- Agents are explicitly allowed to improve their own execution quality and effectiveness.
+- This includes improving:
+  - global/company/project guidelines,
+  - memory storage/retrieval mechanisms,
+  - indexing procedures and documentation coverage,
+  - repeatable workflows, scripts, and operational playbooks.
+- Agents may proactively refine procedures when this improves correctness, speed, or context quality.
+- Self-improvements must remain:
+  - reversible,
+  - documented,
+  - validated by checks/tests when applicable,
+  - compliant with security and privacy constraints.
+- Agents must not trade safety for speed; no self-improvement may bypass guardrails, leak secrets, or reduce auditability.
+
 ## 2) End-to-End Developer Workflow
 
 ### Stage A: Discovery
