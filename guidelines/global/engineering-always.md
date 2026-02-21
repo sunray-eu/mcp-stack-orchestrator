@@ -66,6 +66,32 @@ Stop and escalate when:
 - Migration risks data integrity.
 - Typed contracts are unclear or being forced; redesign types/contracts instead of casting.
 
+### 1.6 Tooling, MCP, and Memory Orchestration (Mandatory)
+
+- For best task completion, use any available and relevant capability: MCP servers, internal tools, skills, and web search.
+- At task start, discover available tools and choose the best-fit path instead of defaulting to a single tool.
+- Prefer local-first and low-risk execution paths, but use remote/provider tools when they materially improve correctness or speed.
+- For framework/library behavior, verify against primary sources (official docs, upstream repos, version-accurate references) before implementation.
+- Use specialized tools by intent:
+  - Context/documentation tools for syntax and API semantics.
+  - Repository/code graph/search tools for codebase navigation and impact analysis.
+  - Runtime/infra tools for health checks, logs, and environment verification.
+  - Security/scanning tools for sensitive or high-risk changes.
+- Apply relevant skills whenever a matching skill exists for the task.
+
+#### Memory Persistence Policy
+
+- Persist durable, reusable project knowledge in all enabled memory-capable MCP backends when available (for example: qdrant, basic-memory, chroma, archon, surreal-backed memory tools).
+- Store high-signal content only:
+  - architecture decisions,
+  - stable commands/workflows,
+  - invariants and constraints,
+  - known risks and mitigations,
+  - validated troubleshooting outcomes.
+- Keep memory entries structured and searchable with consistent tags/metadata (company, project, namespace).
+- Never store secrets, tokens, personal data, or transient/debug noise in memory systems.
+- When multiple memory stores are enabled, keep records semantically aligned (same facts, adapted format) to reduce retrieval drift.
+
 ## 2) End-to-End Developer Workflow
 
 ### Stage A: Discovery

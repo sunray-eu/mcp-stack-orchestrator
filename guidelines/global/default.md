@@ -16,3 +16,5 @@ Minimum expectations:
 - Exact typing and boundary validation (no cast-to-compile workarounds).
 - Small, reversible changes with explicit test evidence.
 - Documentation and operational impact updated with code changes.
+- Use any relevant available MCP/internal/web-search/skill capability to maximize correctness and speed.
+- Persist durable, non-sensitive knowledge to enabled memory MCP backends with consistent metadata.
