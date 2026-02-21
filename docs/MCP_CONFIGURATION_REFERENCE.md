@@ -155,6 +155,8 @@ These are parsed as strict `KEY=VALUE` lines by wrapper scripts.
   - `MCP_CODE_GRAPH_PROJECT_ROOT` (optional explicit project root override)
 - Behavior:
   - defaults to current workspace root and launches `code-graph-mcp` via `uvx`
+  - routes through `scripts/mcp_stdio_line_bridge.py` to convert framed MCP stdio
+    (`Content-Length`) to newline-delimited JSON-RPC expected by current upstream build
   - intended for on-demand structural/call-graph/dependency exploration sessions
 
 ### `mcpx-neo4j` wrapper (`scripts/mcpx_neo4j_auto.sh`)

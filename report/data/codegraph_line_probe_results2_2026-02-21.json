@@ -1,0 +1,74 @@
+[
+  {
+    "repo": "/Users/marosvarchola/Programming/sunray/gits/proworkio-backend",
+    "ok": false,
+    "error": "timeout_waiting_id_4",
+    "duration_sec": 60.69,
+    "init_ok": true,
+    "tools_count": 9,
+    "analyze_quick_ok": true,
+    "project_stats_ok": false,
+    "stats_extract": {},
+    "stderr_tail": ""
+  },
+  {
+    "repo": "/Users/marosvarchola/Programming/sunray/gits/gearswap-devenv",
+    "ok": false,
+    "error": "timeout_waiting_id_4",
+    "duration_sec": 60.61,
+    "init_ok": true,
+    "tools_count": 9,
+    "analyze_quick_ok": true,
+    "project_stats_ok": false,
+    "stats_extract": {},
+    "stderr_tail": ""
+  },
+  {
+    "repo": "/Users/marosvarchola/Programming/sunray/gits/gearswap-devenv/src/gearswap-admin-panel",
+    "ok": false,
+    "error": "timeout_waiting_id_4",
+    "duration_sec": 60.5,
+    "init_ok": true,
+    "tools_count": 9,
+    "analyze_quick_ok": true,
+    "project_stats_ok": false,
+    "stats_extract": {},
+    "stderr_tail": ""
+  },
+  {
+    "repo": "/Users/marosvarchola/Programming/sunray/gits/gearswap-devenv/src/gearswap-backend",
+    "ok": false,
+    "error": "timeout_waiting_id_4",
+    "duration_sec": 60.52,
+    "init_ok": true,
+    "tools_count": 9,
+    "analyze_quick_ok": true,
+    "project_stats_ok": false,
+    "stats_extract": {},
+    "stderr_tail": ""
+  },
+  {
+    "repo": "/Users/marosvarchola/Programming/sunray/gits/gearswap-devenv/src/gearswap-storefront-app",
+    "ok": false,
+    "error": "timeout_waiting_id_4",
+    "duration_sec": 60.5,
+    "init_ok": true,
+    "tools_count": 9,
+    "analyze_quick_ok": true,
+    "project_stats_ok": false,
+    "stats_extract": {},
+    "stderr_tail": ""
+  },
+  {
+    "repo": "/Users/marosvarchola/Programming/sunray/gits/gearswap-devenv/src/gearswap-vendor-panel",
+    "ok": false,
+    "error": "timeout_waiting_id_4",
+    "duration_sec": 60.5,
+    "init_ok": true,
+    "tools_count": 9,
+    "analyze_quick_ok": true,
+    "project_stats_ok": false,
+    "stats_extract": {},
+    "stderr_tail": ""
+  }
+]
