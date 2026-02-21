@@ -4,11 +4,12 @@ Reproducible evaluation artifacts and production-grade orchestration for a multi
 
 ## What This Repository Provides
 
-- Repeatable MCP infra orchestration with Docker (`qdrant`, `surrealdb`, `surrealmcp`, `surrealmcp-compat`, `surrealist`, `docs-mcp`, optional `Archon` + `archon-mcp-compat`)
+- Repeatable MCP infra orchestration with Docker (`qdrant`, `surrealdb`, `surrealmcp`, `surrealmcp-compat`, `surrealist`, `docs-mcp` standalone by default with optional `docs-worker`, optional `Archon` + `archon-mcp-compat`)
 - Global dynamic MCP profiles for multiple agents (`core`, `core-surreal`, `core-archon`, `full`)
 - Workspace-aware wrappers for Qdrant collection routing and LSP selection
 - Taskfile-first operator workflow (`task ...`) with shell scripts as internal runtime engines
 - AGENTS scaffolding generator with layered global/company/project guidelines
+- Canonical always-on engineering policy (`guidelines/global/engineering-always.md`)
 - Safety-first config rollout with backups and one-command restore
 - Full research outputs and scoring artifacts from large MCP candidate sweeps
 
@@ -30,6 +31,7 @@ This repo is intended for developers who want:
 - `templates/agents/` AGENTS/guidelines/prompt templates
 - `report/` detailed evaluation, benchmarks, risk scans, and recommendation outputs
 - `docs/` architecture, maintenance policy, AGENTS workflow, and compatibility notes
+- `docs/MCP_CONFIGURATION_REFERENCE.md` complete MCP configuration matrix with upstream source links
 
 ## Quick Start
 
@@ -39,6 +41,9 @@ This repo is intended for developers who want:
 2. Copy secrets template:
    - `cp .secrets.env.example .secrets.env`
    - Fill only required keys (for `docs` and `archon` profiles).
+   - For private GitHub indexing in `docs-mcp`, set `GITHUB_TOKEN` (or `GH_TOKEN`).
+   - Leave optional `DOCS_MCP_*` keys unset unless needed (do not set blank values).
+   - Set `DOCS_MCP_ENABLE_WORKER=true` only if you want distributed worker mode.
 3. Start infra:
    - `task infra:up PROFILE=core`
 4. Apply MCP profile to agents:
@@ -89,6 +94,7 @@ For full stack (SurrealDB + Archon + docs-mcp):
 - `task profile:restore`
 - `task env:where` (prints canonical vs legacy duplicate stack paths)
 - `task agents:init REPO=/path/to/repo COMPANY=example-co PROJECT=example-api LANGUAGE=typescript PROFILE=core`
+- `task agents:onboard REPO=/path/to/repo COMPANY=example-co PROJECT=example-api LANGUAGE=typescript PROFILE=core`
 
 Legacy compatibility:
 - `make` targets remain available as wrappers around `task` commands.

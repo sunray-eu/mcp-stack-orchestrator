@@ -16,11 +16,13 @@ memory_namespace = "{{MEMORY_NAMESPACE}}"
 qdrant_collection = "{{QDRANT_COLLECTION}}"
 
 [guidelines]
-global = "${STACK_ROOT}/guidelines/global/default.md"
+global = "${STACK_ROOT}/guidelines/global/engineering-always.md"
 company = ".ai/guidelines/company.md"
 project = ".ai/guidelines/project.md"
+
+[context]
+repo_map = ".ai/context/repo_context.md"
 
 [prompts]
 bootstrap = ".ai/prompts/bootstrap_project_context.md"
 update_memory = ".ai/prompts/update_project_memory.md"
-

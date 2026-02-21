@@ -47,7 +47,7 @@ load_workspace_overrides() {
     esac
 
     case "$key" in
-      MCP_LSP_MODE | MCP_LSP_PREFERENCE | MCP_LSP_FALLBACK | MCP_LANGUAGE_SERVER_BIN | MCP_TS_LSP | MCP_PY_LSP)
+      MCP_LSP_MODE | MCP_LSP_PREFERENCE | MCP_LSP_FALLBACK | MCP_LANGUAGE_SERVER_BIN | MCP_TS_LSP | MCP_PY_LSP | MCP_LSP_LOG_LEVEL)
         export "$key=$val"
         ;;
       *) ;;
@@ -128,6 +128,10 @@ resolve_lsp_cmd() {
 workspace="$(resolve_workspace)"
 load_workspace_overrides "$workspace/.mcp-stack.env"
 mode="$(pick_mode "$workspace")"
+
+if [ -n "${MCP_LSP_LOG_LEVEL:-}" ]; then
+  export LOG_LEVEL="$MCP_LSP_LOG_LEVEL"
+fi
 
 mcp_bin="$(resolve_mcp_server_bin || true)"
 if [ -z "${mcp_bin:-}" ] || [ ! -x "$mcp_bin" ]; then

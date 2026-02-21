@@ -11,7 +11,6 @@ from typing import Dict
 SCRIPT_PATH = pathlib.Path(__file__).resolve()
 STACK_ROOT = SCRIPT_PATH.parent.parent
 TEMPLATES_DIR = STACK_ROOT / "templates" / "agents"
-GLOBAL_GUIDELINES = STACK_ROOT / "guidelines" / "global" / "default.md"
 
 
 def slugify(value: str) -> str:
@@ -75,6 +74,7 @@ def build_agents_markdown(repo_root: pathlib.Path, config: dict) -> str:
     project = config.get("project", {})
     company = config.get("company", {})
     mcp = config.get("mcp", {})
+    context = config.get("context", {})
     guidelines = config.get("guidelines", {})
     prompts = config.get("prompts", {})
 
@@ -86,13 +86,15 @@ def build_agents_markdown(repo_root: pathlib.Path, config: dict) -> str:
     memory_namespace = mcp.get("memory_namespace", slugify(project_name))
     qdrant_collection = mcp.get("qdrant_collection", f"proj-{slugify(project_name)}")
 
-    global_ref = guidelines.get("global", "${STACK_ROOT}/guidelines/global/default.md")
+    global_ref = guidelines.get("global", "${STACK_ROOT}/guidelines/global/engineering-always.md")
     company_ref = guidelines.get("company", ".ai/guidelines/company.md")
     project_ref = guidelines.get("project", ".ai/guidelines/project.md")
+    context_ref = context.get("repo_map", ".ai/context/repo_context.md")
 
     global_path = resolve_reference(repo_root, global_ref)
     company_path = resolve_reference(repo_root, company_ref)
     project_path = resolve_reference(repo_root, project_ref)
+    context_path = resolve_reference(repo_root, context_ref)
 
     bootstrap_prompt_path = resolve_reference(
         repo_root, prompts.get("bootstrap", ".ai/prompts/bootstrap_project_context.md")
@@ -135,9 +137,14 @@ Apply instructions in this order:
 1. Confirm active profile and stack health:
    - `task infra:status`
    - `task quality:doctor PROFILE={default_profile}`
-2. For net-new repo understanding, run the bootstrap prompt below.
+2. Read the repository context map first (path below), then run the bootstrap prompt.
 3. Store stable decisions in memory (`mcpx-qdrant` and/or `mcpx-basic-memory`).
 4. For company-sensitive tasks, apply company guideline overrides before coding.
+
+## Repository Context Map
+- Source: `{context_ref}`
+- Resolved path: `{context_path}`
+- Status: {"present" if context_path.exists() else "missing"}
 
 ## Bootstrap Prompt
 ```text
@@ -188,9 +195,11 @@ def init_repo(args: argparse.Namespace) -> int:
     ai_dir = repo_root / ".ai"
     guidelines_dir = ai_dir / "guidelines"
     prompts_dir = ai_dir / "prompts"
+    context_dir = ai_dir / "context"
     ai_dir.mkdir(parents=True, exist_ok=True)
     guidelines_dir.mkdir(parents=True, exist_ok=True)
     prompts_dir.mkdir(parents=True, exist_ok=True)
+    context_dir.mkdir(parents=True, exist_ok=True)
 
     created = []
 

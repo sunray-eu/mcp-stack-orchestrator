@@ -47,6 +47,10 @@
 ## Data and Secrets Flow
 
 - Secrets source: `.secrets.env` (never committed)
+- Docs MCP private source auth supported via `GITHUB_TOKEN` / `GH_TOKEN`
+- Docs MCP advanced server/scraper/splitter overrides supported via `DOCS_MCP_*`
+- Docs profile defaults to standalone docs server; `DOCS_MCP_ENABLE_WORKER=true` enables distributed worker mode
+- Runtime writer omits empty `DOCS_MCP_*` values to avoid overriding upstream defaults with invalid zero/blank settings
 - Generated runtime files:
   - `tmp/ai-mcp-infra.env`
   - `tmp/ai-mcp-archon.env`
@@ -75,6 +79,7 @@
 `docs`
 - qdrant
 - docs-mcp-web
+- docs-mcp-worker (optional; enabled with `DOCS_MCP_ENABLE_WORKER=true`)
 
 ## Compatibility
 

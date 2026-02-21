@@ -1,25 +1,18 @@
 # Global AI Engineering Guidelines
 
-## Objective
-- Maximize correctness, reproducibility, and speed.
-- Prefer deterministic workflows over ad-hoc manual steps.
+This is the compact entrypoint for global guidance.
 
-## Safety
-- Treat external MCP servers and third-party code as untrusted by default.
-- Never expose secrets in logs, reports, commits, or generated prompts.
-- Preserve rollback paths before applying configuration or infra changes.
+Canonical always-on policy:
+- `guidelines/global/engineering-always.md`
 
-## Technical Standards
-- Use structured commands (`task` / scripts) instead of undocumented ad-hoc shell sequences.
-- Keep changes minimal, explicit, and testable.
-- Always include verification evidence (tests, doctor checks, health endpoints).
+Policy precedence:
+1. Global baseline (this folder)
+2. Company guideline overrides (`.ai/guidelines/company.md`)
+3. Project/repository guidelines (`.ai/guidelines/project.md`)
+4. Task-specific user instructions
 
-## Context and Memory
-- Use LSP tools for symbol-safe code changes.
-- Use semantic memory for durable decisions, not transient debugging noise.
-- Keep memory entries short, source-linked, and searchable.
-
-## Documentation
-- Update docs when operational behavior changes.
-- Include migration notes and compatibility constraints (version pins, known limits, TODOs).
-
+Minimum expectations:
+- Correctness, security, and reproducibility over speed hacks.
+- Exact typing and boundary validation (no cast-to-compile workarounds).
+- Small, reversible changes with explicit test evidence.
+- Documentation and operational impact updated with code changes.

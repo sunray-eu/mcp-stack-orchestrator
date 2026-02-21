@@ -29,6 +29,8 @@ Profiles:
   docs     -> core + docs-mcp-server web ui/http endpoint (127.0.0.1:16280)
               requires provider credentials in ${SECRETS_FILE}
               defaults DOCS_MCP_EMBEDDING_MODEL=text-embedding-3-small when OPENAI_API_KEY is present
+              supports private GitHub indexing via GITHUB_TOKEN / GH_TOKEN
+              default mode is standalone server; set DOCS_MCP_ENABLE_WORKER=true to run worker too
   full     -> core + surreal + archon + docs
 
 Filesystem access (MCP containers):
@@ -42,6 +44,14 @@ SurrealDB runtime overrides (optional in ${SECRETS_FILE}):
   - SURREALDB_RPC_PORT, SURREALDB_WS_HOST, SURREALIST_CONNECTION_NAME
   - SURREAL_MCP_SERVER_URL
   - SURREAL_MCP_RATE_LIMIT_RPS, SURREAL_MCP_RATE_LIMIT_BURST
+
+Docs MCP runtime overrides (optional in ${SECRETS_FILE}):
+  - Provider keys: OPENAI_API_KEY, OPENAI_ORG_ID, OPENAI_API_BASE, GOOGLE_API_KEY,
+    GOOGLE_APPLICATION_CREDENTIALS, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY,
+    AWS_REGION, BEDROCK_AWS_REGION, AZURE_OPENAI_API_*
+  - Source auth: GITHUB_TOKEN or GH_TOKEN
+  - Worker mode toggle: DOCS_MCP_ENABLE_WORKER=true|false (default: false)
+  - Advanced config: DOCS_MCP_* (for app/server/auth/scraper/splitter/embeddings/db/assembly)
 
 Archon settings sync (optional in ${SECRETS_FILE}):
   - ARCHON_LLM_PROVIDER (default: openai)
@@ -79,6 +89,17 @@ read_env_var() {
     return 0
   fi
   awk -F= -v k="$key" '$1==k{print substr($0, index($0,"=")+1); exit}' "$file"
+}
+
+is_truthy() {
+  case "${1:-}" in
+    1 | true | TRUE | yes | YES | on | ON)
+      return 0
+      ;;
+    *)
+      return 1
+      ;;
+  esac
 }
 
 infra_compose() {
@@ -290,10 +311,22 @@ write_infra_runtime_env() {
   local docs_provider_required="${1:-false}"
 
   local openai_api_key docs_embedding_model openai_api_base
+  local openai_org_id github_token gh_token
   local google_api_key google_application_credentials
-  local aws_access_key_id aws_secret_access_key aws_region
+  local aws_access_key_id aws_secret_access_key aws_region bedrock_aws_region
   local azure_openai_api_key azure_openai_api_instance_name
   local azure_openai_api_deployment_name azure_openai_api_version
+  local docs_mcp_public_port docs_mcp_config docs_mcp_store_path docs_mcp_app_store_path docs_mcp_app_telemetry_enabled docs_mcp_app_read_only
+  local docs_mcp_server_protocol docs_mcp_server_host docs_mcp_server_heartbeat_ms
+  local docs_mcp_server_ports_default docs_mcp_server_ports_worker docs_mcp_server_ports_mcp docs_mcp_server_ports_web
+  local docs_mcp_auth_enabled docs_mcp_auth_issuer_url docs_mcp_auth_audience
+  local docs_mcp_scraper_max_pages docs_mcp_scraper_max_depth docs_mcp_scraper_max_concurrency
+  local docs_mcp_scraper_page_timeout_ms docs_mcp_scraper_browser_timeout_ms docs_mcp_scraper_fetcher_max_retries
+  local docs_mcp_scraper_fetcher_base_delay_ms docs_mcp_scraper_document_max_size
+  local docs_mcp_splitter_min_chunk_size docs_mcp_splitter_preferred_chunk_size docs_mcp_splitter_max_chunk_size
+  local docs_mcp_embeddings_batch_size docs_mcp_embeddings_vector_dimension docs_mcp_db_migration_max_retries
+  local docs_mcp_assembly_max_chunk_distance docs_mcp_assembly_max_parent_chain_depth docs_mcp_assembly_child_limit
+  local docs_mcp_assembly_preceding_siblings_limit docs_mcp_assembly_subsequent_siblings_limit
   local mcp_host_fs_root mcp_host_fs_users
   local surrealdb_root_user surrealdb_root_pass surrealdb_default_ns surrealdb_default_db
   local surrealdb_rpc_port surrealdb_ws_host surrealist_connection_name
@@ -303,15 +336,60 @@ write_infra_runtime_env() {
   openai_api_key="$(read_env_var "OPENAI_API_KEY" "$SECRETS_FILE")"
   docs_embedding_model="$(read_env_var "DOCS_MCP_EMBEDDING_MODEL" "$SECRETS_FILE")"
   openai_api_base="$(read_env_var "OPENAI_API_BASE" "$SECRETS_FILE")"
+  openai_org_id="$(read_env_var "OPENAI_ORG_ID" "$SECRETS_FILE")"
+  github_token="$(read_env_var "GITHUB_TOKEN" "$SECRETS_FILE")"
+  gh_token="$(read_env_var "GH_TOKEN" "$SECRETS_FILE")"
+  if [ -z "${github_token:-}" ]; then
+    github_token="$(read_env_var "GITHUB_PAT_TOKEN" "$SECRETS_FILE")"
+  fi
+  if [ -z "${gh_token:-}" ]; then
+    gh_token="$github_token"
+  fi
   google_api_key="$(read_env_var "GOOGLE_API_KEY" "$SECRETS_FILE")"
   google_application_credentials="$(read_env_var "GOOGLE_APPLICATION_CREDENTIALS" "$SECRETS_FILE")"
   aws_access_key_id="$(read_env_var "AWS_ACCESS_KEY_ID" "$SECRETS_FILE")"
   aws_secret_access_key="$(read_env_var "AWS_SECRET_ACCESS_KEY" "$SECRETS_FILE")"
   aws_region="$(read_env_var "AWS_REGION" "$SECRETS_FILE")"
+  bedrock_aws_region="$(read_env_var "BEDROCK_AWS_REGION" "$SECRETS_FILE")"
   azure_openai_api_key="$(read_env_var "AZURE_OPENAI_API_KEY" "$SECRETS_FILE")"
   azure_openai_api_instance_name="$(read_env_var "AZURE_OPENAI_API_INSTANCE_NAME" "$SECRETS_FILE")"
   azure_openai_api_deployment_name="$(read_env_var "AZURE_OPENAI_API_DEPLOYMENT_NAME" "$SECRETS_FILE")"
   azure_openai_api_version="$(read_env_var "AZURE_OPENAI_API_VERSION" "$SECRETS_FILE")"
+  docs_mcp_public_port="$(read_env_var "DOCS_MCP_PUBLIC_PORT" "$SECRETS_FILE")"
+  docs_mcp_config="$(read_env_var "DOCS_MCP_CONFIG" "$SECRETS_FILE")"
+  docs_mcp_store_path="$(read_env_var "DOCS_MCP_STORE_PATH" "$SECRETS_FILE")"
+  docs_mcp_app_store_path="$(read_env_var "DOCS_MCP_APP_STORE_PATH" "$SECRETS_FILE")"
+  docs_mcp_app_telemetry_enabled="$(read_env_var "DOCS_MCP_APP_TELEMETRY_ENABLED" "$SECRETS_FILE")"
+  docs_mcp_app_read_only="$(read_env_var "DOCS_MCP_APP_READ_ONLY" "$SECRETS_FILE")"
+  docs_mcp_server_protocol="$(read_env_var "DOCS_MCP_SERVER_PROTOCOL" "$SECRETS_FILE")"
+  docs_mcp_server_host="$(read_env_var "DOCS_MCP_SERVER_HOST" "$SECRETS_FILE")"
+  docs_mcp_server_heartbeat_ms="$(read_env_var "DOCS_MCP_SERVER_HEARTBEAT_MS" "$SECRETS_FILE")"
+  docs_mcp_server_ports_default="$(read_env_var "DOCS_MCP_SERVER_PORTS_DEFAULT" "$SECRETS_FILE")"
+  docs_mcp_server_ports_worker="$(read_env_var "DOCS_MCP_SERVER_PORTS_WORKER" "$SECRETS_FILE")"
+  docs_mcp_server_ports_mcp="$(read_env_var "DOCS_MCP_SERVER_PORTS_MCP" "$SECRETS_FILE")"
+  docs_mcp_server_ports_web="$(read_env_var "DOCS_MCP_SERVER_PORTS_WEB" "$SECRETS_FILE")"
+  docs_mcp_auth_enabled="$(read_env_var "DOCS_MCP_AUTH_ENABLED" "$SECRETS_FILE")"
+  docs_mcp_auth_issuer_url="$(read_env_var "DOCS_MCP_AUTH_ISSUER_URL" "$SECRETS_FILE")"
+  docs_mcp_auth_audience="$(read_env_var "DOCS_MCP_AUTH_AUDIENCE" "$SECRETS_FILE")"
+  docs_mcp_scraper_max_pages="$(read_env_var "DOCS_MCP_SCRAPER_MAX_PAGES" "$SECRETS_FILE")"
+  docs_mcp_scraper_max_depth="$(read_env_var "DOCS_MCP_SCRAPER_MAX_DEPTH" "$SECRETS_FILE")"
+  docs_mcp_scraper_max_concurrency="$(read_env_var "DOCS_MCP_SCRAPER_MAX_CONCURRENCY" "$SECRETS_FILE")"
+  docs_mcp_scraper_page_timeout_ms="$(read_env_var "DOCS_MCP_SCRAPER_PAGE_TIMEOUT_MS" "$SECRETS_FILE")"
+  docs_mcp_scraper_browser_timeout_ms="$(read_env_var "DOCS_MCP_SCRAPER_BROWSER_TIMEOUT_MS" "$SECRETS_FILE")"
+  docs_mcp_scraper_fetcher_max_retries="$(read_env_var "DOCS_MCP_SCRAPER_FETCHER_MAX_RETRIES" "$SECRETS_FILE")"
+  docs_mcp_scraper_fetcher_base_delay_ms="$(read_env_var "DOCS_MCP_SCRAPER_FETCHER_BASE_DELAY_MS" "$SECRETS_FILE")"
+  docs_mcp_scraper_document_max_size="$(read_env_var "DOCS_MCP_SCRAPER_DOCUMENT_MAX_SIZE" "$SECRETS_FILE")"
+  docs_mcp_splitter_min_chunk_size="$(read_env_var "DOCS_MCP_SPLITTER_MIN_CHUNK_SIZE" "$SECRETS_FILE")"
+  docs_mcp_splitter_preferred_chunk_size="$(read_env_var "DOCS_MCP_SPLITTER_PREFERRED_CHUNK_SIZE" "$SECRETS_FILE")"
+  docs_mcp_splitter_max_chunk_size="$(read_env_var "DOCS_MCP_SPLITTER_MAX_CHUNK_SIZE" "$SECRETS_FILE")"
+  docs_mcp_embeddings_batch_size="$(read_env_var "DOCS_MCP_EMBEDDINGS_BATCH_SIZE" "$SECRETS_FILE")"
+  docs_mcp_embeddings_vector_dimension="$(read_env_var "DOCS_MCP_EMBEDDINGS_VECTOR_DIMENSION" "$SECRETS_FILE")"
+  docs_mcp_db_migration_max_retries="$(read_env_var "DOCS_MCP_DB_MIGRATION_MAX_RETRIES" "$SECRETS_FILE")"
+  docs_mcp_assembly_max_chunk_distance="$(read_env_var "DOCS_MCP_ASSEMBLY_MAX_CHUNK_DISTANCE" "$SECRETS_FILE")"
+  docs_mcp_assembly_max_parent_chain_depth="$(read_env_var "DOCS_MCP_ASSEMBLY_MAX_PARENT_CHAIN_DEPTH" "$SECRETS_FILE")"
+  docs_mcp_assembly_child_limit="$(read_env_var "DOCS_MCP_ASSEMBLY_CHILD_LIMIT" "$SECRETS_FILE")"
+  docs_mcp_assembly_preceding_siblings_limit="$(read_env_var "DOCS_MCP_ASSEMBLY_PRECEDING_SIBLINGS_LIMIT" "$SECRETS_FILE")"
+  docs_mcp_assembly_subsequent_siblings_limit="$(read_env_var "DOCS_MCP_ASSEMBLY_SUBSEQUENT_SIBLINGS_LIMIT" "$SECRETS_FILE")"
   mcp_host_fs_root="$(read_env_var "MCP_HOST_FS_ROOT" "$SECRETS_FILE")"
   mcp_host_fs_users="$(read_env_var "MCP_HOST_FS_USERS" "$SECRETS_FILE")"
   surrealdb_root_user="$(read_env_var "SURREALDB_ROOT_USER" "$SECRETS_FILE")"
@@ -362,31 +440,80 @@ write_infra_runtime_env() {
     "$surrealist_connection_name"
 
   mkdir -p "$(dirname "$INFRA_RUNTIME_ENV")"
-  {
-    echo "OPENAI_API_KEY=${openai_api_key:-}"
-    echo "DOCS_MCP_EMBEDDING_MODEL=${docs_embedding_model:-}"
-    echo "OPENAI_API_BASE=${openai_api_base:-}"
-    echo "GOOGLE_API_KEY=${google_api_key:-}"
-    echo "GOOGLE_APPLICATION_CREDENTIALS=${google_application_credentials:-}"
-    echo "AWS_ACCESS_KEY_ID=${aws_access_key_id:-}"
-    echo "AWS_SECRET_ACCESS_KEY=${aws_secret_access_key:-}"
-    echo "AWS_REGION=${aws_region:-}"
-    echo "AZURE_OPENAI_API_KEY=${azure_openai_api_key:-}"
-    echo "AZURE_OPENAI_API_INSTANCE_NAME=${azure_openai_api_instance_name:-}"
-    echo "AZURE_OPENAI_API_DEPLOYMENT_NAME=${azure_openai_api_deployment_name:-}"
-    echo "AZURE_OPENAI_API_VERSION=${azure_openai_api_version:-}"
-    echo "MCP_HOST_FS_ROOT=${mcp_host_fs_root:-/}"
-    echo "MCP_HOST_FS_USERS=${mcp_host_fs_users:-/Users}"
-    echo "SURREALDB_ROOT_USER=${surrealdb_root_user}"
-    echo "SURREALDB_ROOT_PASS=${surrealdb_root_pass}"
-    echo "SURREALDB_DEFAULT_NS=${surrealdb_default_ns}"
-    echo "SURREALDB_DEFAULT_DB=${surrealdb_default_db}"
-    echo "SURREALDB_RPC_PORT=${surrealdb_rpc_port}"
-    echo "SURREAL_MCP_SERVER_URL=${surreal_mcp_server_url}"
-    echo "SURREAL_MCP_RATE_LIMIT_RPS=${surreal_mcp_rate_limit_rps}"
-    echo "SURREAL_MCP_RATE_LIMIT_BURST=${surreal_mcp_rate_limit_burst}"
-    echo "SURREALIST_INSTANCE_FILE=${SURREALIST_INSTANCE_RUNTIME}"
-  } >"$INFRA_RUNTIME_ENV"
+  : >"$INFRA_RUNTIME_ENV"
+  append_env() {
+    printf '%s=%s\n' "$1" "$2" >>"$INFRA_RUNTIME_ENV"
+  }
+  append_if_set() {
+    if [ -n "${2:-}" ]; then
+      append_env "$1" "$2"
+    fi
+  }
+
+  append_env "INFRA_RUNTIME_ENV_FILE" "$INFRA_RUNTIME_ENV"
+  append_env "DOCS_MCP_PUBLIC_PORT" "${docs_mcp_public_port:-16280}"
+  append_env "MCP_HOST_FS_ROOT" "${mcp_host_fs_root:-/}"
+  append_env "MCP_HOST_FS_USERS" "${mcp_host_fs_users:-/Users}"
+  append_env "SURREALDB_ROOT_USER" "$surrealdb_root_user"
+  append_env "SURREALDB_ROOT_PASS" "$surrealdb_root_pass"
+  append_env "SURREALDB_DEFAULT_NS" "$surrealdb_default_ns"
+  append_env "SURREALDB_DEFAULT_DB" "$surrealdb_default_db"
+  append_env "SURREALDB_RPC_PORT" "$surrealdb_rpc_port"
+  append_env "SURREAL_MCP_SERVER_URL" "$surreal_mcp_server_url"
+  append_env "SURREAL_MCP_RATE_LIMIT_RPS" "$surreal_mcp_rate_limit_rps"
+  append_env "SURREAL_MCP_RATE_LIMIT_BURST" "$surreal_mcp_rate_limit_burst"
+  append_env "SURREALIST_INSTANCE_FILE" "$SURREALIST_INSTANCE_RUNTIME"
+
+  append_if_set "OPENAI_API_KEY" "$openai_api_key"
+  append_if_set "OPENAI_ORG_ID" "$openai_org_id"
+  append_if_set "DOCS_MCP_EMBEDDING_MODEL" "$docs_embedding_model"
+  append_if_set "OPENAI_API_BASE" "$openai_api_base"
+  append_if_set "GITHUB_TOKEN" "$github_token"
+  append_if_set "GH_TOKEN" "$gh_token"
+  append_if_set "GOOGLE_API_KEY" "$google_api_key"
+  append_if_set "GOOGLE_APPLICATION_CREDENTIALS" "$google_application_credentials"
+  append_if_set "AWS_ACCESS_KEY_ID" "$aws_access_key_id"
+  append_if_set "AWS_SECRET_ACCESS_KEY" "$aws_secret_access_key"
+  append_if_set "AWS_REGION" "$aws_region"
+  append_if_set "BEDROCK_AWS_REGION" "$bedrock_aws_region"
+  append_if_set "AZURE_OPENAI_API_KEY" "$azure_openai_api_key"
+  append_if_set "AZURE_OPENAI_API_INSTANCE_NAME" "$azure_openai_api_instance_name"
+  append_if_set "AZURE_OPENAI_API_DEPLOYMENT_NAME" "$azure_openai_api_deployment_name"
+  append_if_set "AZURE_OPENAI_API_VERSION" "$azure_openai_api_version"
+  append_if_set "DOCS_MCP_CONFIG" "$docs_mcp_config"
+  append_if_set "DOCS_MCP_STORE_PATH" "$docs_mcp_store_path"
+  append_if_set "DOCS_MCP_APP_STORE_PATH" "$docs_mcp_app_store_path"
+  append_if_set "DOCS_MCP_APP_TELEMETRY_ENABLED" "$docs_mcp_app_telemetry_enabled"
+  append_if_set "DOCS_MCP_APP_READ_ONLY" "$docs_mcp_app_read_only"
+  append_if_set "DOCS_MCP_SERVER_PROTOCOL" "$docs_mcp_server_protocol"
+  append_if_set "DOCS_MCP_SERVER_HOST" "$docs_mcp_server_host"
+  append_if_set "DOCS_MCP_SERVER_HEARTBEAT_MS" "$docs_mcp_server_heartbeat_ms"
+  append_if_set "DOCS_MCP_SERVER_PORTS_DEFAULT" "$docs_mcp_server_ports_default"
+  append_if_set "DOCS_MCP_SERVER_PORTS_WORKER" "$docs_mcp_server_ports_worker"
+  append_if_set "DOCS_MCP_SERVER_PORTS_MCP" "$docs_mcp_server_ports_mcp"
+  append_if_set "DOCS_MCP_SERVER_PORTS_WEB" "$docs_mcp_server_ports_web"
+  append_if_set "DOCS_MCP_AUTH_ENABLED" "$docs_mcp_auth_enabled"
+  append_if_set "DOCS_MCP_AUTH_ISSUER_URL" "$docs_mcp_auth_issuer_url"
+  append_if_set "DOCS_MCP_AUTH_AUDIENCE" "$docs_mcp_auth_audience"
+  append_if_set "DOCS_MCP_SCRAPER_MAX_PAGES" "$docs_mcp_scraper_max_pages"
+  append_if_set "DOCS_MCP_SCRAPER_MAX_DEPTH" "$docs_mcp_scraper_max_depth"
+  append_if_set "DOCS_MCP_SCRAPER_MAX_CONCURRENCY" "$docs_mcp_scraper_max_concurrency"
+  append_if_set "DOCS_MCP_SCRAPER_PAGE_TIMEOUT_MS" "$docs_mcp_scraper_page_timeout_ms"
+  append_if_set "DOCS_MCP_SCRAPER_BROWSER_TIMEOUT_MS" "$docs_mcp_scraper_browser_timeout_ms"
+  append_if_set "DOCS_MCP_SCRAPER_FETCHER_MAX_RETRIES" "$docs_mcp_scraper_fetcher_max_retries"
+  append_if_set "DOCS_MCP_SCRAPER_FETCHER_BASE_DELAY_MS" "$docs_mcp_scraper_fetcher_base_delay_ms"
+  append_if_set "DOCS_MCP_SCRAPER_DOCUMENT_MAX_SIZE" "$docs_mcp_scraper_document_max_size"
+  append_if_set "DOCS_MCP_SPLITTER_MIN_CHUNK_SIZE" "$docs_mcp_splitter_min_chunk_size"
+  append_if_set "DOCS_MCP_SPLITTER_PREFERRED_CHUNK_SIZE" "$docs_mcp_splitter_preferred_chunk_size"
+  append_if_set "DOCS_MCP_SPLITTER_MAX_CHUNK_SIZE" "$docs_mcp_splitter_max_chunk_size"
+  append_if_set "DOCS_MCP_EMBEDDINGS_BATCH_SIZE" "$docs_mcp_embeddings_batch_size"
+  append_if_set "DOCS_MCP_EMBEDDINGS_VECTOR_DIMENSION" "$docs_mcp_embeddings_vector_dimension"
+  append_if_set "DOCS_MCP_DB_MIGRATION_MAX_RETRIES" "$docs_mcp_db_migration_max_retries"
+  append_if_set "DOCS_MCP_ASSEMBLY_MAX_CHUNK_DISTANCE" "$docs_mcp_assembly_max_chunk_distance"
+  append_if_set "DOCS_MCP_ASSEMBLY_MAX_PARENT_CHAIN_DEPTH" "$docs_mcp_assembly_max_parent_chain_depth"
+  append_if_set "DOCS_MCP_ASSEMBLY_CHILD_LIMIT" "$docs_mcp_assembly_child_limit"
+  append_if_set "DOCS_MCP_ASSEMBLY_PRECEDING_SIBLINGS_LIMIT" "$docs_mcp_assembly_preceding_siblings_limit"
+  append_if_set "DOCS_MCP_ASSEMBLY_SUBSEQUENT_SIBLINGS_LIMIT" "$docs_mcp_assembly_subsequent_siblings_limit"
   chmod 600 "$INFRA_RUNTIME_ENV"
 }
 
@@ -416,14 +543,22 @@ surreal_down() {
 
 docs_up() {
   require_file "$INFRA_COMPOSE"
+  local docs_mcp_enable_worker
   write_infra_runtime_env true
-  infra_compose up -d docs-mcp-web
+  docs_mcp_enable_worker="$(read_env_var "DOCS_MCP_ENABLE_WORKER" "$SECRETS_FILE")"
+  if is_truthy "$docs_mcp_enable_worker"; then
+    infra_compose up -d docs-mcp-web docs-mcp-worker
+  else
+    infra_compose up -d docs-mcp-web
+    infra_compose rm -sf docs-mcp-worker >/dev/null 2>&1 || true
+    docker rm -f ai-mcp-docs-worker >/dev/null 2>&1 || true
+  fi
 }
 
 docs_down() {
   require_file "$INFRA_COMPOSE"
-  infra_compose rm -sf docs-mcp-web >/dev/null 2>&1 || true
-  docker rm -f ai-mcp-docs-mcp >/dev/null 2>&1 || true
+  infra_compose rm -sf docs-mcp-worker docs-mcp-web >/dev/null 2>&1 || true
+  docker rm -f ai-mcp-docs-worker ai-mcp-docs-mcp >/dev/null 2>&1 || true
 }
 
 archon_up() {
@@ -482,9 +617,14 @@ http_code() {
 
 show_endpoints() {
   local surrealdb_rpc_port
+  local docs_mcp_public_port
   surrealdb_rpc_port="$(read_env_var "SURREALDB_RPC_PORT" "$INFRA_RUNTIME_ENV")"
   if [ -z "${surrealdb_rpc_port:-}" ]; then
     surrealdb_rpc_port="18083"
+  fi
+  docs_mcp_public_port="$(read_env_var "DOCS_MCP_PUBLIC_PORT" "$INFRA_RUNTIME_ENV")"
+  if [ -z "${docs_mcp_public_port:-}" ]; then
+    docs_mcp_public_port="16280"
   fi
   echo
   echo "== Endpoint checks =="
@@ -497,7 +637,7 @@ show_endpoints() {
   printf "%-24s %-32s %s\n" "archon-api" "http://127.0.0.1:18081/health" "$(http_code 'http://127.0.0.1:18081/health')"
   printf "%-24s %-32s %s\n" "archon-mcp-health" "http://127.0.0.1:18051/health" "$(http_code 'http://127.0.0.1:18051/health')"
   printf "%-24s %-32s %s\n" "archon-ui" "http://127.0.0.1:13737" "$(http_code 'http://127.0.0.1:13737')"
-  printf "%-24s %-32s %s\n" "docs-mcp-ui" "http://127.0.0.1:16280" "$(http_code 'http://127.0.0.1:16280')"
+  printf "%-24s %-32s %s\n" "docs-mcp-ui" "http://127.0.0.1:${docs_mcp_public_port}" "$(http_code "http://127.0.0.1:${docs_mcp_public_port}")"
 }
 
 show_status() {

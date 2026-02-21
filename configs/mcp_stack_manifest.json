@@ -8,6 +8,7 @@
     "mcpx-lsp",
     "mcpx-surrealdb-http",
     "mcpx-archon-http",
+    "mcpx-docs-mcp-http",
     "mcpx-qdrant-global",
     "mcpx-qdrant-project-a",
     "mcpx-qdrant-project-b",
@@ -42,7 +43,8 @@
       "mcpx-chroma",
       "mcpx-lsp",
       "mcpx-surrealdb-http",
-      "mcpx-archon-http"
+      "mcpx-archon-http",
+      "mcpx-docs-mcp-http"
     ]
   },
   "servers": {
@@ -97,6 +99,7 @@
         "env": {
           "MCP_QDRANT_COLLECTION_MODE": "workspace",
           "QDRANT_URL": "http://127.0.0.1:6333",
+          "EMBEDDING_PROVIDER": "fastembed",
           "EMBEDDING_MODEL": "sentence-transformers/all-MiniLM-L6-v2"
         },
         "startup_timeout_sec": 120
@@ -109,6 +112,7 @@
         "env": {
           "MCP_QDRANT_COLLECTION_MODE": "workspace",
           "QDRANT_URL": "http://127.0.0.1:6333",
+          "EMBEDDING_PROVIDER": "fastembed",
           "EMBEDDING_MODEL": "sentence-transformers/all-MiniLM-L6-v2"
         }
       },
@@ -120,6 +124,7 @@
         "environment": {
           "MCP_QDRANT_COLLECTION_MODE": "workspace",
           "QDRANT_URL": "http://127.0.0.1:6333",
+          "EMBEDDING_PROVIDER": "fastembed",
           "EMBEDDING_MODEL": "sentence-transformers/all-MiniLM-L6-v2"
         },
         "timeout": 120000,
@@ -237,6 +242,22 @@
       "opencode": {
         "type": "remote",
         "url": "http://127.0.0.1:18051/mcp",
+        "enabled": true
+      }
+    },
+    "mcpx-docs-mcp-http": {
+      "summary": "Docs MCP over local HTTP endpoint (infra profile docs/full).",
+      "codex": {
+        "kind": "http",
+        "url": "http://127.0.0.1:16280/mcp"
+      },
+      "claude": {
+        "transport": "http",
+        "url": "http://127.0.0.1:16280/mcp"
+      },
+      "opencode": {
+        "type": "remote",
+        "url": "http://127.0.0.1:16280/mcp",
         "enabled": true
       }
     }

@@ -88,6 +88,16 @@ check_endpoint() {
   fail "endpoint $name unexpected status $code (expected: $expected_csv, url: $url)"
 }
 
+read_env_var() {
+  local key="$1"
+  local file="$2"
+  if [ ! -f "$file" ]; then
+    echo ""
+    return 0
+  fi
+  awk -F= -v k="$key" '$1==k{print substr($0, index($0,"=")+1); exit}' "$file"
+}
+
 check_bash_syntax() {
   local f="$1"
   if bash -n "$f"; then
@@ -213,7 +223,14 @@ if [ "$PROFILE" = "archon" ] || [ "$PROFILE" = "full" ]; then
 fi
 
 if [ "$PROFILE" = "docs" ] || [ "$PROFILE" = "full" ]; then
-  check_endpoint "docs-mcp-ui" "http://127.0.0.1:16280" "200" "8"
+  DOCS_MCP_PUBLIC_PORT="${DOCS_MCP_PUBLIC_PORT:-}"
+  if [ -z "${DOCS_MCP_PUBLIC_PORT:-}" ]; then
+    DOCS_MCP_PUBLIC_PORT="$(read_env_var "DOCS_MCP_PUBLIC_PORT" "$INFRA_RUNTIME_ENV")"
+  fi
+  if [ -z "${DOCS_MCP_PUBLIC_PORT:-}" ]; then
+    DOCS_MCP_PUBLIC_PORT="16280"
+  fi
+  check_endpoint "docs-mcp-ui" "http://127.0.0.1:${DOCS_MCP_PUBLIC_PORT}" "200" "8"
 fi
 
 echo

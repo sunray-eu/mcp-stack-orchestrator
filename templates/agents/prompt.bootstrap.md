@@ -7,21 +7,21 @@ Goal:
 
 Workflow:
 1. Read `AGENTS.md` and `.ai/guidelines/project.md`.
-2. Verify stack health:
+2. Read `.ai/context/repo_context.md` if present.
+3. Verify stack health:
    - `task infra:status`
    - `task quality:doctor PROFILE={{DEFAULT_PROFILE}}`
-3. Map repository structure, primary entrypoints, and test/lint/typecheck commands.
-4. Use `mcpx-lsp` for symbol/navigation map and `mcpx-qdrant` for semantic memory recall.
-5. Summarize:
+4. Map repository structure, primary entrypoints, and test/lint/typecheck commands.
+5. Use `mcpx-lsp` for symbol/navigation map and `mcpx-qdrant` for semantic memory recall.
+6. Summarize:
    - core architecture and modules
    - likely risk areas
    - missing tests/docs
    - recommended next actions
-6. Store stable findings to memory namespace `{{MEMORY_NAMESPACE}}`.
+7. Store stable findings to memory namespace `{{MEMORY_NAMESPACE}}`.
 
 Output format:
 - concise architecture map
 - command checklist
 - risk list
 - prioritized next steps
-

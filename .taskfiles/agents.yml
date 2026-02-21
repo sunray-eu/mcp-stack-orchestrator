@@ -43,3 +43,34 @@ tasks:
     cmds:
       - python3 ./scripts/agents_scaffold.py prompt --repo {{.REPO}} --kind update
 
+  context:
+    desc: Generate/refresh `.ai/context/repo_context.md` for a repository.
+    requires:
+      vars: [REPO]
+    cmds:
+      - >-
+        python3 ./scripts/repo_onboard.py
+        --repo {{.REPO}}
+        --company {{.COMPANY}}
+        --project {{.PROJECT}}
+        --language {{.LANGUAGE}}
+        --force
+
+  onboard:
+    desc: Full repo onboarding (agents scaffold + context map generation).
+    requires:
+      vars: [REPO]
+    cmds:
+      - task: init
+        vars:
+          REPO: "{{.REPO}}"
+          COMPANY: "{{.COMPANY}}"
+          PROJECT: "{{.PROJECT}}"
+          LANGUAGE: "{{.LANGUAGE}}"
+          PROFILE: "{{.PROFILE}}"
+      - task: context
+        vars:
+          REPO: "{{.REPO}}"
+          COMPANY: "{{.COMPANY}}"
+          PROJECT: "{{.PROJECT}}"
+          LANGUAGE: "{{.LANGUAGE}}"
