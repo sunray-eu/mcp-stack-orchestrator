@@ -55,13 +55,12 @@ Use `.secrets.env.example` as the template.
   - `AZURE_OPENAI_API_DEPLOYMENT_NAME`, `AZURE_OPENAI_API_VERSION`
 - GitHub scraping auth (private repos / higher limits):
   - `GITHUB_TOKEN` (preferred), `GH_TOKEN` (fallback/alias)
-- Runtime mode:
-  - `DOCS_MCP_ENABLE_WORKER=true|false` (default `false`, standalone server mode)
 
 ### Docs MCP advanced passthrough (`DOCS_MCP_*`)
 
 The stack forwards documented high-signal options for app/server/auth/scraper/splitter/embeddings/db/assembly:
 Only non-empty values are forwarded to runtime env to preserve upstream defaults and avoid invalid blank/zero overrides.
+The orchestrator runs docs-mcp in standalone `server` mode; distributed `mcp + web + worker` topology is intentionally not enabled here.
 
 - App:
   - `DOCS_MCP_CONFIG`, `DOCS_MCP_STORE_PATH`, `DOCS_MCP_APP_STORE_PATH`

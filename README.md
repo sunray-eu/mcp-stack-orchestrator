@@ -4,7 +4,7 @@ Reproducible evaluation artifacts and production-grade orchestration for a multi
 
 ## What This Repository Provides
 
-- Repeatable MCP infra orchestration with Docker (`qdrant`, `surrealdb`, `surrealmcp`, `surrealmcp-compat`, `surrealist`, `docs-mcp` standalone by default with optional `docs-worker`, optional `Archon` + `archon-mcp-compat`)
+- Repeatable MCP infra orchestration with Docker (`qdrant`, `surrealdb`, `surrealmcp`, `surrealmcp-compat`, `surrealist`, `docs-mcp` standalone, optional `Archon` + `archon-mcp-compat`)
 - Global dynamic MCP profiles for multiple agents (`core`, `core-surreal`, `core-archon`, `full`)
 - Workspace-aware wrappers for Qdrant collection routing and LSP selection
 - Taskfile-first operator workflow (`task ...`) with shell scripts as internal runtime engines
@@ -43,7 +43,6 @@ This repo is intended for developers who want:
    - Fill only required keys (for `docs` and `archon` profiles).
    - For private GitHub indexing in `docs-mcp`, set `GITHUB_TOKEN` (or `GH_TOKEN`).
    - Leave optional `DOCS_MCP_*` keys unset unless needed (do not set blank values).
-   - Set `DOCS_MCP_ENABLE_WORKER=true` only if you want distributed worker mode.
 3. Start infra:
    - `task infra:up PROFILE=core`
 4. Apply MCP profile to agents:

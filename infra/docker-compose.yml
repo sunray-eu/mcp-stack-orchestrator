@@ -168,10 +168,3 @@ services:
         "--resume",
       ]
     volumes: *docs_mcp_volumes
-
-  docs-mcp-worker:
-    image: ${DOCS_MCP_IMAGE:-ghcr.io/arabold/docs-mcp-server:latest}
-    container_name: ai-mcp-docs-worker
-    env_file: *docs_mcp_env_file
-    command: ["worker"]
-    volumes: *docs_mcp_volumes

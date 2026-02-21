@@ -30,7 +30,7 @@ Profiles:
               requires provider credentials in ${SECRETS_FILE}
               defaults DOCS_MCP_EMBEDDING_MODEL=text-embedding-3-small when OPENAI_API_KEY is present
               supports private GitHub indexing via GITHUB_TOKEN / GH_TOKEN
-              default mode is standalone server; set DOCS_MCP_ENABLE_WORKER=true to run worker too
+              runs in standalone server mode (embedded worker included upstream)
   full     -> core + surreal + archon + docs
 
 Filesystem access (MCP containers):
@@ -50,7 +50,6 @@ Docs MCP runtime overrides (optional in ${SECRETS_FILE}):
     GOOGLE_APPLICATION_CREDENTIALS, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY,
     AWS_REGION, BEDROCK_AWS_REGION, AZURE_OPENAI_API_*
   - Source auth: GITHUB_TOKEN or GH_TOKEN
-  - Worker mode toggle: DOCS_MCP_ENABLE_WORKER=true|false (default: false)
   - Advanced config: DOCS_MCP_* (for app/server/auth/scraper/splitter/embeddings/db/assembly)
 
 Archon settings sync (optional in ${SECRETS_FILE}):
@@ -89,17 +88,6 @@ read_env_var() {
     return 0
   fi
   awk -F= -v k="$key" '$1==k{print substr($0, index($0,"=")+1); exit}' "$file"
-}
-
-is_truthy() {
-  case "${1:-}" in
-    1 | true | TRUE | yes | YES | on | ON)
-      return 0
-      ;;
-    *)
-      return 1
-      ;;
-  esac
 }
 
 infra_compose() {
@@ -543,22 +531,16 @@ surreal_down() {
 
 docs_up() {
   require_file "$INFRA_COMPOSE"
-  local docs_mcp_enable_worker
   write_infra_runtime_env true
-  docs_mcp_enable_worker="$(read_env_var "DOCS_MCP_ENABLE_WORKER" "$SECRETS_FILE")"
-  if is_truthy "$docs_mcp_enable_worker"; then
-    infra_compose up -d docs-mcp-web docs-mcp-worker
-  else
-    infra_compose up -d docs-mcp-web
-    infra_compose rm -sf docs-mcp-worker >/dev/null 2>&1 || true
-    docker rm -f ai-mcp-docs-worker >/dev/null 2>&1 || true
-  fi
+  infra_compose up -d docs-mcp-web
+  infra_compose rm -sf docs-mcp-worker >/dev/null 2>&1 || true
+  docker rm -f ai-mcp-docs-worker >/dev/null 2>&1 || true
 }
 
 docs_down() {
   require_file "$INFRA_COMPOSE"
-  infra_compose rm -sf docs-mcp-worker docs-mcp-web >/dev/null 2>&1 || true
-  docker rm -f ai-mcp-docs-worker ai-mcp-docs-mcp >/dev/null 2>&1 || true
+  infra_compose rm -sf docs-mcp-web >/dev/null 2>&1 || true
+  docker rm -f ai-mcp-docs-mcp >/dev/null 2>&1 || true
 }
 
 archon_up() {
